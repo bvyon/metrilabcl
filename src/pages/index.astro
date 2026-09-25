@@ -38,21 +38,35 @@ const jsonLd = ldIndice(new URL('/', Astro.site!).href, libros, urlDe)
             <dt>{S.dtAutor}</dt>
             <dd>{b.author}</dd>
             <dt>{S.dtFormato}</dt>
-            <dd>{b.format}</dd>
+            <dd>{b.format ?? <span class="no-medido-inline">{S.noMedido}</span>}</dd>
             <dt>{S.dtIdioma}</dt>
-            <dd>{b.language}</dd>
+            <dd>{b.language ?? <span class="no-medido-inline">{S.noMedido}</span>}</dd>
             <dt>{S.dtExtension}</dt>
-            <dd>{S.paginas(b.printLength)}</dd>
+            <dd>
+              {b.printLength ? S.paginas(b.printLength) : <span class="no-medido-inline">{S.noMedido}</span>}
+            </dd>
             <dt>{S.dtPublicado}</dt>
             <dd>
-              <time datetime={b.publicationDate}>{fecha(b.publicationDate)}</time>
+              {
+                b.publicationDate ? (
+                  <time datetime={b.publicationDate}>{fecha(b.publicationDate)}</time>
+                ) : (
+                  <span class="no-medido-inline">{S.noMedido}</span>
+                )
+              }
             </dd>
             <dt>{S.dtAsin}</dt>
             <dd>
               <code>{b.asin}</code>
             </dd>
           </dl>
-          <p class="procedencia">{S.medidoEl(fechaHora(b.measurement.measuredAt))}</p>
+          <p class="procedencia">
+            {
+              b.measurement
+                ? S.medidoEl(fechaHora(b.measurement.measuredAt))
+                : S.declaradoEl(fechaHora(b.declaration!.declaredAt))
+            }
+          </p>
         </li>
       ))
     }

@@ -28,10 +28,18 @@ const urlIndice = new URL('/', Astro.site!).href
 // KDP pasa de 100 caracteres y la descripcion saldria cortada en el resultado de busqueda.
 // El <title> si lleva el titulo completo: ahi el dato real manda sobre la longitud ideal.
 const tituloCorto = b.title.split(':')[0].trim().slice(0, 60)
-const description = S.fichaDescripcion(
-  tituloCorto, b.author, b.format, b.printLength, b.language,
-  fecha(b.publicationDate), b.asin, b.measurement.measuredAt.slice(0, 10),
-)
+
+// Una ficha lleva `measurement` (leida de Amazon) o `declaration` (entregada por escrito por el
+// propietario del catalogo); el esquema garantiza que sea exactamente una. La declarada no tiene
+// ni un campo medido, asi que ni su <title>, ni su descripcion, ni sus datos pueden fingir uno.
+const m = b.measurement
+const decl = b.declaration
+const description = m
+  ? S.fichaDescripcion(
+      tituloCorto, b.author, b.format!, b.printLength!, b.language!,
+      fecha(b.publicationDate!), b.asin, m.measuredAt.slice(0, 10),
+    )
+  : S.fichaDescripcionDeclarada(tituloCorto, b.author, b.asin, fecha(decl!.declaredAt.slice(0, 10)))
 
 const d = b.demandContext
 ---
@@ -47,31 +55,49 @@ const d = b.demandContext
     <a href="/">{S.migaCatalogo}</a> › <span aria-current="page">{b.asin}</span>
   </nav>
   <h1 lang={idiomaDelTitulo(b)}>{b.title}</h1>
-  <p class="entrada">{S.fichaEntrada(b.author)}</p>
+  <p class="entrada">{m ? S.fichaEntrada(b.author) : S.fichaEntradaDeclarada(b.author)}</p>
+  {!m && <p class="aviso">{S.fichaAvisoDeclarada}</p>}
 
   <h2>{S.h2Datos}</h2>
   <dl class="datos datos-ficha">
     <dt>{S.dtAutor}</dt>
     <dd>{b.author}</dd>
     <dt>{S.dtFormato}</dt>
-    <dd>{b.format}</dd>
+    <dd>{b.format ?? <span class="no-medido-inline">{S.noMedido}</span>}</dd>
     <dt>{S.dtIdioma}</dt>
-    <dd>{b.language}</dd>
+    <dd>{b.language ?? <span class="no-medido-inline">{S.noMedido}</span>}</dd>
     <dt>{S.dtExtension}</dt>
-    <dd>{S.paginas(b.printLength)}</dd>
+    <dd>{b.printLength ? S.paginas(b.printLength) : <span class="no-medido-inline">{S.noMedido}</span>}</dd>
     <dt>{S.dtFechaPublicacion}</dt>
-    <dd><time datetime={b.publicationDate}>{fecha(b.publicationDate)}</time></dd>
+    <dd>
+      {
+        b.publicationDate ? (
+          <time datetime={b.publicationDate}>{fecha(b.publicationDate)}</time>
+        ) : (
+          <span class="no-medido-inline">{S.noMedido}</span>
+        )
+      }
+    </dd>
     <dt>{S.dtAsin}</dt>
     <dd><code>{b.asin}</code></dd>
     {b.fileSize && <><dt>{S.dtPeso}</dt><dd>{b.fileSize}</dd></>}
     {
-      b.price && (
+      b.price ? (
         <>
           <dt>{S.dtPrecio}</dt>
           <dd>
             {b.price.currency} {b.price.amount} <span class="nota-inline">{S.precioNota}</span>
           </dd>
         </>
+      ) : (
+        // En una ficha declarada la fila del precio se emite VACIA y marcada, no se omite: un
+        // precio ausente en silencio se lee como "gratis" o como una pagina a medio hacer.
+        !m && (
+          <>
+            <dt>{S.dtPrecioNeutro}</dt>
+            <dd><span class="no-medido-inline">{S.noMedido}</span></dd>
+          </>
+        )
       )
     }
   </dl>
@@ -144,29 +170,50 @@ const d = b.demandContext
   }
 
   <h2>{S.h2Procedencia}</h2>
-  <dl class="datos procedencia-dl">
-    <dt>{S.dtFuente}</dt>
-    <dd>{b.measurement.source} — <span class="url">{b.measurement.sourceUrl}</span></dd>
-    <dt>{S.dtMedidoEl}</dt>
-    <dd>
-      <time datetime={b.measurement.measuredAt}>{fechaHora(b.measurement.measuredAt)}</time>
-    </dd>
-    <dt>{S.dtMedidoPor}</dt>
-    <dd>{b.measurement.measuredBy}</dd>
-    <dt>{S.dtMetodo}</dt>
-    <dd>{b.measurement.method}</dd>
-    {
-      b.measurement.verifiedAt && (
-        <>
-          <dt>{S.dtReverificado}</dt>
-          <dd>
-            <time datetime={b.measurement.verifiedAt}>{fechaHora(b.measurement.verifiedAt)}</time>
-            {b.measurement.verifiedBy && ` — ${b.measurement.verifiedBy}`}
-          </dd>
-        </>
-      )
-    }
-  </dl>
+  {
+    m ? (
+      <dl class="datos procedencia-dl">
+        <dt>{S.dtFuente}</dt>
+        <dd>{m.source} — <span class="url">{m.sourceUrl}</span></dd>
+        <dt>{S.dtMedidoEl}</dt>
+        <dd>
+          <time datetime={m.measuredAt}>{fechaHora(m.measuredAt)}</time>
+        </dd>
+        <dt>{S.dtMedidoPor}</dt>
+        <dd>{m.measuredBy}</dd>
+        <dt>{S.dtMetodo}</dt>
+        <dd>{m.method}</dd>
+        {
+          m.verifiedAt && (
+            <>
+              <dt>{S.dtReverificado}</dt>
+              <dd>
+                <time datetime={m.verifiedAt}>{fechaHora(m.verifiedAt)}</time>
+                {m.verifiedBy && ` — ${m.verifiedBy}`}
+              </dd>
+            </>
+          )
+        }
+      </dl>
+    ) : (
+      <dl class="datos procedencia-dl">
+        <dt>{S.dtFuente}</dt>
+        <dd>{decl!.source}</dd>
+        <dt>{S.dtDeclaradoEl}</dt>
+        <dd>
+          <time datetime={decl!.declaredAt}>{fechaHora(decl!.declaredAt)}</time>
+        </dd>
+        <dt>{S.dtDeclaradoPor}</dt>
+        <dd>{decl!.declaredBy}</dd>
+        <dt>{S.dtDeclaraQue}</dt>
+        <dd>
+          <ul class="declara">{decl!.declares.map((x) => <li>{x}</li>)}</ul>
+        </dd>
+        <dt>{S.dtMetodo}</dt>
+        <dd>{decl!.method}</dd>
+      </dl>
+    )
+  }
 
   {
     b.observations && (

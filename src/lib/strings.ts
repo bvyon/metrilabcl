@@ -41,12 +41,20 @@ export interface Tabla {
   dtAsin: string
   dtPeso: string
   dtPrecio: string
+  /** Etiqueta neutra del precio en una ficha declarada: alli no hay medicion que calificar. */
+  dtPrecioNeutro: string
   paginas: (n: number) => string
   precioNota: string
   medidoEl: (f: string) => string
+  /** Marca de valor ausente. Un dato que no se midio se DICE, no se omite en silencio. */
+  noMedido: string
+  declaradoEl: (f: string) => string
   fichaTitulo: (t: string, asin: string) => string
   fichaDescripcion: (corto: string, autor: string, formato: string, paginas: number, idioma: string, fecha: string, asin: string, medido: string) => string
+  fichaDescripcionDeclarada: (corto: string, autor: string, asin: string, declarado: string) => string
   fichaEntrada: (autor: string) => string
+  fichaEntradaDeclarada: (autor: string) => string
+  fichaAvisoDeclarada: string
   h2Datos: string
   h2Procedencia: string
   h2NoMedido: string
@@ -60,6 +68,9 @@ export interface Tabla {
   dtMedidoPor: string
   dtMetodo: string
   dtReverificado: string
+  dtDeclaradoEl: string
+  dtDeclaradoPor: string
+  dtDeclaraQue: string
   demandaIntro: (etiqueta: string, fecha: string) => string
   demandaAviso: string
   demandaFuente: (url: string) => string
@@ -83,6 +94,7 @@ export interface Tabla {
   autorH2Titulos: string
   autorTitulosIntro: (n: number) => string
   autorConFicha: string
+  autorFichaDeclarada: string
   autorSinFicha: string
   autorH2Perfiles: string
   autorPerfilesIntro: string
@@ -98,8 +110,9 @@ export const STRINGS: Record<'es' | 'en', Tabla> = {
     rutaLabel: 'Ruta',
     migaCatalogo: 'Catálogo',
     piePublisher: (p) => `${p}. Catálogo de títulos autopublicados en Amazon Kindle.`,
-    pieNota: 'Cada dato de este sitio sale de la página pública del título en Amazon y lleva la ' +
-      'fecha en que se midió. Lo que no se ha medido se declara como no medido, no se estima.',
+    pieNota: 'Cada dato de este sitio sale de la página pública del título en Amazon y lleva la fecha ' +
+      'en que se midió, o bien lleva escrito de dónde sale si no es una medición nuestra. Lo que no se ' +
+      'ha medido se declara como no medido, no se estima.',
     pieGenerado: (f) => `Página generada el ${f}.`,
 
     titulosCuenta: (n) => (n === 1 ? '1 título' : `${n} títulos`),
@@ -110,7 +123,8 @@ export const STRINGS: Record<'es' | 'en', Tabla> = {
     indiceEntrada: (publisher) =>
       `Ficha de datos de cada título autopublicado por ${publisher} en Amazon Kindle. Los valores de ` +
       'esta página se leyeron de la página pública del producto en Amazon en la fecha indicada en cada ' +
-      'ficha; no hay reseñas, valoraciones ni posiciones de venta porque no se han medido.',
+      'ficha, salvo donde la propia ficha dice que el dato no está medido; no hay reseñas, valoraciones ' +
+      'ni posiciones de venta porque no se han medido.',
     indiceCatalogo: (titulos) => `Catálogo (${titulos})`,
     indiceAutorH2: 'Quién publica estos títulos',
     indiceAutorTexto: (nombre) =>
@@ -127,17 +141,33 @@ export const STRINGS: Record<'es' | 'en', Tabla> = {
     dtAsin: 'ASIN',
     dtPeso: 'Tamaño del archivo',
     dtPrecio: 'Precio medido',
+    dtPrecioNeutro: 'Precio',
     paginas: (n) => `${n} páginas`,
     precioNota: '(precio de compra en amazon.com al momento de la medición; puede haber cambiado)',
     medidoEl: (f) => `Datos medidos el ${f}.`,
+    noMedido: 'no medido',
+    declaradoEl: (f) => `Título declarado el ${f}. Ningún dato de este título está medido.`,
 
     fichaTitulo: (t, asin) => `${t} — ficha de datos (ASIN ${asin})`,
     fichaDescripcion: (corto, autor, formato, paginas, idioma, fecha, asin, medido) =>
       `«${corto}» de ${autor}: ${formato}, ${paginas} páginas, ${idioma}, publicado el ${fecha}. ` +
       `ASIN ${asin}. Medido el ${medido}.`,
+    fichaDescripcionDeclarada: (corto, autor, asin, declarado) =>
+      `«${corto}» de ${autor}, ASIN ${asin}. Título declarado por escrito por el propietario del ` +
+      `catálogo el ${declarado}. Su página de Amazon nunca se pudo leer: ningún otro dato de este ` +
+      'título está medido, y esta ficha no publica ninguno.',
     fichaEntrada: (autor) =>
       `Título de ${autor} publicado en Amazon Kindle. Todo lo que sigue se leyó de la página pública ` +
       'del producto; nada está estimado.',
+    // Sin "en Amazon Kindle": el formato de este título tampoco está medido.
+    fichaEntradaDeclarada: (autor) =>
+      `Título atribuido a ${autor} por el propietario de este catálogo. A diferencia del resto del ` +
+      'catálogo, esta ficha no sale de una medición nuestra: la página de Amazon de este ASIN nunca se ' +
+      'ha podido leer.',
+    fichaAvisoDeclarada:
+      'Lo único que esta página afirma es lo que el propietario del catálogo declaró por escrito, y se ' +
+      'nombra debajo. Los campos marcados como no medidos están vacíos porque no se midieron, no porque ' +
+      'no existan: aparecerán el día en que la página del producto se pueda leer, y no antes.',
     h2Datos: 'Datos del título',
     h2Procedencia: 'Procedencia de estos datos',
     h2NoMedido: 'No medido',
@@ -152,6 +182,9 @@ export const STRINGS: Record<'es' | 'en', Tabla> = {
     dtMedidoPor: 'Medido por',
     dtMetodo: 'Método',
     dtReverificado: 'Re-verificado el',
+    dtDeclaradoEl: 'Declarado el',
+    dtDeclaradoPor: 'Declarado por',
+    dtDeclaraQue: 'Qué cubre la declaración',
 
     demandaIntro: (etiqueta, fecha) =>
       `Preguntas reales sobre este tema, citadas literalmente de ${etiqueta}, leída el ${fecha}.`,
@@ -189,11 +222,12 @@ export const STRINGS: Record<'es' | 'en', Tabla> = {
     autorThMedido: 'Medido',
     autorH2Titulos: 'Títulos publicados bajo este nombre',
     autorTitulosIntro: (n) =>
-      `${n} título(s) corroborados por al menos dos métodos independientes. Los que tienen ficha en este ` +
-      'catálogo son los que se pudieron medir en su página de Amazon; el resto se nombra sin datos ' +
-      'porque su ficha no se pudo leer.',
+      `${n} título(s) conocidos bajo este nombre, cada uno con la fuente en la que se corroboró. Tener ` +
+      'ficha en este catálogo no significa que el libro esté medido: cada ficha dice en su propia página ' +
+      'si sus campos se leyeron de la página de Amazon o si sólo hay un título declarado por escrito.',
     autorConFicha: 'con ficha en este catálogo',
-    autorSinFicha: 'sin ficha: su página de Amazon no se pudo medir',
+    autorFichaDeclarada: 'con ficha en este catálogo, pero sin ningún campo medido',
+    autorSinFicha: 'sin ficha: no se ha leído ninguna página de Amazon de este título',
     autorH2Perfiles: 'Perfiles externos verificados',
     autorPerfilesIntro:
       'Sólo se enlazan perfiles que existen y respondieron al comprobarlos, con la hora de la comprobación.',
@@ -208,8 +242,9 @@ export const STRINGS: Record<'es' | 'en', Tabla> = {
     rutaLabel: 'Breadcrumb',
     migaCatalogo: 'Catalog',
     piePublisher: (p) => `${p}. Catalog of titles self-published on Amazon Kindle.`,
-    pieNota: 'Every value on this site was read from the title’s public Amazon product page and ' +
-      'carries the date it was measured. Anything not measured is declared as not measured, never estimated.',
+    pieNota: 'Every value on this site was either read from the title’s public Amazon product page, with ' +
+      'the date it was measured, or carries in writing where it comes from when it is not a measurement ' +
+      'of ours. Anything not measured is declared as not measured, never estimated.',
     pieGenerado: (f) => `Page generated on ${f}.`,
 
     titulosCuenta: (n) => (n === 1 ? '1 title' : `${n} titles`),
@@ -219,8 +254,9 @@ export const STRINGS: Record<'es' | 'en', Tabla> = {
       'and publication date read from the product page.',
     indiceEntrada: (publisher) =>
       `A data sheet for every title self-published by ${publisher} on Amazon Kindle. The values on this ` +
-      'page were read from the public Amazon product page on the date shown on each card; there are no ' +
-      'reviews, ratings or sales ranks here because none have been measured.',
+      'page were read from the public Amazon product page on the date shown on each card, except where ' +
+      'the card itself says the field was not measured; there are no reviews, ratings or sales ranks ' +
+      'here because none have been measured.',
     indiceCatalogo: (titulos) => `Catalog (${titulos})`,
     indiceAutorH2: 'Who publishes these titles',
     indiceAutorTexto: (nombre) =>
@@ -237,17 +273,33 @@ export const STRINGS: Record<'es' | 'en', Tabla> = {
     dtAsin: 'ASIN',
     dtPeso: 'File size',
     dtPrecio: 'Measured price',
+    dtPrecioNeutro: 'Price',
     paginas: (n) => `${n} pages`,
     precioNota: '(purchase price on amazon.com at the time of measurement; it may have changed since)',
     medidoEl: (f) => `Data measured on ${f}.`,
+    noMedido: 'not measured',
+    declaradoEl: (f) => `Title declared on ${f}. No field of this title has been measured.`,
 
     fichaTitulo: (t, asin) => `${t} — data sheet (ASIN ${asin})`,
     fichaDescripcion: (corto, autor, formato, paginas, idioma, fecha, asin, medido) =>
       `“${corto}” by ${autor}: ${formato}, ${paginas} pages, ${idioma}, published ${fecha}. ` +
       `ASIN ${asin}. Measured on ${medido}.`,
+    fichaDescripcionDeclarada: (corto, autor, asin, declarado) =>
+      `“${corto}” by ${autor}, ASIN ${asin}. The title was declared in writing by the owner of this ` +
+      `catalog on ${declarado}. Its Amazon page has never been readable: no other field of this title ` +
+      'is measured, and this sheet publishes none.',
     fichaEntrada: (autor) =>
       `A title by ${autor} published on Amazon Kindle. Everything below was read from the public ` +
       'product page; nothing is estimated.',
+    // No "on Amazon Kindle": the format of this title is not measured either.
+    fichaEntradaDeclarada: (autor) =>
+      `A title attributed to ${autor} by the owner of this catalog. Unlike the rest of this catalog, ` +
+      'this sheet does not come from a measurement of ours: the Amazon page of this ASIN has never been ' +
+      'readable.',
+    fichaAvisoDeclarada:
+      'The only thing this page asserts is what the owner of this catalog declared in writing, named ' +
+      'below. The fields marked as not measured are empty because they were not measured, not because ' +
+      'they do not exist: they will appear the day the product page can be read, and not before.',
     h2Datos: 'Title data',
     h2Procedencia: 'Provenance of these data',
     h2NoMedido: 'Not measured',
@@ -262,6 +314,9 @@ export const STRINGS: Record<'es' | 'en', Tabla> = {
     dtMedidoPor: 'Measured by',
     dtMetodo: 'Method',
     dtReverificado: 'Re-verified on',
+    dtDeclaradoEl: 'Declared on',
+    dtDeclaradoPor: 'Declared by',
+    dtDeclaraQue: 'What the declaration covers',
 
     demandaIntro: (etiqueta, fecha) =>
       `Real questions about this topic, quoted verbatim from ${etiqueta}, read on ${fecha}.`,
@@ -299,11 +354,12 @@ export const STRINGS: Record<'es' | 'en', Tabla> = {
     autorThMedido: 'Measured',
     autorH2Titulos: 'Titles published under this name',
     autorTitulosIntro: (n) =>
-      `${n} title(s) corroborated by at least two independent methods. The ones with a data sheet in ` +
-      'this catalog are the ones whose Amazon page could be measured; the rest are named without data ' +
-      'because their listing could not be read.',
+      `${n} title(s) known under this name, each with the source it was corroborated in. Having a data ` +
+      'sheet in this catalog does not mean the book was measured: every sheet states on its own page ' +
+      'whether its fields were read from the Amazon listing or whether only a declared title exists.',
     autorConFicha: 'data sheet in this catalog',
-    autorSinFicha: 'no data sheet: its Amazon listing could not be measured',
+    autorFichaDeclarada: 'data sheet in this catalog, with no measured field at all',
+    autorSinFicha: 'no data sheet: no Amazon listing of this title has been read',
     autorH2Perfiles: 'Verified external profiles',
     autorPerfilesIntro:
       'Only profiles that exist and answered when checked are linked here, with the time of the check.',

@@ -23,6 +23,31 @@ const medicion = z
   })
   .strict()
 
+// Procedencia alternativa: un dato ENTREGADO POR ESCRITO por el propietario del catalogo.
+// No es una medicion nuestra y no se cita como tal. Habilita SOLO los campos que la propia
+// declaracion dice cubrir (`declares`); todo lo demas sigue prohibido exactamente igual que
+// antes: se mide en la pagina de Amazon o no se publica. (Enmienda del Board, MET-166,
+// 2026-09-25T13:48Z: un Book sin offers ni numberOfPages es correcto; uno con un precio
+// inventado es el pasivo que este sitio existe para no tener.)
+const declaracion = z
+  .object({
+    declaredAt: z.string().regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/, 'ISO-8601 UTC (YYYY-MM-DDTHH:MM:SSZ)'),
+    declaredBy: z.string().min(1),
+    source: z.string().min(1),
+    method: z.string().min(1),
+    // Que cubre la declaracion, campo por campo. Es lo que la pagina publica como alcance.
+    declares: z.array(z.string().min(1)).nonempty(),
+  })
+  .strict()
+
+// Lo que solo puede salir de la pagina de Amazon. Con `declaration` ninguno se admite; con
+// `measurement`, los seis primeros son obligatorios.
+const CAMPOS_DE_AMAZON = [
+  'format', 'language', 'languageCode', 'printLength', 'publicationDate', 'publicationDateLabel',
+  'titleLanguageCode', 'fileSize', 'price', 'demandContext', 'relatedEditions',
+] as const
+const CAMPOS_DE_AMAZON_OBLIGATORIOS = CAMPOS_DE_AMAZON.slice(0, 6)
+
 const bcp47 = z.string().regex(/^[a-z]{2}(-[A-Z]{2})?$/, 'BCP-47 corto, p.ej. "en" o "es-CL"')
 
 const libros = defineCollection({
@@ -36,16 +61,19 @@ const libros = defineCollection({
       author: z.string().min(1),
       asin: z.string().regex(/^[A-Z0-9]{10}$/, '10 caracteres [A-Z0-9]'),
       amazonUrl: z.string().url(),
-      format: z.string().min(1),
-      language: z.string().min(1),
-      languageCode: bcp47,
+      format: z.string().min(1).optional(),
+      language: z.string().min(1).optional(),
+      languageCode: bcp47.optional(),
       // Idioma del TEXTO del titulo cuando no coincide con el idioma declarado del libro.
       // Caso real medido: B0HDPV63R4 declara Language=Spanish con el titulo en ingles.
       // inLanguage describe el libro; el atributo lang del titulo describe ese texto.
       titleLanguageCode: bcp47.optional(),
-      printLength: z.number().int().positive('paginas medidas, entero positivo'),
-      publicationDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'YYYY-MM-DD'),
-      publicationDateLabel: z.string().min(1),
+      // Opcionales en el esquema plano, obligatorios en cuanto la ficha declara `measurement`:
+      // lo exige el superRefine de abajo. La opcionalidad existe para la ficha declarada, que
+      // no tiene ninguno de estos datos medidos, no para poder olvidar uno en una ficha medida.
+      printLength: z.number().int().positive('paginas medidas, entero positivo').optional(),
+      publicationDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'YYYY-MM-DD').optional(),
+      publicationDateLabel: z.string().min(1).optional(),
       fileSize: z.string().min(1).optional(),
       price: z
         .object({
@@ -96,9 +124,60 @@ const libros = defineCollection({
         )
         .nonempty()
         .optional(),
-      measurement: medicion,
+      // Exactamente una de las dos, nunca las dos ni ninguna: lo exige el superRefine.
+      measurement: medicion.optional(),
+      declaration: declaracion.optional(),
     })
     .strict()
+    .superRefine((b, ctx) => {
+      const presente = (k: string) => (b as Record<string, unknown>)[k] !== undefined
+
+      if (Boolean(b.measurement) === Boolean(b.declaration)) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['measurement'],
+          message:
+            'cada ficha lleva exactamente UNA procedencia: `measurement` (leida por nosotros de la ' +
+            'pagina de Amazon) o `declaration` (entregada por escrito por el propietario del catalogo). ' +
+            `Esta tiene ${b.measurement ? 'las dos' : 'ninguna'}.`,
+        })
+      }
+
+      if (b.measurement) {
+        for (const k of CAMPOS_DE_AMAZON_OBLIGATORIOS) {
+          if (!presente(k)) {
+            ctx.addIssue({
+              code: 'custom',
+              path: [k],
+              message: `falta "${k}": una ficha con \`measurement\` publica los campos leidos de la pagina ` +
+                'de Amazon, y este no esta. Si no se midio, la ficha no lleva `measurement`.',
+            })
+          }
+        }
+      }
+
+      if (b.declaration) {
+        for (const k of CAMPOS_DE_AMAZON) {
+          if (presente(k)) {
+            ctx.addIssue({
+              code: 'custom',
+              path: [k],
+              message: `"${k}" no se puede publicar en una ficha declarada: la declaracion del propietario ` +
+                `cubre ${b.declaration.declares.join(', ')} y nada mas. Ese dato se lee de la pagina de ` +
+                'Amazon o no se publica — no se rellena con un valor plausible.',
+            })
+          }
+        }
+        if (!b.notMeasured) {
+          ctx.addIssue({
+            code: 'custom',
+            path: ['notMeasured'],
+            message: 'una ficha declarada tiene que DECIR en la pagina lo que no se midio: `notMeasured` ' +
+              'es obligatorio aqui. Una ficha con tres datos y sin explicacion parece una a medio hacer.',
+          })
+        }
+      }
+    })
     .refine((b) => b.amazonUrl.includes(b.asin), {
       message: 'amazonUrl no contiene el ASIN de la ficha',
       path: ['amazonUrl'],

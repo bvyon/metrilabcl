@@ -44,7 +44,9 @@ export function fechaHora(iso: string): string {
   return `${fecha(String(iso).slice(0, 10))}, ${String(iso).slice(11, 16)} UTC`
 }
 
-/** Idioma del TEXTO del titulo: el suyo si se declaro distinto, si no el del libro. */
-export function idiomaDelTitulo(b: { titleLanguageCode?: string; languageCode: string }): string {
+/** Idioma del TEXTO del titulo: el suyo si se declaro distinto, si no el del libro. Devuelve
+ *  undefined cuando el idioma no se ha medido (ficha declarada): sin dato no se emite atributo
+ *  lang, en vez de afirmar un idioma que nadie leyo. */
+export function idiomaDelTitulo(b: { titleLanguageCode?: string; languageCode?: string }): string | undefined {
   return b.titleLanguageCode || b.languageCode
 }

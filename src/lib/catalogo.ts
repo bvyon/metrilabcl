@@ -67,10 +67,26 @@ export async function cargarAutor(libros: Libro[]): Promise<Autor> {
       problemas.push(`author.json: knownTitles[${i}].slug "${t.slug}" no corresponde a ningun archivo de src/data/libros/`)
     }
   }
-  // La pagina de autor no puede omitir un titulo que el catalogo si publica.
+  // La pagina de autor no puede omitir un titulo que el catalogo si publica, ni listarlo dos veces.
   for (const b of libros) {
-    if (!a.knownTitles.some((t) => t.slug === b.slug)) {
-      problemas.push(`author.json: el titulo publicado "${b.slug}" no aparece en knownTitles`)
+    const veces = a.knownTitles.filter((t) => t.slug === b.slug).length
+    if (veces === 0) problemas.push(`author.json: el titulo publicado "${b.slug}" no aparece en knownTitles`)
+    if (veces > 1) problemas.push(`author.json: el titulo publicado "${b.slug}" aparece ${veces} veces en knownTitles`)
+  }
+
+  // El mismo libro, dos veces en la misma pagina: una vez con ficha y otra como "titulo sin
+  // medir" bajo su forma corta. Paso en MET-166 con "Cited Or Invisible" / "Cited or Invisible:
+  // The GEO/AEO Playbook...". El nombre corto de un titulo publicado es su parte antes de los
+  // dos puntos, que es justo la forma con la que lo listan Goodreads y compania.
+  const corto = (s: string) => s.split(':')[0].trim().toLowerCase()
+  const publicados = new Map(libros.map((b) => [corto(b.title), b.slug]))
+  for (const [i, t] of a.knownTitles.entries()) {
+    if (t.slug === null && publicados.has(corto(t.title))) {
+      problemas.push(
+        `author.json: knownTitles[${i}] "${t.title}" se lista sin ficha, pero es el mismo libro que ` +
+          `src/data/libros/${publicados.get(corto(t.title))}.json, que si la tiene. La pagina de autor lo ` +
+          'nombraria dos veces: uno de los dos elementos sobra.',
+      )
     }
   }
 

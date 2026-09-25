@@ -1,0 +1,31 @@
+{
+  "slug": "cited-or-invisible",
+  "title": "Cited or Invisible: The GEO/AEO Playbook for Clinics and Medical Practices",
+  "author": "Metrilab Cl",
+  "asin": "B0GX2VKG28",
+  "amazonUrl": "https://www.amazon.com/dp/B0GX2VKG28",
+  "declaration": {
+    "declaredAt": "2026-09-25T13:48:53Z",
+    "declaredBy": "The owner of this catalog, in writing",
+    "source": "Written answer from the owner of this catalog in the MetrilabCL issue thread MET-147, relayed verbatim into MET-166 on 2026-09-25T13:48:53Z",
+    "method": "Nothing on this page was read from the Amazon product listing. The owner of the catalog handed over this ASIN and, in writing, the title it corresponds to: a statement by the person who published the book, not a measurement of the listing. That declaration is the source of the title published above; a separate measurement corroborates it, and is reported as a measurement in the first observation below rather than folded in here. The Amazon page of this ASIN has never been readable by us — see the section after that.",
+    "declares": [
+      "the title of the book",
+      "the ASIN B0GX2VKG28",
+      "that this ASIN belongs to the same author as the rest of this catalog"
+    ]
+  },
+  "observations": [
+    "The declared title is corroborated by a measurement, made not on the Amazon listing but on a search-result file that RADAR had already paid for and saved on 2026-09-25 at 02:18:27 UTC (SerpApi). Result 6 of the 9 in that file is https://www.amazon.ca/Cited-Invisible-Playbook-Clinics-Practices-ebook/dp/B0GX2VKG28, and its snippet reads \"Cited or Invisible: The GEO/AEO Playbook for Clinics and Medical Practices eBook : CL, Metrilab: Amazon.ca: Kindle Store\": this ASIN and this exact title appear together in one Kindle-store URL. The result was found by VERITAS on 2026-09-25T02:49:10Z, confirmed independently by ATLAS at 2026-09-25T13:50Z and re-read from the same file by TALLER at 2026-09-25T14:00:51Z. It corroborates the title and the author byline and nothing else: a search snippet carries no page count, no publication date, no language and no price, and none is taken from it.",
+    "The Goodreads author profile, read on 2026-09-25T02:15:35Z, lists this work as \"Cited Or Invisible\", with a capital O in \"Or\" and without the subtitle. The form published above is the one the owner of the catalog wrote. Both are reported; neither is corrected into the other.",
+    "The same work is listed on amazon.ae under a different ASIN, B0H8H2T1C1 (result 2 of the same saved search file, reported by RADAR on 2026-09-25T02:18:27Z): the same title in another marketplace, not a competing identity for this one. Its URL carries no -ebook path segment, where the amazon.ca URL of this ASIN does — consistent with a print edition alongside this Kindle one, which is an inference from the shape of two URLs and not something read from either listing.",
+    "Three booksellers in that same search file — Payot, IBS and Browns Books — list this work under ISBN 9798186753063 and the byline \"Metrilab Cl\" / \"CL, Metrilab\". That ISBN identifies the paperback edition, not this ASIN, and is recorded here for that reason only: no attribute of the paperback (its price, its page count, its publisher) is an attribute of the Kindle edition this page describes."
+  ],
+  "notMeasured": [
+    "Everything except the three items listed as declared above. No format, no language, no page count, no publication date, no price, no file size and no description of this title has been measured, and none is published: a plausible value in any of those fields would be an invention, not a fact.",
+    "The Amazon listing of this ASIN has never been read. Seven responses to it are saved on disk and every one of them was re-checked by TALLER in MET-166 on 2026-09-25T13:53:43Z: four are empty (0 bytes), one is 2656 bytes and two are 3781 bytes, and none of the seven contains the product-title element of an Amazon product page. The non-empty ones are Amazon's automated-access notice, one of which states that continued automated access violates its Conditions of Use. The owner of this catalog reported further attempts of its own in the same thread, the last at 2026-09-25T13:47:44Z, with the same result; that attempt is reported, not measured here.",
+    "Why there is no workaround: getting past that notice would be evasion, not measurement. This page will carry measured fields the day the listing answers with its real content, and not before.",
+    "The exact spelling of the author byline on this listing. The four titles of this catalog are published under two different spellings on Amazon (\"Metrilab Cl\" and \"Metrilab CL\"), and which of the two this listing uses cannot be known without reading it. The name above is the primary published form of the author entity, and it stands for the attribution the owner declared, not for a byline we read.",
+    "Average rating, number of reviews and sales rank: not measured for this title, as for every other title of this catalog. Nothing is aggregated on this site because there is nothing measured to aggregate."
+  ]
+}

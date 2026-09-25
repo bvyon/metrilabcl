@@ -35,8 +35,12 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.92em}
 .url{overflow-wrap:anywhere;color:var(--tinta-suave)}
 .procedencia,.nota,.nota-inline{color:var(--tinta-suave);font-size:.84rem}
 .procedencia{margin:.85rem 0 0}
-.no-medido,.preguntas,.enlaces{color:var(--tinta-suave);font-size:.93rem;padding-left:1.1rem}
+.no-medido,.preguntas,.enlaces,.declara{color:var(--tinta-suave);font-size:.93rem;padding-left:1.1rem}
 .enlaces{color:var(--tinta)}
+.declara{margin:0;font-size:1rem;color:var(--tinta)}
+/* Valor ausente de una ficha declarada. Se ve distinto del dato real a proposito: la fila no se
+   omite, se marca, para que "no medido" no se confunda con un cero ni con un descuido. */
+.no-medido-inline{color:var(--tinta-suave);font-style:italic}
 .preguntas li{margin:.25rem 0}
 .aviso{background:#fff;border:1px solid var(--linea);border-left:3px solid var(--acento);
   border-radius:6px;padding:.8rem 1rem;font-size:.9rem;color:var(--tinta-suave)}

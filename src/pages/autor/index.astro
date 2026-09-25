@@ -68,7 +68,9 @@ const libroDe = (slug: string | null) => (slug ? libros.find((b) => b.slug === s
               )
             }
             {' — '}
-            <span class="nota-inline">{libro ? S.autorConFicha : S.autorSinFicha}</span>.{' '}
+            <span class="nota-inline">
+              {libro ? (libro.measurement ? S.autorConFicha : S.autorFichaDeclarada) : S.autorSinFicha}
+            </span>.{' '}
             <span class="nota-inline">{t.corroboration}</span>
           </li>
         )
