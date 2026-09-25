@@ -1,4 +1,5 @@
-import { defineCollection, z } from 'astro:content'
+import { defineCollection } from 'astro:content'
+import { z } from 'zod'
 import { glob } from 'astro/loaders'
 
 // El esquema es la regla de la casa hecha codigo: **un campo que no esta aqui no se puede

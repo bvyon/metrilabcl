@@ -18,6 +18,7 @@ import sitemap from '@astrojs/sitemap'
 const DEFECTO = 'https://libros.bvyon-marketing.cl'
 
 function resolverSite() {
+  /** @param {string} n @returns {string | null} */
   const env = (n) => (typeof process.env[n] === 'string' && process.env[n].trim() ? process.env[n].trim() : null)
 
   const explicita = env('SITE_BASE_URL')

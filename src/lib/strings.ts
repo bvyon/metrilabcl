@@ -14,7 +14,84 @@ const MESES_ES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio'
 const MESES_EN = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
   'August', 'September', 'October', 'November', 'December']
 
-export const STRINGS = {
+/** Contrato de una tabla de cadenas. Anotar STRINGS con esto tipa por contexto cada funcion
+ *  de las tablas: si una tabla olvida una clave o le cambia la aridad, falla `astro check`. */
+export interface Tabla {
+  fecha: (y: number, m: number, d: number) => string
+  skip: string
+  rutaLabel: string
+  migaCatalogo: string
+  piePublisher: (p: string) => string
+  pieNota: string
+  pieGenerado: (f: string) => string
+  titulosCuenta: (n: number) => string
+  indiceTitulo: (nombre: string, titulos: string) => string
+  indiceDescripcion: (publisher: string, titulos: string) => string
+  indiceEntrada: (publisher: string) => string
+  indiceCatalogo: (titulos: string) => string
+  indiceAutorH2: string
+  indiceAutorTexto: (nombre: string) => string
+  indiceAutorEnlace: string
+  dtAutor: string
+  dtFormato: string
+  dtIdioma: string
+  dtExtension: string
+  dtPublicado: string
+  dtFechaPublicacion: string
+  dtAsin: string
+  dtPeso: string
+  dtPrecio: string
+  paginas: (n: number) => string
+  precioNota: string
+  medidoEl: (f: string) => string
+  fichaTitulo: (t: string, asin: string) => string
+  fichaDescripcion: (corto: string, autor: string, formato: string, paginas: number, idioma: string, fecha: string, asin: string, medido: string) => string
+  fichaEntrada: (autor: string) => string
+  h2Datos: string
+  h2Procedencia: string
+  h2NoMedido: string
+  h2Anomalias: string
+  h2Demanda: string
+  h2OtrasEdiciones: string
+  h2MasDelAutor: string
+  cta: string
+  dtFuente: string
+  dtMedidoEl: string
+  dtMedidoPor: string
+  dtMetodo: string
+  dtReverificado: string
+  demandaIntro: (etiqueta: string, fecha: string) => string
+  demandaAviso: string
+  demandaFuente: (url: string) => string
+  masDelAutorTexto: (nombre: string) => string
+  /** `enlace` es HTML ya construido: la plantilla lo inserta con set:html. */
+  masDelAutorSinOtros: (nombre: string, enlace: string) => string
+  verPaginaAutor: string
+  p404Titulo: string
+  p404Entrada: string
+  p404Enlace: string
+  p404Head: (nombre: string) => string
+  p404Desc: string
+  autorTitulo: (nombre: string, sitio: string) => string
+  autorDescripcion: (nombre: string, n: number) => string
+  autorEntrada: (nombre: string) => string
+  autorH2Nombres: string
+  autorNombresIntro: string
+  autorThForma: string
+  autorThFuente: string
+  autorThMedido: string
+  autorH2Titulos: string
+  autorTitulosIntro: (n: number) => string
+  autorConFicha: string
+  autorSinFicha: string
+  autorH2Perfiles: string
+  autorPerfilesIntro: string
+  autorVerificado: (f: string, quien: string) => string
+  autorH2NoEncontrado: string
+  autorH2Procedencia: string
+}
+
+export const STRINGS: Record<'es' | 'en', Tabla> = {
   es: {
     fecha: (y, m, d) => `${d} de ${MESES_ES[m - 1]} de ${y}`,
     skip: 'Saltar al contenido',

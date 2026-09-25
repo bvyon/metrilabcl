@@ -1,0 +1,37 @@
+name: CI del hub de ebooks
+
+# El sitio se despliega en Vercel, que corre su propio build en cada push (ver DESPLIEGUE.md).
+# Este workflow NO despliega: es el CI que pone rojo el repositorio si el sitio se rompe, para
+# enterarnos aqui y no en el log de Vercel.
+#
+# `npm run build` encadena `astro build` y `node scripts/verificar-salida.mjs`, asi que un
+# canonical que deje de ser autorreferente, un sitemap incompleto o la aparicion de un campo
+# de valoracion tumban el workflow igual que un error de compilacion.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  construir:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - run: npm ci
+
+      - name: Comprobacion de tipos
+        run: npm run check
+
+      - name: Build y verificacion de la salida
+        run: npm run build
