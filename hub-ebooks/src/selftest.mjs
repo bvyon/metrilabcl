@@ -20,7 +20,7 @@ const ok = (n) => console.log(`  ok   ${n}`)
 const no = (n, d) => { fallos++; console.log(`  FALLA ${n}\n       ${d}`) }
 
 const CFG_OK = {
-  baseUrl: 'https://ejemplo.github.io/repo-de-prueba',
+  baseUrl: 'https://ejemplo.cl/repo-de-prueba',
   siteName: 'Sitio de prueba',
   siteLang: 'es',
   publisherName: 'Editor de prueba',
@@ -89,10 +89,19 @@ function arbol(cfg, libros, autor = AUTOR_OK) {
   return dir
 }
 
-function correr(dir) {
+// El host del build se resuelve desde el entorno (SITE_BASE_URL, VERCEL_PROJECT_PRODUCTION_URL).
+// Si el selftest heredara esas variables de quien lo ejecuta, cada fixture emitiria canonicals
+// de otro host y los controles fallarian por el entorno, no por el generador. Se limpian
+// siempre y cada caso declara explicitamente el entorno que quiere probar.
+const ENV_HOST = ['SITE_BASE_URL', 'VERCEL_PROJECT_PRODUCTION_URL', 'VERCEL']
+
+function correr(dir, envExtra = {}) {
+  const env = { ...process.env, MLE_ROOT: dir }
+  for (const k of ENV_HOST) delete env[k]
+  Object.assign(env, envExtra)
   try {
     const out = execFileSync(process.execPath, [BUILD], {
-      env: { ...process.env, MLE_ROOT: dir }, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'],
+      env, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'],
     })
     return { code: 0, out, err: '' }
   } catch (e) {
@@ -114,7 +123,7 @@ function casoBueno() {
     ['emite la ficha en URL limpia', () => leer('libros/titulo-de-prueba/index.html') !== null],
     ['emite la pagina de autor en URL limpia', () => leer('autor/index.html') !== null],
     ['emite 404.html', () => leer('404.html') !== null],
-    ['emite .nojekyll', () => leer('.nojekyll') !== null],
+    ['NO emite .nojekyll (era solo para GitHub Pages)', () => leer('.nojekyll') === null],
     ['emite assets/styles.css', () => (leer('assets/styles.css') || '').includes('--tinta')],
     ['canonical del indice = baseUrl + "/"',
       () => leer('index.html').includes(`<link rel="canonical" href="${CFG_OK.baseUrl}/">`)],
@@ -351,9 +360,9 @@ const CASOS_MALOS = [
     'titulo-de-prueba.json': LIBRO_OK,
     'otro-titulo.json': { ...LIBRO_OK, slug: 'otro-titulo', asin: 'B000000002', amazonUrl: 'https://www.amazon.com/dp/B000000002' },
   }, /title duplicado/],
-  ['baseUrl con barra final', { ...CFG_OK, baseUrl: 'https://ejemplo.github.io/repo/' },
+  ['baseUrl con barra final', { ...CFG_OK, baseUrl: 'https://ejemplo.cl/repo/' },
     { 'titulo-de-prueba.json': LIBRO_OK }, /no debe terminar en/],
-  ['baseUrl no https', { ...CFG_OK, baseUrl: 'ejemplo.github.io/repo' },
+  ['baseUrl no https', { ...CFG_OK, baseUrl: 'ejemplo.cl/repo' },
     { 'titulo-de-prueba.json': LIBRO_OK }, /URL https absoluta/],
   ['falta siteName en la config', (() => { const c = { ...CFG_OK }; delete c.siteName; return c })(),
     { 'titulo-de-prueba.json': LIBRO_OK }, /falta o esta vacio "siteName"/],
@@ -443,6 +452,85 @@ function casoRepoReal() {
   rmSync(dir, { recursive: true, force: true })
 }
 
+// --- 5. resolucion del host: entorno > entorno de Vercel > config, y falla ruidosa ---
+//
+// Es el mecanismo que hace desplegable el sitio en Vercel sin clavar el dominio en el repo.
+// Se mide sobre el canonical emitido y sobre el exit code, no sobre la intencion del codigo.
+function casoResolucionDelHost() {
+  const casos = [
+    {
+      n: 'SITE_BASE_URL gana al baseUrl de site.config.json',
+      env: { SITE_BASE_URL: 'https://hub.ejemplo.cl' },
+      espera: 'https://hub.ejemplo.cl', fuente: 'SITE_BASE_URL',
+    },
+    {
+      n: 'VERCEL_PROJECT_PRODUCTION_URL (sin esquema) se usa si no hay SITE_BASE_URL',
+      env: { VERCEL: '1', VERCEL_PROJECT_PRODUCTION_URL: 'hub.vercel.app' },
+      espera: 'https://hub.vercel.app', fuente: 'VERCEL_PROJECT_PRODUCTION_URL',
+    },
+    {
+      // El matiz que importa: en un preview, VERCEL_PROJECT_PRODUCTION_URL sigue apuntando a
+      // produccion. El canonical de un preview NO debe apuntarse a si mismo.
+      n: 'en un preview el canonical apunta a produccion, no al host del preview',
+      env: {
+        VERCEL: '1', VERCEL_ENV: 'preview', VERCEL_URL: 'hub-git-rama-equipo.vercel.app',
+        VERCEL_PROJECT_PRODUCTION_URL: 'hub.vercel.app',
+      },
+      espera: 'https://hub.vercel.app', fuente: 'VERCEL_PROJECT_PRODUCTION_URL',
+    },
+    {
+      n: 'SITE_BASE_URL gana tambien dentro de Vercel',
+      env: { VERCEL: '1', VERCEL_PROJECT_PRODUCTION_URL: 'hub.vercel.app', SITE_BASE_URL: 'https://ebooks.ejemplo.cl' },
+      espera: 'https://ebooks.ejemplo.cl', fuente: 'SITE_BASE_URL',
+    },
+    {
+      n: 'sin entorno cae al baseUrl de site.config.json',
+      env: {},
+      espera: CFG_OK.baseUrl, fuente: 'site.config.json baseUrl',
+    },
+  ]
+  for (const c of casos) {
+    const dir = arbol(CFG_OK, { 'titulo-de-prueba.json': LIBRO_OK })
+    const r = correr(dir, c.env)
+    if (r.code !== 0) no(c.n, `exit ${r.code}: ${r.err.trim().slice(0, 240)}`)
+    else {
+      const i = readFileSync(join(dir, 'dist', 'index.html'), 'utf8')
+      const s = readFileSync(join(dir, 'dist', 'sitemap.xml'), 'utf8')
+      const canonicalOk = i.includes(`<link rel="canonical" href="${c.espera}/">`)
+      const sitemapOk = s.includes(`<loc>${c.espera}/libros/titulo-de-prueba/</loc>`)
+      // El log es parte del contrato: es lo unico que se lee en Vercel para saber que host salio.
+      const logOk = r.out.includes(`baseUrl: ${c.espera}  (fuente: ${c.fuente})`)
+      if (canonicalOk && sitemapOk && logOk) ok(c.n)
+      else no(c.n, `canonical:${canonicalOk} sitemap:${sitemapOk} log:${logOk} — log: ${r.out.split('\n').find((l) => l.startsWith('baseUrl:'))}`)
+    }
+    rmSync(dir, { recursive: true, force: true })
+  }
+
+  // Falla ruidosa: dentro de Vercel sin host que usar, antes que un canonical inventado.
+  const malos = [
+    {
+      n: 'build de Vercel sin SITE_BASE_URL ni VERCEL_PROJECT_PRODUCTION_URL -> muere',
+      env: { VERCEL: '1' }, patron: /sin host que usar/,
+    },
+    {
+      n: 'SITE_BASE_URL invalida -> muere nombrando SITE_BASE_URL',
+      env: { SITE_BASE_URL: 'http://ejemplo.cl' }, patron: /SITE_BASE_URL: baseUrl debe ser una URL https absoluta/,
+    },
+    {
+      n: 'SITE_BASE_URL con barra final -> muere nombrando SITE_BASE_URL',
+      env: { SITE_BASE_URL: 'https://ejemplo.cl/' }, patron: /SITE_BASE_URL: baseUrl no debe terminar en/,
+    },
+  ]
+  for (const c of malos) {
+    const dir = arbol(CFG_OK, { 'titulo-de-prueba.json': LIBRO_OK })
+    const r = correr(dir, c.env)
+    if (r.code === 0) no(c.n, 'el build salio con exit 0 en vez de morir')
+    else if (!c.patron.test(r.err)) no(c.n, `exit ${r.code} pero el mensaje no dice ${c.patron}: ${r.err.trim().slice(0, 240)}`)
+    else ok(`${c.n} -> exit ${r.code}`)
+    rmSync(dir, { recursive: true, force: true })
+  }
+}
+
 console.log('selftest del generador de metrilab-ebooks')
 console.log(`\n[1] camino bueno`); casoBueno()
 console.log(`\n[2] dominio propio en la raiz`); casoDominioPropio()
@@ -450,6 +538,7 @@ console.log(`\n[2-bis] idioma del titulo distinto al del libro`); casoIdiomaDelT
 console.log(`\n[2-ter] chrome en ingles y contexto de demanda`); casoIngesYDemanda()
 console.log(`\n[3] falla ruidosa con datos malos (${CASOS_MALOS.length} casos)`); casosMalos()
 console.log(`\n[4] datos reales del repositorio`); casoRepoReal()
+console.log(`\n[5] resolucion del host (SITE_BASE_URL / Vercel / config)`); casoResolucionDelHost()
 
 if (fallos) { console.error(`\nSELFTEST FALLIDO — ${fallos} control(es) en rojo\n`); process.exit(1) }
 console.log('\nselftest OK — todos los controles en verde\n')

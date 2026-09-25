@@ -1,7 +1,7 @@
 {
-  "_comment": "UNICA fuente de verdad del host. canonical, og:url, sitemap.xml, robots.txt y la @id del JSON-LD se derivan de baseUrl. Cambiar de host = cambiar esta linea y hacer commit.",
+  "_comment": "canonical, og:url, sitemap.xml, robots.txt y la @id del JSON-LD se derivan del baseUrl RESUELTO, no de esta linea. El orden de resolucion esta en src/build.mjs -> resolveBaseUrl(): 1) env SITE_BASE_URL, 2) https://$VERCEL_PROJECT_PRODUCTION_URL (Vercel la inyecta y apunta a produccion incluso en preview), 3) este baseUrl. Este valor es SOLO para builds locales y para el CI de GitHub: dentro de un build de Vercel el generador MUERE antes que emitir un canonical apuntando aqui. El build imprime que fuente uso.",
   "_comment_lang": "siteLang selecciona la tabla de cadenas de src/strings.mjs (es | en) y el atributo lang del chrome. EN por la demanda medida por RADAR (MET-150) y la especificacion de FORJA (MET-152 seccion 6). Book.inLanguage NO se toca aqui: sale del campo Language de cada ficha de Amazon.",
-  "baseUrl": "https://bvyon.github.io/metrilabcl",
+  "baseUrl": "https://localhost",
   "siteName": "MetrilabCL Ebooks",
   "siteLang": "en",
   "publisherName": "MetrilabCL",

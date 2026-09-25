@@ -1,28 +1,23 @@
 # Hub de ebooks de MetrilabCL
 
 Hub público de los ebooks autopublicados de **MetrilabCL** en Amazon Kindle. Sitio estático
-generado con Node (sin dependencias), listo para GitHub Pages desde `main`.
+generado con Node (sin dependencias). **Se despliega en Vercel**, que importa este repositorio
+y corre el build en cada push.
 
-**URL prevista:** https://bvyon.github.io/metrilabcl/ — **todavía no está publicada.**
+**URL:** la asigna Vercel al importar el proyecto (`<proyecto>.vercel.app`) — **todavía no
+está desplegada.** El paso a paso para el Board está en [`../DESPLIEGUE.md`](../DESPLIEGUE.md).
 
-> **Estado: construido, no publicado.** El Board decidió el 2026-09-25T02:25Z *«ocupar la repo
-> asignada al proyecto dentro de bvyon»* y *«solo hagan la pagina yo lo publico despues»*. Por
-> eso GitHub Pages **no está habilitado** y el job de despliegue del workflow **no corre**.
-> Para publicar hacen falta dos actos humanos, en este orden:
->
-> 1. **Settings → Pages → Source: «GitHub Actions»** (no «Deploy from a branch»).
-> 2. **Settings → Secrets and variables → Actions → Variables → New repository variable:**
->    nombre `PAGES_ACTIVO`, valor `true`.
->
-> Después, **Actions → «Hub de ebooks…» → Run workflow**. El job `construir` ya corre en cada
-> push; el job `desplegar` sólo corre con `PAGES_ACTIVO=true`. Así el repositorio no queda con
-> un workflow rojo por una decisión pendiente, y nada se publica por accidente.
->
-> Con Pages en modo «GitHub Actions» se sirve **únicamente el artefacto `hub-ebooks/dist/`**,
-> no el resto del repositorio.
+> **Estado: construido, no desplegado.** El Board decidió el 2026-09-25T02:25Z *«solo hagan la
+> pagina yo lo publico despues»* y el 2026-09-25T12:41Z *«queria que la pagina fuera
+> desarrollada normalmente por que yo la iba a subir a vercel, no a githubpages»*. MetrilabCL
+> no tiene cuenta ni token de Vercel: nosotros entregamos el repositorio listo, el Board
+> importa y aprieta Deploy.
 
-El sitio vive en `hub-ebooks/` dentro del repositorio del proyecto; el workflow está en
-`.github/workflows/hub-ebooks.yml`, en la raíz (GitHub sólo lee los workflows de ahí).
+El sitio vive en `hub-ebooks/`; el `vercel.json` que apunta el build ahí está en la **raíz del
+repositorio** (Vercel sólo lee el de la raíz), igual que el workflow de CI en
+`.github/workflows/hub-ebooks.yml` (GitHub sólo lee los workflows de ahí). Ese workflow **no
+despliega**: sólo corre `selftest` + `build` para que el repositorio se ponga rojo si el
+generador se rompe.
 
 ## Principio de contenido
 
@@ -58,8 +53,9 @@ dist/404.html                            noindex, fuera del sitemap
 dist/sitemap.xml                         generado desde baseUrl
 dist/robots.txt                          generado desde baseUrl
 dist/assets/styles.css
-dist/.nojekyll                           GitHub Pages sirve dist/ tal cual, sin Jekyll
 ```
+
+`dist/` no está versionado: el build corre en el despliegue de Vercel y en el CI.
 
 ## Cómo se agrega un título nuevo
 
@@ -131,9 +127,9 @@ dist/.nojekyll                           GitHub Pages sirve dist/ tal cual, sin 
 3. `node src/selftest.mjs && node src/build.mjs`. El build rechaza slugs duplicados, ASIN
    duplicados, títulos duplicados (romperían la unicidad de `<title>`/meta description),
    fechas mal formadas y `printLength` no numérico.
-4. Commit a `main`. El job `construir` del workflow valida y construye; el índice y el
-   `sitemap.xml` recogen el título nuevo automáticamente. El despliegue sigue dependiendo de
-   `PAGES_ACTIVO` (ver el estado al principio de este README).
+4. Commit a `main`. El CI valida y construye; el índice y el `sitemap.xml` recogen el título
+   nuevo automáticamente. Si el proyecto ya está importado en Vercel, ese mismo push dispara
+   un despliegue.
 
 ## La página de autor (`author.json`)
 
@@ -165,69 +161,84 @@ inglés y FORJA lo especificó en MET-152 §6. Volver a español es cambiar esa 
 (`languageCode`). Un `siteLang` sin tabla de cadenas mata el build — un sitio a medio traducir
 falla sin que se vea.
 
-## Cómo se cambia la URL base
+## Cómo se resuelve la URL base
 
-`site.config.json` → `baseUrl`. Es la **única** fuente de verdad del host: de ahí se derivan
-`<link rel="canonical">`, `og:url`, `sitemap.xml`, la línea `Sitemap:` de `robots.txt`, la
-`@id` del JSON-LD y el prefijo de todos los enlaces internos.
+Del host resuelto se derivan `<link rel="canonical">`, `og:url`, `sitemap.xml`, la línea
+`Sitemap:` de `robots.txt`, la `@id` del JSON-LD y el prefijo de todos los enlaces internos.
+**No está clavado en el repositorio.** `src/build.mjs` → `resolveBaseUrl()` lo busca en este
+orden y **escribe en el log cuál usó y de dónde salió**:
 
-```jsonc
-{ "baseUrl": "https://bvyon.github.io/metrilabcl" }        // actual: project pages, prefijo /metrilabcl
-{ "baseUrl": "https://metrilabcl.github.io" }              // pages de organización en la raíz
-{ "baseUrl": "https://ebooks.metrilab.cl" }                // dominio propio en la raíz
+| # | Fuente | Cuándo manda |
+|---|--------|--------------|
+| 1 | env `SITE_BASE_URL` | siempre que esté definida (override manual, dominio propio) |
+| 2 | `https://$VERCEL_PROJECT_PRODUCTION_URL` | dentro de Vercel, si no hay `SITE_BASE_URL` |
+| 3 | `site.config.json` → `baseUrl` | build local y CI de GitHub |
+
+La línea que imprime el build es la que se lee en el log de Vercel para saber que el canonical
+quedó bien sin abrir el HTML:
+
+```
+baseUrl: https://ebooks.metrilab.cl  (fuente: SITE_BASE_URL)  basePath: ""  siteLang: en
 ```
 
-Reglas que el build valida: `https://`, absoluta, **sin** barra final. El prefijo de los
-enlaces internos se deduce del `pathname` de `baseUrl`, así que pasar de un subdirectorio a la
-raíz de un dominio no requiere tocar ninguna plantilla. Cambiar el host cuesta un commit.
+Por qué `VERCEL_PROJECT_PRODUCTION_URL` y no `VERCEL_URL`: la documentación de Vercel («System
+environment variables», leída el 2026-09-25) dice de la primera *«A production domain name of
+the project. (…) Note, that this is always set, even in preview deployments»*. Es justo lo que
+queremos — **un preview no debe emitir un canonical hacia sí mismo**, sino hacia producción.
+`VERCEL_URL`, en cambio, es el host del despliegue concreto.
+
+El `baseUrl` de `site.config.json` es hoy `https://localhost` y **sólo sirve para builds
+locales y para el CI**. Dentro de un build de Vercel (env `VERCEL`), si no hay ni
+`SITE_BASE_URL` ni `VERCEL_PROJECT_PRODUCTION_URL`, el build **muere con exit 1** y dice qué
+falta: preferimos un despliegue rojo a un canonical inventado en producción.
+
+Reglas que el build valida venga de donde venga el valor: `https://`, absoluta, **sin** barra
+final; el mensaje de error nombra la fuente. El prefijo de los enlaces internos se deduce del
+`pathname`, así que un host en la raíz de un dominio no requiere tocar ninguna plantilla.
 
 ## Cómo se activa un dominio propio
 
-Hoy **no hay dominio aprobado**, así que no hay archivo `CNAME` en el repositorio: existe
-`CNAME.example` como plantilla. Si el Board aprueba un dominio, el procedimiento exacto es:
+Hoy **no hay dominio aprobado**. Cuando el Board apruebe uno:
 
-1. **En el DNS del dominio** (lo hace quien administra la zona):
-   - subdominio (p. ej. `ebooks.metrilab.cl`) → un registro `CNAME` a `bvyon.github.io.`
-   - dominio raíz (`metrilab.cl`) → cuatro registros `A` a `185.199.108.153`,
-     `185.199.109.153`, `185.199.110.153`, `185.199.111.153` (y los `AAAA` equivalentes de
-     GitHub si se quiere IPv6). Verifica estas IP en la documentación de GitHub Pages antes de
-     aplicarlas: GitHub las ha cambiado en el pasado.
-2. **En este repositorio:** `cp CNAME.example CNAME`, pon dentro el dominio exacto (una línea,
-   sin `https://`, sin barra final) y añade el paso de copia a `dist/` — o más simple: deja el
-   `CNAME` en la raíz y agrega al workflow un `cp CNAME dist/CNAME` después del build, porque
-   GitHub Pages sólo lee el `CNAME` que está **dentro del artefacto publicado**.
-3. **En `site.config.json`:** cambia `baseUrl` al dominio nuevo, en el mismo commit. Si te
-   olvidas de este paso, el sitio queda sirviéndose en el dominio nuevo con canonicals
-   apuntando al viejo, que es peor que no tener dominio.
-4. **En Settings → Pages:** escribe el dominio en «Custom domain», espera la verificación DNS
-   y marca «Enforce HTTPS» cuando GitHub haya emitido el certificado.
-5. Verifica en vivo: `curl -sI https://<dominio>/` (http 200) y
+1. **En Vercel:** proyecto → **Settings → Domains → Add**, escribe el dominio y sigue las
+   instrucciones que muestra el panel. El registro DNS exacto (tipo, nombre y valor) **lo
+   entrega ese panel al añadir el dominio**; no lo copies de aquí ni de ninguna otra parte:
+   depende de si es raíz o subdominio y Vercel lo ha cambiado en el pasado.
+2. **En el DNS del dominio:** quien administre la zona crea exactamente el registro que mostró
+   el panel de Vercel, y se espera la verificación.
+3. **El canonical:** define `SITE_BASE_URL` en **Settings → Environment Variables** con el
+   dominio nuevo (`https://…`, sin barra final), o deja que `VERCEL_PROJECT_PRODUCTION_URL` lo
+   recoja solo — Vercel elige el dominio de producción personalizado más corto en cuanto está
+   verificado. **Vuelve a desplegar**: el canonical se fija en el build, no en la petición.
+4. Verifica en vivo: `curl -sI https://<dominio>/` (200, sin `Location`) y
    `curl -s https://<dominio>/ | grep canonical` (tiene que citar el dominio nuevo).
 
-## Restricciones reales de GitHub Pages
+## Qué gana el sitio al servirse desde Vercel
 
-- **No hay cabeceras HTTP personalizadas.** Nada de `X-Robots-Tag`, CSP propia ni `Cache-Control`
-  a medida. Lo que se puede controlar es sólo lo que quepa en el HTML.
-- **No hay redirecciones 301 de servidor.** El mapa de URLs se acierta a la primera. Si un slug
-  cambia, la URL vieja devuelve 404 y no hay forma limpia de redirigirla: no se resuelve con
-  `meta refresh`. Por eso el slug de cada ficha se fija junto con sus datos y no se toca.
-- El sitio se sirve desde `dist/` mediante el artefacto de Pages; `.nojekyll` evita que Jekyll
-  reinterprete la salida.
+La limitación que el informe le achacaba a GitHub Pages era no poder tocar la respuesta HTTP.
+En Vercel sí se puede, y `vercel.json` (raíz del repositorio) lo usa:
+
+- **Cabeceras propias.** `X-Content-Type-Options: nosniff` y
+  `Referrer-Policy: strict-origin-when-cross-origin` en todas las rutas, y `Cache-Control:
+  public, max-age=31536000` en `/assets/*`.
+  ⚠️ `assets/styles.css` **no lleva hash en el nombre**: con ese TTL, si cambias el CSS los
+  visitantes que ya lo tienen en caché seguirán con el viejo. La regla es **cambiar el CSS =
+  cambiar el nombre del archivo**.
+- **Redirecciones de servidor.** `trailingSlash: true`: `/libros/<slug>` responde 308 hacia
+  `/libros/<slug>/`, que es la URL canónica. Ya no hace falta acertar el mapa de URLs a la
+  primera: un slug que cambie se puede redirigir con `redirects` en `vercel.json`. Aun así el
+  slug de cada ficha se fija junto con sus datos y no se toca sin motivo.
+- **404 real.** `404.html` en la raíz de la salida se sirve con **status 404** para cualquier
+  ruta que no exista, sin configuración extra.
 
 ## Despliegue
 
-`.github/workflows/hub-ebooks.yml` (en la raíz del repositorio), sobre cada push a `main` que
-toque `hub-ebooks/**`, y a mano con «Run workflow»:
+En Vercel, importando este repositorio. El paso a paso para el Board está en
+[`../DESPLIEGUE.md`](../DESPLIEGUE.md) y la configuración en `../vercel.json`.
 
-1. `node src/selftest.mjs` — si el generador está roto, el workflow se cae aquí.
-2. `node src/build.mjs` — si algún dato es inválido, exit 1 y el workflow se cae aquí.
-3. `upload-pages-artifact` de `hub-ebooks/dist/`.
-4. Job `desplegar`, con `needs: construir` **y** `if: vars.PAGES_ACTIVO == 'true'`:
-   `configure-pages` + `deploy-pages`.
-
-Dos consecuencias buscadas: **un build fallido no despliega nada**, y mientras `PAGES_ACTIVO`
-no exista el despliegue se **salta** en vez de fallar — el repositorio no acumula workflows
-rojos por una decisión que aún no se ha tomado.
+`.github/workflows/hub-ebooks.yml` es **sólo CI**: sobre cada push y PR que toque
+`hub-ebooks/**` corre `node src/selftest.mjs` y `node src/build.mjs`. No despliega nada. Sirve
+para que el repositorio se ponga rojo si el generador o los datos se rompen.
 
 ## Estado y origen
 

@@ -1,15 +1,12 @@
-name: Hub de ebooks — build y (si se autoriza) despliegue a Pages
+name: Hub de ebooks — CI del generador
 
-# El sitio vive en hub-ebooks/. El build y el chequeo de salud corren SIEMPRE: si el
-# generador o los datos se rompen, este workflow se pone rojo y no se publica nada.
+# El sitio vive en hub-ebooks/ y se despliega en Vercel, que corre su propio build en cada
+# push (ver DESPLIEGUE.md y vercel.json). Este workflow NO despliega nada: es el CI que pone
+# rojo el repositorio si el generador o los datos se rompen, para enterarnos aqui y no en el
+# log de Vercel.
 #
-# El despliegue NO corre por omision. El Board dijo el 2026-09-25T02:25Z "solo hagan la
-# pagina yo lo publico despues", asi que hacen falta DOS actos humanos para publicar:
-#   1. Settings > Pages > Source: "GitHub Actions"
-#   2. Settings > Secrets and variables > Actions > Variables > New repository variable:
-#      nombre PAGES_ACTIVO, valor true
-# Sin el paso 2 el job "desplegar" se salta (no falla). Asi el repositorio no queda con un
-# workflow rojo por algo que es una decision pendiente, no un defecto del sitio.
+# El build corre sin SITE_BASE_URL a proposito: asi ejercita el camino de respaldo
+# (site.config.json baseUrl) que es el que usa cualquiera que clone el repositorio.
 
 on:
   push:
@@ -17,16 +14,14 @@ on:
     paths:
       - 'hub-ebooks/**'
       - '.github/workflows/hub-ebooks.yml'
+  pull_request:
+    paths:
+      - 'hub-ebooks/**'
+      - '.github/workflows/hub-ebooks.yml'
   workflow_dispatch:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: pages
-  cancel-in-progress: false
 
 jobs:
   construir:
@@ -42,27 +37,9 @@ jobs:
           node-version: '20'
 
       # El generador no tiene dependencias: sin npm install. Si el chequeo de salud o el
-      # build fallan, exit != 0 y el workflow se cae antes de subir nada.
+      # build fallan, exit != 0 y el workflow se cae.
       - name: Chequeo de salud del generador
         run: node src/selftest.mjs
 
       - name: Build
         run: node src/build.mjs
-
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: hub-ebooks/dist
-
-  desplegar:
-    needs: construir
-    if: vars.PAGES_ACTIVO == 'true'
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      # configure-pages consulta la API de Pages: falla si Pages no esta habilitado todavia.
-      # Por eso vive aqui y no en el job de build.
-      - uses: actions/configure-pages@v5
-      - id: deployment
-        uses: actions/deploy-pages@v4

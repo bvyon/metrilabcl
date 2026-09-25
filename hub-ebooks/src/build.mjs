@@ -6,10 +6,11 @@
 //                          authorPathSegment }
 //   author.json       -> entidad del autor (pagina /<authorPathSegment>/), ver README
 //   data/<slug>.json  -> un archivo por titulo medido (ver README)
+//   env SITE_BASE_URL / VERCEL_PROJECT_PRODUCTION_URL -> host del sitio, ver resolveBaseUrl()
 // Contrato de salida:
 //   dist/index.html, dist/404.html, dist/<catalogPathSegment>/<slug>/index.html,
 //   dist/<authorPathSegment>/index.html, dist/sitemap.xml, dist/robots.txt,
-//   dist/assets/styles.css, dist/.nojekyll
+//   dist/assets/styles.css
 // Exit codes: 0 build correcto. 1 dato de entrada invalido o invariante roto (falla ruidosa).
 //
 // Regla de la casa: nunca emitir una pagina a medias ni un campo vacio en silencio.
@@ -42,6 +43,42 @@ function die() {
 
 // ---------- config ----------
 
+// Resuelve el host del sitio. El orden importa y la fuente elegida se imprime en el log del
+// build: en el log de Vercel se lee que el canonical quedo bien sin abrir el HTML.
+//
+//   1. SITE_BASE_URL              env explicita, gana siempre (override manual del Board).
+//   2. VERCEL_PROJECT_PRODUCTION_URL  la inyecta Vercel. Documentacion de Vercel, "System
+//      environment variables", leida el 2026-09-25: "A production domain name of the project.
+//      We select the shortest production custom domain, or vercel.app domain if no custom
+//      domain is available. Note, that this is always set, even in preview deployments."
+//      Justo lo que queremos: un preview NO emite un canonical hacia si mismo.
+//      Viene sin esquema ("my-site.com"), asi que se le antepone https://.
+//   3. site.config.json baseUrl   ultimo recurso, para `npm run build` en local y para el CI.
+//
+// Guardia: si estamos dentro de un build de Vercel (env VERCEL) y hemos tenido que caer al
+// valor 3, el build MUERE. Preferimos un despliegue rojo a un canonical inventado en produccion.
+function resolveBaseUrl(cfgBaseUrl) {
+  const env = (n) => (typeof process.env[n] === 'string' && process.env[n].trim() ? process.env[n].trim() : null)
+
+  const site = env('SITE_BASE_URL')
+  if (site) return { baseUrl: site, fuente: 'SITE_BASE_URL' }
+
+  const prod = env('VERCEL_PROJECT_PRODUCTION_URL')
+  if (prod) return { baseUrl: `https://${prod.replace(/^https?:\/\//, '')}`, fuente: 'VERCEL_PROJECT_PRODUCTION_URL' }
+
+  if (env('VERCEL')) {
+    console.error('\nBUILD FALLIDO — build de Vercel (VERCEL=' + env('VERCEL') + ') sin host que usar:')
+    console.error('  - SITE_BASE_URL no esta definida')
+    console.error('  - VERCEL_PROJECT_PRODUCTION_URL no esta definida (Project Settings >')
+    console.error('    Environment Variables > "Enable access to System Environment Variables")')
+    console.error(`  El baseUrl de site.config.json ("${cfgBaseUrl}") es solo para builds locales:`)
+    console.error('  emitirlo en produccion pondria un canonical falso en cada pagina.')
+    console.error('  Define SITE_BASE_URL en el proyecto de Vercel o habilita las variables de sistema.\n')
+    process.exit(1)
+  }
+  return { baseUrl: cfgBaseUrl, fuente: 'site.config.json baseUrl' }
+}
+
 function loadConfig() {
   const p = join(ROOT, 'site.config.json')
   if (!existsSync(p)) {
@@ -59,11 +96,16 @@ function loadConfig() {
     if (typeof cfg[k] !== 'string' || !cfg[k].trim()) fail(`site.config.json: falta o esta vacio "${k}"`)
   }
   die()
+  // El host puede venir del entorno; la validacion es la misma venga de donde venga, y el
+  // mensaje de error nombra la fuente para que se pueda corregir donde toca.
+  const resuelto = resolveBaseUrl(cfg.baseUrl)
+  cfg.baseUrl = resuelto.baseUrl
+  cfg.baseUrlFuente = resuelto.fuente
   if (!/^https:\/\/[^\s/]+(\/[^\s]*)?$/.test(cfg.baseUrl)) {
-    fail(`site.config.json: baseUrl debe ser una URL https absoluta, recibido "${cfg.baseUrl}"`)
+    fail(`${cfg.baseUrlFuente}: baseUrl debe ser una URL https absoluta, recibido "${cfg.baseUrl}"`)
   }
   if (cfg.baseUrl.endsWith('/')) {
-    fail(`site.config.json: baseUrl no debe terminar en "/", recibido "${cfg.baseUrl}"`)
+    fail(`${cfg.baseUrlFuente}: baseUrl no debe terminar en "/", recibido "${cfg.baseUrl}"`)
   }
   for (const k of ['catalogPathSegment', 'authorPathSegment']) {
     if (!/^[a-z0-9-]+$/.test(cfg[k])) {
@@ -885,7 +927,6 @@ function main() {
   escritos.push(emit('sitemap.xml', sitemap(cfg, urls)))
   escritos.push(emit('robots.txt', robots(cfg)))
   escritos.push(emit('assets/styles.css', CSS))
-  escritos.push(emit('.nojekyll', ''))
 
   // Invariante: toda URL del sitemap tiene un archivo emitido detras.
   for (const u of urls) {
@@ -895,7 +936,7 @@ function main() {
   die()
 
   console.log(`build OK — ${books.length} titulo(s), ${escritos.length} archivo(s) en dist/`)
-  console.log(`baseUrl: ${cfg.baseUrl}  basePath: "${cfg.basePath}"  siteLang: ${cfg.siteLang}`)
+  console.log(`baseUrl: ${cfg.baseUrl}  (fuente: ${cfg.baseUrlFuente})  basePath: "${cfg.basePath}"  siteLang: ${cfg.siteLang}`)
   for (const f of escritos) console.log(`  dist/${f}`)
 }
 
