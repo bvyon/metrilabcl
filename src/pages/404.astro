@@ -1,0 +1,19 @@
+---
+// Vercel sirve dist/404.html con status 404 para cualquier ruta que no exista, sin
+// configuracion extra. No va al sitemap (lo excluye el filtro de astro.config.mjs) y se marca
+// noindex: no es una URL del catalogo.
+import Base from '../layouts/Base.astro'
+import { SITIO, S } from '../lib/sitio'
+---
+
+<Base
+  ruta="/404.html"
+  title={S.p404Head(SITIO.siteName)}
+  description={S.p404Desc}
+  bodyClass="p-404"
+  noindex={true}
+>
+  <h1>{S.p404Titulo}</h1>
+  <p class="entrada">{S.p404Entrada}</p>
+  <p><a href="/">{S.p404Enlace}</a></p>
+</Base>

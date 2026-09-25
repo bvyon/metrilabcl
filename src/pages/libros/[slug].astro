@@ -1,0 +1,188 @@
+---
+import Base from '../../layouts/Base.astro'
+import { cargarLibros, cargarAutor, type Libro, type Autor } from '../../lib/catalogo'
+import { SITIO, S, fecha, fechaHora, idiomaDelTitulo } from '../../lib/sitio'
+import { ldFicha } from '../../lib/jsonld'
+
+export async function getStaticPaths() {
+  const libros = await cargarLibros()
+  const autor = await cargarAutor(libros)
+  return libros.map((b) => ({
+    params: { slug: b.slug },
+    props: { b, otros: libros.filter((o) => o.slug !== b.slug), autor },
+  }))
+}
+
+interface Props {
+  b: Libro
+  otros: Libro[]
+  autor: Autor
+}
+const { b, otros, autor } = Astro.props
+
+const ruta = `/${SITIO.catalogPathSegment}/${b.slug}/`
+const canonical = new URL(ruta, Astro.site!).href
+const urlIndice = new URL('/', Astro.site!).href
+
+// La meta description usa el titulo hasta los dos puntos: el titulo completo de un libro de
+// KDP pasa de 100 caracteres y la descripcion saldria cortada en el resultado de busqueda.
+// El <title> si lleva el titulo completo: ahi el dato real manda sobre la longitud ideal.
+const tituloCorto = b.title.split(':')[0].trim().slice(0, 60)
+const description = S.fichaDescripcion(
+  tituloCorto, b.author, b.format, b.printLength, b.language,
+  fecha(b.publicationDate), b.asin, b.measurement.measuredAt.slice(0, 10),
+)
+
+const d = b.demandContext
+---
+
+<Base
+  ruta={ruta}
+  title={S.fichaTitulo(b.title, b.asin)}
+  description={description}
+  bodyClass="p-ficha"
+  jsonLd={ldFicha(canonical, b, urlIndice)}
+>
+  <nav class="migas" aria-label={S.rutaLabel}>
+    <a href="/">{S.migaCatalogo}</a> › <span aria-current="page">{b.asin}</span>
+  </nav>
+  <h1 lang={idiomaDelTitulo(b)}>{b.title}</h1>
+  <p class="entrada">{S.fichaEntrada(b.author)}</p>
+
+  <h2>{S.h2Datos}</h2>
+  <dl class="datos datos-ficha">
+    <dt>{S.dtAutor}</dt>
+    <dd>{b.author}</dd>
+    <dt>{S.dtFormato}</dt>
+    <dd>{b.format}</dd>
+    <dt>{S.dtIdioma}</dt>
+    <dd>{b.language}</dd>
+    <dt>{S.dtExtension}</dt>
+    <dd>{S.paginas(b.printLength)}</dd>
+    <dt>{S.dtFechaPublicacion}</dt>
+    <dd><time datetime={b.publicationDate}>{fecha(b.publicationDate)}</time></dd>
+    <dt>{S.dtAsin}</dt>
+    <dd><code>{b.asin}</code></dd>
+    {b.fileSize && <><dt>{S.dtPeso}</dt><dd>{b.fileSize}</dd></>}
+    {
+      b.price && (
+        <>
+          <dt>{S.dtPrecio}</dt>
+          <dd>
+            {b.price.currency} {b.price.amount} <span class="nota-inline">{S.precioNota}</span>
+          </dd>
+        </>
+      )
+    }
+  </dl>
+
+  <p class="cta">
+    <a class="boton" href={b.amazonUrl} rel="external nofollow">{S.cta}</a>
+  </p>
+
+  {
+    d && (
+      <>
+        <h2>{S.h2Demanda}</h2>
+        <p>{S.demandaIntro(d.source.label, fecha(d.source.readAt))}</p>
+        <ul class="preguntas">
+          {d.questions.map((q) => <li lang={d.questionsLang}>{q}</li>)}
+        </ul>
+        <p class="aviso">{S.demandaAviso}</p>
+        {d.notes?.map((n) => <p class="nota">{n}</p>)}
+        <p class="procedencia">
+          {S.demandaFuente(d.source.url)} — {d.source.method} {d.source.readBy}
+        </p>
+      </>
+    )
+  }
+
+  {
+    b.relatedEditions && (
+      <>
+        <h2>{S.h2OtrasEdiciones}</h2>
+        <ul class="no-medido">
+          {
+            b.relatedEditions.map((e) => (
+              <li>
+                {e.format} — <code>{e.asin}</code>,{' '}
+                <a href={e.url} rel="external nofollow">{e.storefront}</a>. {e.note}
+              </li>
+            ))
+          }
+        </ul>
+      </>
+    )
+  }
+
+  <h2>{S.h2MasDelAutor}</h2>
+  {
+    otros.length ? (
+      <>
+        <p>{S.masDelAutorTexto(autor.primaryName)}</p>
+        <ul class="enlaces">
+          {
+            otros.map((o) => (
+              <li>
+                <a href={`/${SITIO.catalogPathSegment}/${o.slug}/`} lang={idiomaDelTitulo(o)}>
+                  {o.title}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+        <p><a href={`/${SITIO.authorPathSegment}/`}>{S.verPaginaAutor}</a></p>
+      </>
+    ) : (
+      <p
+        set:html={S.masDelAutorSinOtros(
+          autor.primaryName,
+          `<a href="/${SITIO.authorPathSegment}/">${S.verPaginaAutor}</a>`,
+        )}
+      />
+    )
+  }
+
+  <h2>{S.h2Procedencia}</h2>
+  <dl class="datos procedencia-dl">
+    <dt>{S.dtFuente}</dt>
+    <dd>{b.measurement.source} — <span class="url">{b.measurement.sourceUrl}</span></dd>
+    <dt>{S.dtMedidoEl}</dt>
+    <dd>
+      <time datetime={b.measurement.measuredAt}>{fechaHora(b.measurement.measuredAt)}</time>
+    </dd>
+    <dt>{S.dtMedidoPor}</dt>
+    <dd>{b.measurement.measuredBy}</dd>
+    <dt>{S.dtMetodo}</dt>
+    <dd>{b.measurement.method}</dd>
+    {
+      b.measurement.verifiedAt && (
+        <>
+          <dt>{S.dtReverificado}</dt>
+          <dd>
+            <time datetime={b.measurement.verifiedAt}>{fechaHora(b.measurement.verifiedAt)}</time>
+            {b.measurement.verifiedBy && ` — ${b.measurement.verifiedBy}`}
+          </dd>
+        </>
+      )
+    }
+  </dl>
+
+  {
+    b.observations && (
+      <>
+        <h2>{S.h2Anomalias}</h2>
+        <ul class="no-medido">{b.observations.map((x) => <li>{x}</li>)}</ul>
+      </>
+    )
+  }
+
+  {
+    b.notMeasured && (
+      <>
+        <h2>{S.h2NoMedido}</h2>
+        <ul class="no-medido">{b.notMeasured.map((x) => <li>{x}</li>)}</ul>
+      </>
+    )
+  }
+</Base>

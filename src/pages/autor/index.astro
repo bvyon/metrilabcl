@@ -1,0 +1,109 @@
+---
+import Base from '../../layouts/Base.astro'
+import { cargarLibros, cargarAutor } from '../../lib/catalogo'
+import { SITIO, S, fechaHora, idiomaDelTitulo } from '../../lib/sitio'
+import { ldAutor } from '../../lib/jsonld'
+
+const libros = await cargarLibros()
+const autor = await cargarAutor(libros)
+
+const ruta = `/${SITIO.authorPathSegment}/`
+const canonical = new URL(ruta, Astro.site!).href
+const urlIndice = new URL('/', Astro.site!).href
+
+const libroDe = (slug: string | null) => (slug ? libros.find((b) => b.slug === slug) : undefined)
+---
+
+<Base
+  ruta={ruta}
+  title={S.autorTitulo(autor.primaryName, SITIO.siteName)}
+  description={S.autorDescripcion(autor.primaryName, autor.knownTitles.length)}
+  bodyClass="p-autor"
+  jsonLd={ldAutor(canonical, autor, urlIndice)}
+>
+  <nav class="migas" aria-label={S.rutaLabel}>
+    <a href="/">{S.migaCatalogo}</a> › <span aria-current="page">{autor.primaryName}</span>
+  </nav>
+  <h1>{autor.primaryName}</h1>
+  <p class="entrada">{S.autorEntrada(autor.primaryName)}</p>
+
+  <h2>{S.autorH2Nombres}</h2>
+  <p>{S.autorNombresIntro}</p>
+  <table class="tabla-nombres">
+    <thead>
+      <tr>
+        <th scope="col">{S.autorThForma}</th>
+        <th scope="col">{S.autorThFuente}</th>
+        <th scope="col">{S.autorThMedido}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {
+        autor.nameForms.map((n) => (
+          <tr>
+            <td>{n.form}</td>
+            <td>{n.source}</td>
+            <td>{n.measuredBy}</td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+
+  <h2>{S.autorH2Titulos}</h2>
+  <p>{S.autorTitulosIntro(autor.knownTitles.length)}</p>
+  <ul class="enlaces">
+    {
+      autor.knownTitles.map((t) => {
+        const libro = libroDe(t.slug)
+        return (
+          <li>
+            {
+              libro ? (
+                <a href={`/${SITIO.catalogPathSegment}/${libro.slug}/`} lang={idiomaDelTitulo(libro)}>
+                  {t.title}
+                </a>
+              ) : (
+                <span>{t.title}</span>
+              )
+            }
+            {' — '}
+            <span class="nota-inline">{libro ? S.autorConFicha : S.autorSinFicha}</span>.{' '}
+            <span class="nota-inline">{t.corroboration}</span>
+          </li>
+        )
+      })
+    }
+  </ul>
+
+  <h2>{S.autorH2Perfiles}</h2>
+  <p>{S.autorPerfilesIntro}</p>
+  <ul class="enlaces">
+    {
+      autor.sameAs.map((s) => (
+        <li>
+          <a href={s.url} rel="external nofollow">{s.label}</a>
+          {' — '}
+          <span class="nota-inline">{S.autorVerificado(fechaHora(s.verifiedAt), s.verifiedBy)}</span>
+        </li>
+      ))
+    }
+  </ul>
+
+  <h2>{S.autorH2NoEncontrado}</h2>
+  <ul class="no-medido">{autor.notFound.map((x) => <li>{x}</li>)}</ul>
+
+  <h2>{S.autorH2Procedencia}</h2>
+  <dl class="datos procedencia-dl">
+    <dt>{S.dtFuente}</dt>
+    <dd>{autor.measurement.source} — <span class="url">{autor.measurement.sourceUrl}</span></dd>
+    <dt>{S.dtMedidoEl}</dt>
+    <dd>
+      <time datetime={autor.measurement.measuredAt}>{fechaHora(autor.measurement.measuredAt)}</time>
+    </dd>
+    <dt>{S.dtMedidoPor}</dt>
+    <dd>{autor.measurement.measuredBy}</dd>
+    <dt>{S.dtMetodo}</dt>
+    <dd>{autor.measurement.method}</dd>
+  </dl>
+</Base>

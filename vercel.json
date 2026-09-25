@@ -1,9 +1,5 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "framework": null,
-  "installCommand": "",
-  "buildCommand": "cd hub-ebooks && node src/build.mjs",
-  "outputDirectory": "hub-ebooks/dist",
   "trailingSlash": true,
   "headers": [
     {
@@ -14,9 +10,9 @@
       ]
     },
     {
-      "source": "/assets/(.*)",
+      "source": "/_astro/(.*)",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000" }
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
       ]
     }
   ]

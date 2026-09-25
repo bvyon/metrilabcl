@@ -1,4 +1,6 @@
-hub-ebooks/dist/
 node_modules/
-tmp/
+dist/
+.astro/
+.vercel/
 .claude/
+.DS_Store

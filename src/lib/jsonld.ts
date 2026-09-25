@@ -1,0 +1,104 @@
+// JSON-LD: SOLO propiedades medidas (lista "procede" de NEXUS, MET-151 §3.1).
+//
+// Lo que deliberadamente NO se emite, y por que:
+//   aggregateRating / review  0 resenas confirmadas por dos fuentes independientes.
+//   isbn                      el unico observado pertenece a otro ASIN.
+//   offers                    el precio medido caduca y el sitio no lo re-mide en cada visita.
+//   workExample               el hermano en papel solo esta visto en amazon.es, sin crudo propio.
+import type { Libro, Autor } from './catalogo'
+import { SITIO, S } from './sitio'
+
+type Miga = { name: string; url: string }
+
+// BreadcrumbList: la jerarquia REAL de este sitio. El indice ES el catalogo, asi que su miga
+// tiene un solo elemento — emitir "Inicio > Catalogo" con la misma URL dos veces seria
+// declarar una jerarquia que no existe.
+export function migajas(canonical: string, items: Miga[]) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    '@id': `${canonical}#breadcrumb`,
+    itemListElement: items.map((it, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: it.name,
+      item: it.url,
+    })),
+  }
+}
+
+export function ldIndice(canonical: string, libros: Libro[], urlDe: (b: Libro) => string) {
+  return [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'CollectionPage',
+      '@id': canonical,
+      url: canonical,
+      name: SITIO.siteName,
+      inLanguage: SITIO.siteLang,
+      // El ASIN va en cada hasPart para que una verificacion externa pueda cruzar nodo por
+      // nodo contra el catalogo medido; sin identificador, el nodo no es comprobable (§3.1).
+      hasPart: libros.map((b) => ({
+        '@type': 'Book',
+        '@id': urlDe(b),
+        url: urlDe(b),
+        name: b.title,
+        inLanguage: b.languageCode,
+        identifier: [{ '@type': 'PropertyValue', propertyID: 'ASIN', value: b.asin }],
+        sameAs: b.amazonUrl,
+      })),
+    },
+    migajas(canonical, [{ name: S.migaCatalogo, url: canonical }]),
+  ]
+}
+
+export function ldFicha(canonical: string, b: Libro, urlIndice: string) {
+  return [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'Book',
+      '@id': canonical,
+      url: canonical,
+      name: b.title,
+      // Forma literal del byline de ESTA ficha: NEXUS §3.1 pide no normalizar entre fichas.
+      author: { '@type': 'Person', name: b.author },
+      bookFormat: 'https://schema.org/EBook',
+      inLanguage: b.languageCode,
+      numberOfPages: b.printLength,
+      datePublished: b.publicationDate,
+      identifier: [{ '@type': 'PropertyValue', propertyID: 'ASIN', value: b.asin }],
+      sameAs: b.amazonUrl,
+      isPartOf: { '@type': 'CollectionPage', '@id': urlIndice },
+    },
+    migajas(canonical, [
+      { name: S.migaCatalogo, url: urlIndice },
+      { name: b.title, url: canonical },
+    ]),
+  ]
+}
+
+// Person con las formas medidas del nombre y sameAs SOLO hacia los perfiles que respondieron
+// al comprobarlos (NEXUS §3.1 y condicion de citabilidad 4). Sin Organization: no existe una
+// entidad recuperable con datos de contacto reales (§3.2).
+export function ldAutor(canonical: string, a: Autor, urlIndice: string) {
+  const person: Record<string, unknown> = {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    '@id': `${canonical}#person`,
+    url: canonical,
+    name: a.primaryName,
+    mainEntityOfPage: canonical,
+  }
+  if (a.alternateNames?.length) {
+    person.alternateName = a.alternateNames.length === 1 ? a.alternateNames[0] : a.alternateNames
+  }
+  person.sameAs = a.sameAs.map((s) => s.url)
+
+  return [
+    person,
+    migajas(canonical, [
+      { name: S.migaCatalogo, url: urlIndice },
+      { name: a.primaryName, url: canonical },
+    ]),
+  ]
+}

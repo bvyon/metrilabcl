@@ -1,10 +1,10 @@
-// Cadenas de la plantilla por idioma del sitio (siteLang de site.config.json).
+// Cadenas de la plantilla por idioma del sitio (siteLang de src/lib/sitio.ts).
 //
 // Por que existe este archivo: RADAR (MET-150) midio que la demanda del contenido tipo
 // guia esta en ingles y que en espanol no hay demanda equivalente para ese angulo; FORJA
 // (MET-152 §6, §7 accion 2) especifico que el chrome del sitio pase a ingles manteniendo
 // Book.inLanguage fiel a lo que declara cada ficha de Amazon. Dejar las dos tablas hace
-// que volver atras sea una linea en site.config.json, no una reescritura.
+// que volver atras sea una linea en src/lib/sitio.ts, no una reescritura.
 //
 // Regla: si siteLang no tiene tabla, el build muere. Un sitio a medio traducir es peor que
 // uno en el idioma equivocado, porque el fallo no se ve.

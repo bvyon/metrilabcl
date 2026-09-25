@@ -1,0 +1,64 @@
+---
+import Base from '../layouts/Base.astro'
+import { cargarLibros, cargarAutor } from '../lib/catalogo'
+import { SITIO, S, fecha, fechaHora, idiomaDelTitulo } from '../lib/sitio'
+import { ldIndice } from '../lib/jsonld'
+
+const libros = await cargarLibros()
+const autor = await cargarAutor(libros)
+
+const titulos = S.titulosCuenta(libros.length)
+const rutaFicha = (slug: string) => `/${SITIO.catalogPathSegment}/${slug}/`
+const urlDe = (b: { slug: string }) => new URL(rutaFicha(b.slug), Astro.site!).href
+
+const jsonLd = ldIndice(new URL('/', Astro.site!).href, libros, urlDe)
+---
+
+<Base
+  ruta="/"
+  title={S.indiceTitulo(SITIO.siteName, titulos)}
+  description={S.indiceDescripcion(SITIO.publisherName, titulos)}
+  bodyClass="p-indice"
+  jsonLd={jsonLd}
+>
+  <h1>{SITIO.siteName}</h1>
+  <p class="entrada">{S.indiceEntrada(SITIO.publisherName)}</p>
+
+  <h2 class="seccion">{S.indiceCatalogo(titulos)}</h2>
+  <ul class="catalogo">
+    {
+      libros.map((b) => (
+        <li class="tarjeta">
+          <h3>
+            <a href={rutaFicha(b.slug)} lang={idiomaDelTitulo(b)}>
+              {b.title}
+            </a>
+          </h3>
+          <dl class="datos">
+            <dt>{S.dtAutor}</dt>
+            <dd>{b.author}</dd>
+            <dt>{S.dtFormato}</dt>
+            <dd>{b.format}</dd>
+            <dt>{S.dtIdioma}</dt>
+            <dd>{b.language}</dd>
+            <dt>{S.dtExtension}</dt>
+            <dd>{S.paginas(b.printLength)}</dd>
+            <dt>{S.dtPublicado}</dt>
+            <dd>
+              <time datetime={b.publicationDate}>{fecha(b.publicationDate)}</time>
+            </dd>
+            <dt>{S.dtAsin}</dt>
+            <dd>
+              <code>{b.asin}</code>
+            </dd>
+          </dl>
+          <p class="procedencia">{S.medidoEl(fechaHora(b.measurement.measuredAt))}</p>
+        </li>
+      ))
+    }
+  </ul>
+
+  <h2>{S.indiceAutorH2}</h2>
+  <p>{S.indiceAutorTexto(autor.primaryName)}</p>
+  <p><a href={`/${SITIO.authorPathSegment}/`}>{S.indiceAutorEnlace}</a></p>
+</Base>

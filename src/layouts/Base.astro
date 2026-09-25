@@ -1,0 +1,60 @@
+---
+import { SITIO, S, fechaHora } from '../lib/sitio'
+import '../styles/global.css'
+
+interface Props {
+  title: string
+  description: string
+  bodyClass: string
+  /** Ruta del sitio, con barra final. El canonical se deriva de `site`, nunca se concatena. */
+  ruta: string
+  jsonLd?: unknown[]
+  noindex?: boolean
+}
+
+const { title, description, bodyClass, ruta, jsonLd = [], noindex = false } = Astro.props
+
+if (!Astro.site) throw new Error('falta `site` en astro.config.mjs: sin el no hay canonical absoluto')
+const canonical = new URL(ruta, Astro.site).href
+
+// La hora de generacion es un dato de procedencia del sitio, no del catalogo: dice cuando se
+// emitio esta pagina, no cuando se midieron los libros (eso va en cada ficha).
+const generadoEn = new Date().toISOString().replace(/\.\d{3}Z$/, 'Z')
+---
+
+<!DOCTYPE html>
+<html lang={SITIO.siteLang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <link rel="canonical" href={canonical} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITIO.siteName} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="generator" content={`metrilab-ebooks ${SITIO.buildRef} ${generadoEn}`} />
+    {
+      jsonLd.map((bloque) => (
+        <script type="application/ld+json" set:html={JSON.stringify(bloque, null, 2)} />
+      ))
+    }
+  </head>
+  <body class={bodyClass}>
+    <a class="skip" href="#contenido">{S.skip}</a>
+    <header class="site-header">
+      <p class="brand"><a href="/">{SITIO.siteName}</a></p>
+    </header>
+    <main id="contenido">
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <p>{S.piePublisher(SITIO.publisherName)}</p>
+      <p class="nota">{S.pieNota}</p>
+      <p class="nota">{S.pieGenerado(fechaHora(generadoEn))}</p>
+    </footer>
+  </body>
+</html>

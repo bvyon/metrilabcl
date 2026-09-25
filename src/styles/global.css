@@ -1,0 +1,61 @@
+/* Hoja de estilos del hub. Portada literalmente desde el generador anterior
+   (hub-ebooks/src/build.mjs, const CSS) para no re-teclear decisiones ya verificadas:
+   los comentarios citan las mediciones de metrilab-render que las justifican. */
+:root{--tinta:#15181d;--tinta-suave:#4a5260;--linea:#d9dde4;--fondo:#fbfbfc;--acento:#0b4f8a}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--fondo);color:var(--tinta);
+  font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+.skip{position:absolute;left:-9999px}
+.skip:focus{position:static;display:inline-block;padding:.5rem;background:#fff}
+.site-header,main,.site-footer{max-width:46rem;margin:0 auto;padding:0 1.25rem}
+.site-header{padding-top:1.5rem;padding-bottom:1rem;border-bottom:1px solid var(--linea)}
+.brand{margin:0;font-weight:600;font-size:1rem;letter-spacing:.01em}
+.brand a{color:var(--tinta);text-decoration:none}
+a{color:var(--acento)}
+h1{font-size:1.6rem;line-height:1.25;margin:1.75rem 0 .75rem}
+h2{font-size:1.12rem;margin:2rem 0 .6rem}
+h3{font-size:1.06rem;margin:0 0 .75rem;line-height:1.35}
+.entrada{color:var(--tinta-suave);margin:0 0 1.5rem}
+.migas{font-size:.85rem;color:var(--tinta-suave);margin-top:1.5rem}
+.migas a{color:var(--tinta-suave)}
+.catalogo{list-style:none;padding:0;margin:0;display:grid;gap:1rem}
+.tarjeta{background:#fff;border:1px solid var(--linea);border-radius:8px;padding:1.1rem 1.25rem}
+dl.datos{display:grid;grid-template-columns:auto 1fr;gap:.3rem .9rem;margin:0;font-size:.93rem}
+dl.datos dt{color:var(--tinta-suave);min-width:0}
+dl.datos dd{margin:0;min-width:0}
+dl.datos-ficha,dl.procedencia-dl{background:#fff;border:1px solid var(--linea);border-radius:8px;padding:1rem 1.15rem}
+dl.procedencia-dl{grid-template-columns:auto;gap:.15rem}
+dl.procedencia-dl dt{font-weight:600;color:var(--tinta);margin-top:.5rem}
+dl.procedencia-dl dt:first-child{margin-top:0}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.92em}
+/* La URL de procedencia es larga y no tiene espacios: overflow-wrap:anywhere la parte y
+   reduce el min-content que usa el grid para dimensionar la pista. Verificado con
+   metrilab-render en 390px (desborde=0). */
+.url{overflow-wrap:anywhere;color:var(--tinta-suave)}
+.procedencia,.nota,.nota-inline{color:var(--tinta-suave);font-size:.84rem}
+.procedencia{margin:.85rem 0 0}
+.no-medido,.preguntas,.enlaces{color:var(--tinta-suave);font-size:.93rem;padding-left:1.1rem}
+.enlaces{color:var(--tinta)}
+.preguntas li{margin:.25rem 0}
+.aviso{background:#fff;border:1px solid var(--linea);border-left:3px solid var(--acento);
+  border-radius:6px;padding:.8rem 1rem;font-size:.9rem;color:var(--tinta-suave)}
+/* table-layout:fixed — sin el, el ancho de la tabla lo fija el texto mas largo de la celda
+   y desbordaba el viewport movil por 15px (metrilab-render 390px, 2026-09-25T02:56Z). */
+table.tabla-nombres{border-collapse:collapse;width:100%;table-layout:fixed;font-size:.93rem;
+  background:#fff;border:1px solid var(--linea);border-radius:8px}
+table.tabla-nombres th,table.tabla-nombres td{text-align:left;padding:.5rem .75rem;
+  border-bottom:1px solid var(--linea);vertical-align:top;overflow-wrap:anywhere}
+table.tabla-nombres tr:last-child td{border-bottom:0}
+.cta{margin:1.5rem 0}
+.boton{display:inline-block;background:var(--acento);color:#fff;text-decoration:none;
+  padding:.65rem 1.1rem;border-radius:6px;font-weight:600}
+.boton:hover{background:#093c6b}
+.site-footer{margin-top:3rem;padding-top:1.25rem;padding-bottom:3rem;border-top:1px solid var(--linea)}
+.site-footer p{margin:.4rem 0}
+@media (prefers-color-scheme:dark){
+  :root{--tinta:#e8eaee;--tinta-suave:#a3abb8;--linea:#2b313a;--fondo:#12151a;--acento:#7cb6ea}
+  .tarjeta,dl.datos-ficha,dl.procedencia-dl,.aviso,table.tabla-nombres{background:#181c22}
+  .brand a{color:var(--tinta)}
+  .boton{color:#0d1117}
+}
