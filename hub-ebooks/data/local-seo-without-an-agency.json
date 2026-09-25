@@ -15,24 +15,45 @@
   "price": { "amount": "4.99", "currency": "USD" },
   "measurement": {
     "measuredAt": "2026-09-25T02:02:55Z",
-    "source": "Página de producto de amazon.com",
+    "source": "amazon.com product page",
     "sourceUrl": "https://www.amazon.com/dp/B0HDPV63R4",
-    "method": "Renderizado con Chromium (Playwright) por EXPLORADOR en MET-149: http=200, 751993 bytes, ficha completa. Campos re-extraídos del mismo HTML guardado por TALLER en MET-156 el 2026-09-25T02:14Z con comandos propios (productTitle, aria-label=\"Print length\", campo Language, Publication date, File size, input displayedPrice).",
+    "method": "Rendered with Chromium (Playwright) by EXPLORADOR in MET-149: http=200, 751993 bytes, full product page. Fields re-extracted from that same saved HTML by TALLER in MET-156 on 2026-09-25T02:14Z with its own commands (productTitle, aria-label=\"Print length\", Language field, Publication date, File size, input displayedPrice).",
     "evidenceFile": "evidencia/explorador/www-amazon-com-dp-B0HDPV63R4-intento1-2026-09-25T020255805Z.html",
     "measuredBy": "MetrilabCL / MET-149 (EXPLORADOR)",
     "verifiedAt": "2026-09-25T02:14:36Z",
-    "verifiedBy": "MetrilabCL / MET-156 (TALLER, re-extracción propia sobre el mismo HTML guardado)"
+    "verifiedBy": "MetrilabCL / MET-156 (TALLER, own re-extraction from the same saved HTML)"
+  },
+  "demandContext": {
+    "source": {
+      "url": "https://www.konverto.cl/blog/preguntas-frecuentes-sobre-posicionamiento-seo-antes-de-contratar/",
+      "label": "a Chilean agency FAQ about SEO before hiring anyone",
+      "readAt": "2026-09-25",
+      "readBy": "MetrilabCL / MET-151 (NEXUS).",
+      "method": "Direct read of the page, 25 literal questions in Spanish in the source; the six below are the ones that match the topic of this title. They are quoted in the original Spanish, untranslated."
+    },
+    "questionsLang": "es",
+    "questions": [
+      "¿De verdad necesito SEO?",
+      "¿Qué pasa si dejo de hacer SEO?",
+      "¿Por qué subo en tráfico, pero no en ventas?",
+      "¿Por qué mi sitio web no sale en Google?",
+      "¿Cuál es el costo del SEO?",
+      "¿Se puede hacer SEO solo por unos meses, pausarlo y retomarlo después?"
+    ],
+    "notes": [
+      "A second measured signal on the same intent: the query \"how to measure seo results before hiring an agency\" (google.com, gl=us, hl=en, SerpApi, 2026-09-25T02:18:34Z, RADAR / MET-150) returns results that match the premise of this title — measuring before and after hiring an agency — from reddit r/agency, outerboxdesign.com, quora, carnegiehighered.com and helium-seo.com."
+    ]
   },
   "observations": [
-    "La ficha de Amazon declara idioma Spanish y el byline \"Spanish Edition\", pero el título está en inglés. Es lo que la fuente declara; determinar el idioma del contenido interior exigiría leer el libro y queda fuera de alcance.",
-    "El precio medido aparece en la propia ficha como precio con descuento: «$4.99 with 71 percent savings». Es un precio promocional y puede cambiar sin aviso.",
-    "El byline de esta ficha escribe el nombre del autor como «Metrilab CL»; la ficha del otro título medido lo escribe «Metrilab Cl». La inconsistencia está en la fuente, en las dos páginas de Amazon."
+    "The Amazon listing declares the language as Spanish and carries the \"Spanish Edition\" byline, but the title is in English. That is what the source says; establishing the language of the text inside the book would require reading it and is outside the scope of this catalog.",
+    "The measured price appears on the listing itself as a discounted price: \"$4.99 with 71 percent savings\". It is a promotional price and can change without notice.",
+    "The byline of this listing spells the author's name \"Metrilab CL\"; the listing of the other measured title spells it \"Metrilab Cl\". The inconsistency is in the source, on the two Amazon pages themselves."
   ],
   "notMeasured": [
-    "Valoración media y número de reseñas: la página medida no contiene ningún bloque de reseñas ni valoración (búsqueda literal de los tres marcadores de valoración de Amazon en el HTML: cero coincidencias).",
-    "Best Sellers Rank: ausente en la página medida.",
-    "ISBN y editorial: no aparecen en la página medida.",
-    "El precio publicado es el de la edición Kindle de este ASIN (campo displayedPrice de la propia página). La edición en papel aparece en la misma ficha desde USD 16.99 y no se publica aquí porque es otra edición.",
-    "Descripción editorial del título: pendiente de la especificación de contenido (MET-152)."
+    "Average rating and number of reviews: the measured page contains no review block and no rating at all (literal search for Amazon's three rating markers in the HTML: zero matches).",
+    "Best Sellers Rank: absent from the measured page.",
+    "ISBN and publisher: they do not appear on the measured page.",
+    "The published price is the one of the Kindle edition of this ASIN (the displayedPrice field of the page itself). A print edition appears on the same listing from USD 16.99 and is not published here because it is a different edition.",
+    "Whether the book answers the questions listed above: that would require reading the inside of the book, which is outside the scope of this catalog."
   ]
 }

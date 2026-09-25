@@ -14,17 +14,47 @@
   "price": { "amount": "6.99", "currency": "USD" },
   "measurement": {
     "measuredAt": "2026-09-25T01:36:00Z",
-    "source": "Página de producto de amazon.com",
+    "source": "amazon.com product page",
     "sourceUrl": "https://www.amazon.com/dp/B0FP1RY9G4",
-    "method": "Lectura del HTML público de la página /dp/<ASIN> y extracción de los campos del bloque de detalle del producto. HTML guardado como evidencia.",
+    "method": "The public HTML of the /dp/<ASIN> page was read and the fields of the product detail block were extracted from it. The HTML is kept as evidence.",
     "evidenceFile": "evidencia/cerebro-met147/amazon-dp-B0FP1RY9G4-2026-09-25T0136Z.html",
     "measuredBy": "MetrilabCL / MET-147",
     "verifiedAt": "2026-09-25T01:58:00Z",
-    "verifiedBy": "MetrilabCL / MET-155 (re-extracción sobre el mismo HTML guardado)"
+    "verifiedBy": "MetrilabCL / MET-155 (re-extraction from the same saved HTML)"
   },
+  "demandContext": {
+    "source": {
+      "url": "https://www.webfx.com/blog/healthcare/healthcare-marketing-faq/",
+      "label": "the WebFX healthcare marketing FAQ",
+      "readAt": "2026-09-25",
+      "readBy": "MetrilabCL / MET-151 (NEXUS).",
+      "method": "Direct read of the page, 50 literal questions in the source; the five below are the ones that match the topic of this title."
+    },
+    "questionsLang": "en",
+    "questions": [
+      "What patient information can be used in marketing?",
+      "What are common compliance mistakes in healthcare marketing?",
+      "How do I measure ROI from healthcare marketing?",
+      "What KPIs matter most in healthcare marketing?",
+      "Should healthcare organizations hire an agency or do everything in-house?"
+    ],
+    "notes": [
+      "One measured fact about the listing, not about the book: the Amazon product description of this title does not contain the words HIPAA, compliance or ROI (literal search over the saved HTML, zero matches, MET-151). Whether the book covers those subjects cannot be told from the listing."
+    ]
+  },
+  "relatedEditions": [
+    {
+      "asin": "B0FP44Z621",
+      "format": "Print edition (listed as Books, i.e. not Kindle)",
+      "storefront": "amazon.es",
+      "url": "https://www.amazon.es/Healthcare-Marketing-healthcare-generation-marketers/dp/B0FP44Z621",
+      "confidence": "Medium",
+      "note": "Same exact title and author, publication date two days apart. Seen through a runtime web search on the Spanish storefront, not read from amazon.com, so its length, price and exact date are not measured here and this edition is deliberately kept out of the structured data of this page."
+    }
+  ],
   "notMeasured": [
-    "Valoración media y número de reseñas: la página medida no contiene ningún bloque de reseñas ni valoración.",
-    "Best Sellers Rank: ausente en la página medida.",
-    "Descripción editorial del título: pendiente de MET-156."
+    "Average rating and number of reviews: the measured page contains no review block and no rating at all.",
+    "Best Sellers Rank: absent from the measured page.",
+    "Whether the book answers the questions listed above: that would require reading the inside of the book, which is outside the scope of this catalog."
   ]
 }

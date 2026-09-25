@@ -25,6 +25,34 @@ const CFG_OK = {
   siteLang: 'es',
   publisherName: 'Editor de prueba',
   catalogPathSegment: 'libros',
+  authorPathSegment: 'autor',
+}
+
+const AUTOR_OK = {
+  primaryName: 'Autor de prueba',
+  alternateNames: ['AUTOR DE PRUEBA'],
+  nameForms: [
+    { form: 'Autor de prueba', source: 'Fixture A', measuredBy: 'selftest' },
+    { form: 'AUTOR DE PRUEBA', source: 'Fixture B', measuredBy: 'selftest' },
+  ],
+  knownTitles: [
+    { title: 'Titulo de prueba', slug: 'titulo-de-prueba', corroboration: 'Fixture del selftest' },
+    { title: 'Titulo sin ficha', slug: null, corroboration: 'Fixture: citado en una fuente, sin ficha medida' },
+  ],
+  sameAs: [{
+    url: 'https://www.ejemplo.org/perfil/1',
+    label: 'Perfil de prueba',
+    verifiedAt: '2026-01-01T00:00:00Z',
+    verifiedBy: 'selftest',
+  }],
+  notFound: ['No hay biografia recuperable en ninguna fuente medida.'],
+  measurement: {
+    measuredAt: '2026-01-01T00:00:00Z',
+    source: 'Fixture',
+    sourceUrl: 'https://www.ejemplo.org/perfil/1',
+    method: 'Fixture del selftest',
+    measuredBy: 'selftest',
+  },
 }
 
 const LIBRO_OK = {
@@ -48,10 +76,13 @@ const LIBRO_OK = {
   },
 }
 
-function arbol(cfg, libros) {
+function arbol(cfg, libros, autor = AUTOR_OK) {
   const dir = mkdtempSync(join(tmpdir(), 'mle-selftest-'))
   mkdirSync(join(dir, 'data'), { recursive: true })
   writeFileSync(join(dir, 'site.config.json'), JSON.stringify(cfg, null, 2))
+  if (autor !== null) {
+    writeFileSync(join(dir, 'author.json'), typeof autor === 'string' ? autor : JSON.stringify(autor, null, 2))
+  }
   for (const [nombre, libro] of Object.entries(libros)) {
     writeFileSync(join(dir, 'data', nombre), typeof libro === 'string' ? libro : JSON.stringify(libro, null, 2))
   }
@@ -81,6 +112,7 @@ function casoBueno() {
   const controles = [
     ['emite index.html', () => leer('index.html') !== null],
     ['emite la ficha en URL limpia', () => leer('libros/titulo-de-prueba/index.html') !== null],
+    ['emite la pagina de autor en URL limpia', () => leer('autor/index.html') !== null],
     ['emite 404.html', () => leer('404.html') !== null],
     ['emite .nojekyll', () => leer('.nojekyll') !== null],
     ['emite assets/styles.css', () => (leer('assets/styles.css') || '').includes('--tinta')],
@@ -94,11 +126,12 @@ function casoBueno() {
         .includes(`<meta property="og:url" content="${CFG_OK.baseUrl}/libros/titulo-de-prueba/">`)],
     ['@id del JSON-LD sale de baseUrl',
       () => leer('libros/titulo-de-prueba/index.html').includes(`"@id": "${CFG_OK.baseUrl}/libros/titulo-de-prueba/"`)],
-    ['el sitemap usa baseUrl y lista indice + ficha', () => {
+    ['el sitemap usa baseUrl y lista indice + ficha + autor', () => {
       const s = leer('sitemap.xml')
       return s.includes(`<loc>${CFG_OK.baseUrl}/</loc>`) &&
         s.includes(`<loc>${CFG_OK.baseUrl}/libros/titulo-de-prueba/</loc>`) &&
-        (s.match(/<loc>/g) || []).length === 2
+        s.includes(`<loc>${CFG_OK.baseUrl}/autor/</loc>`) &&
+        (s.match(/<loc>/g) || []).length === 3
     }],
     ['el sitemap NO lista 404.html', () => !leer('sitemap.xml').includes('404')],
     ['robots.txt apunta al sitemap de baseUrl',
@@ -118,6 +151,28 @@ function casoBueno() {
     ['el enlace a Amazon lleva rel explicito',
       () => leer('libros/titulo-de-prueba/index.html')
         .includes('href="https://www.amazon.com/dp/B000000001" rel="external nofollow"')],
+    ['la ficha emite BreadcrumbList con @id bajo baseUrl',
+      () => leer('libros/titulo-de-prueba/index.html')
+        .includes(`"@id": "${CFG_OK.baseUrl}/libros/titulo-de-prueba/#breadcrumb"`)],
+    ['el indice enlaza a la pagina de autor',
+      () => leer('index.html').includes('href="/repo-de-prueba/autor/"')],
+    ['la pagina de autor emite Person con las dos formas medidas del nombre', () => {
+      const a = leer('autor/index.html')
+      return a.includes('"@type": "Person"') && a.includes('"name": "Autor de prueba"') &&
+        a.includes('"alternateName": "AUTOR DE PRUEBA"')
+    }],
+    ['el Person lleva @id absoluto bajo baseUrl',
+      () => leer('autor/index.html').includes(`"@id": "${CFG_OK.baseUrl}/autor/#person"`)],
+    ['el sameAs del autor solo lista perfiles comprobados', () => {
+      const a = leer('autor/index.html')
+      const m = a.match(/"sameAs": \[\s*"([^"]+)"\s*\]/)
+      return !!m && m[1] === 'https://www.ejemplo.org/perfil/1'
+    }],
+    ['la pagina de autor declara lo que no existe',
+      () => leer('autor/index.html').includes('No hay biografia recuperable en ninguna fuente medida.')],
+    ['la pagina de autor marca el titulo sin ficha como no medido',
+      () => leer('autor/index.html').includes('Titulo sin ficha') &&
+        !leer('autor/index.html').includes('href="/repo-de-prueba/libros/titulo-sin-ficha/"')],
   ]
   let malos = 0
   for (const [nombre, f] of controles) {
@@ -171,6 +226,67 @@ function casoIdiomaDelTitulo() {
     ['la ficha publica las anomalias de la fuente',
       () => ficha.includes('Anomalías de la ficha en Amazon') &&
         ficha.includes('La ficha declara Spanish con el titulo en ingles.')],
+  ]
+  let malos = 0
+  for (const [nombre, f] of controles) {
+    let bien = false
+    try { bien = !!f() } catch { bien = false }
+    if (bien) ok(nombre); else { no(nombre, 'control falso'); malos++ }
+  }
+  if (!malos) ok(n)
+  rmSync(dir, { recursive: true, force: true })
+}
+
+// --- 2-ter. chrome en ingles y bloque de contexto de demanda ---
+//
+// El bloque de preguntas reales es el unico contenido del hub que no sale de la ficha de
+// Amazon (condicion de citabilidad 2 de NEXUS). Se comprueba que se publique con su fuente,
+// su fecha y el aviso de que el libro no se ha leido — sin ese aviso, citar la pregunta
+// insinuaria que el libro la responde.
+function casoIngesYDemanda() {
+  const libro = {
+    ...LIBRO_OK,
+    demandContext: {
+      source: {
+        url: 'https://www.ejemplo.org/faq/',
+        label: 'the example FAQ',
+        readAt: '2026-01-02',
+        readBy: 'selftest',
+        method: 'Fixture del selftest.',
+      },
+      questionsLang: 'es',
+      questions: ['¿Cuánto cuesta?'],
+      notes: ['Nota medida de fixture.'],
+    },
+    relatedEditions: [{
+      asin: 'B000000002', format: 'Print edition', storefront: 'amazon.es',
+      url: 'https://www.amazon.es/dp/B000000002', confidence: 'Medium', note: 'Fixture.',
+    }],
+  }
+  const dir = arbol({ ...CFG_OK, siteLang: 'en' }, { 'titulo-de-prueba.json': libro })
+  const r = correr(dir)
+  const n = 'chrome en ingles + bloque de demanda con fuente y aviso'
+  if (r.code !== 0) { no(n, `exit ${r.code}: ${r.err.trim()}`); rmSync(dir, { recursive: true, force: true }); return }
+  const ficha = readFileSync(join(dir, 'dist', 'libros', 'titulo-de-prueba', 'index.html'), 'utf8')
+  const indice = readFileSync(join(dir, 'dist', 'index.html'), 'utf8')
+  const controles = [
+    ['<html lang> sigue a siteLang=en', () => indice.startsWith('<!DOCTYPE html>\n<html lang="en">')],
+    ['el chrome se traduce', () => indice.includes('Skip to content') && ficha.includes('Title data')],
+    ['la fecha se formatea en ingles', () => ficha.includes('January 15, 2025')],
+    ['la pregunta se cita literal y con su idioma',
+      () => ficha.includes('<li lang="es">¿Cuánto cuesta?</li>')],
+    ['la fuente de la pregunta va con URL y fecha',
+      () => ficha.includes('https://www.ejemplo.org/faq/') && ficha.includes('January 2, 2026')],
+    ['el aviso de que el libro no se ha leido se publica',
+      () => ficha.includes('Nobody at MetrilabCL has read the inside of the book')],
+    ['la edicion hermana se menciona en texto y NO en el JSON-LD', () => {
+      const bloques = [...ficha.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)]
+        .map((m) => m[1])
+      return ficha.includes('B000000002') && !bloques.some((b) => b.includes('B000000002')) &&
+        !bloques.some((b) => b.includes('workExample'))
+    }],
+    ['no hay JS en la pagina',
+      () => !/<script(?![^>]*type="application\/ld\+json")/i.test(ficha)],
   ]
   let malos = 0
   for (const [nombre, f] of controles) {
@@ -241,11 +357,71 @@ const CASOS_MALOS = [
     { 'titulo-de-prueba.json': LIBRO_OK }, /URL https absoluta/],
   ['falta siteName en la config', (() => { const c = { ...CFG_OK }; delete c.siteName; return c })(),
     { 'titulo-de-prueba.json': LIBRO_OK }, /falta o esta vacio "siteName"/],
+  // Un siteLang sin tabla de cadenas dejaria media plantilla en el idioma equivocado sin avisar.
+  ['siteLang sin tabla de cadenas', { ...CFG_OK, siteLang: 'fr' },
+    { 'titulo-de-prueba.json': LIBRO_OK }, /no tiene tabla de cadenas/],
+  ['catalogPathSegment igual a authorPathSegment', { ...CFG_OK, authorPathSegment: 'libros' },
+    { 'titulo-de-prueba.json': LIBRO_OK }, /no pueden ser el mismo segmento/],
+  // --- pagina de autor: la entidad es parte de la fase 1, no un extra opcional ---
+  ['falta author.json', CFG_OK, { 'titulo-de-prueba.json': LIBRO_OK }, /falta .*author\.json/, null],
+  ['author.json roto', CFG_OK, { 'titulo-de-prueba.json': LIBRO_OK },
+    /author\.json no es JSON valido/, '{no es json'],
+  ['author.json sin notFound (una entidad vacia tiene que decir que esta vacia)', CFG_OK,
+    { 'titulo-de-prueba.json': LIBRO_OK }, /falta el campo requerido "notFound"/,
+    (() => { const a = { ...AUTOR_OK }; delete a.notFound; return a })()],
+  ['primaryName que no es ninguna forma medida', CFG_OK, { 'titulo-de-prueba.json': LIBRO_OK },
+    /no aparece en nameForms/, { ...AUTOR_OK, primaryName: 'MetrilabCL' }],
+  ['sameAs sin fecha de comprobacion', CFG_OK, { 'titulo-de-prueba.json': LIBRO_OK },
+    /falta sameAs\[0\]\.verifiedAt/,
+    { ...AUTOR_OK, sameAs: [{ url: 'https://www.ejemplo.org/perfil/1', label: 'Perfil', verifiedBy: 'selftest' }] }],
+  ['la pagina de autor omite un titulo publicado', CFG_OK, { 'titulo-de-prueba.json': LIBRO_OK },
+    /no aparece en knownTitles/,
+    { ...AUTOR_OK, knownTitles: [{ title: 'Otro', slug: null, corroboration: 'Fixture' }] }],
+  ['knownTitles apunta a un slug que no existe', CFG_OK, { 'titulo-de-prueba.json': LIBRO_OK },
+    /no corresponde a ningun archivo de data/,
+    { ...AUTOR_OK, knownTitles: [...AUTOR_OK.knownTitles, { title: 'Fantasma', slug: 'fantasma', corroboration: 'Fixture' }] }],
+  // --- contexto de demanda: una pregunta sin fuente citable es una pregunta inventada ---
+  ['demandContext sin fuente', CFG_OK,
+    { 'titulo-de-prueba.json': { ...LIBRO_OK, demandContext: { questions: ['¿Y?'], questionsLang: 'es' } } },
+    /demandContext\.source es obligatorio/],
+  ['demandContext sin preguntas', CFG_OK,
+    {
+      'titulo-de-prueba.json': {
+        ...LIBRO_OK,
+        demandContext: {
+          questions: [], questionsLang: 'es',
+          source: { url: 'https://ejemplo.org/faq', label: 'FAQ', readAt: '2026-01-01', readBy: 'selftest', method: 'fixture' },
+        },
+      },
+    },
+    /demandContext\.questions debe ser un arreglo no vacio/],
+  ['demandContext con fuente que no es URL absoluta', CFG_OK,
+    {
+      'titulo-de-prueba.json': {
+        ...LIBRO_OK,
+        demandContext: {
+          questions: ['¿Y?'], questionsLang: 'es',
+          source: { url: '/faq', label: 'FAQ', readAt: '2026-01-01', readBy: 'selftest', method: 'fixture' },
+        },
+      },
+    },
+    /demandContext\.source\.url debe ser una URL https absoluta/],
+  ['relatedEditions con ASIN que no coincide con su URL', CFG_OK,
+    {
+      'titulo-de-prueba.json': {
+        ...LIBRO_OK,
+        relatedEditions: [{
+          asin: 'B000000009', format: 'Paperback', storefront: 'amazon.es',
+          url: 'https://www.amazon.es/dp/B000000008', confidence: 'Media', note: 'fixture',
+        }],
+      },
+    },
+    /relatedEditions\[0\]\.url no contiene el ASIN/],
 ]
 
 function casosMalos() {
-  for (const [nombre, cfg, libros, patron] of CASOS_MALOS) {
-    const dir = arbol(cfg, libros)
+  for (const [nombre, cfg, libros, patron, autor] of CASOS_MALOS) {
+    const dir = arbol(cfg, libros, autor === undefined ? AUTOR_OK : autor)
     const r = correr(dir)
     if (r.code === 0) no(nombre, 'el build salio con exit 0 en vez de morir')
     else if (!patron.test(r.err)) no(nombre, `exit ${r.code} pero el mensaje no dice ${patron}: ${r.err.trim().slice(0, 240)}`)
@@ -259,6 +435,7 @@ function casosMalos() {
 function casoRepoReal() {
   const dir = mkdtempSync(join(tmpdir(), 'mle-real-'))
   cpSync(join(ROOT, 'site.config.json'), join(dir, 'site.config.json'))
+  cpSync(join(ROOT, 'author.json'), join(dir, 'author.json'))
   cpSync(join(ROOT, 'data'), join(dir, 'data'), { recursive: true })
   const r = correr(dir)
   if (r.code !== 0) no('los datos reales de data/ construyen', `exit ${r.code}: ${r.err.trim().slice(0, 400)}`)
@@ -270,6 +447,7 @@ console.log('selftest del generador de metrilab-ebooks')
 console.log(`\n[1] camino bueno`); casoBueno()
 console.log(`\n[2] dominio propio en la raiz`); casoDominioPropio()
 console.log(`\n[2-bis] idioma del titulo distinto al del libro`); casoIdiomaDelTitulo()
+console.log(`\n[2-ter] chrome en ingles y contexto de demanda`); casoIngesYDemanda()
 console.log(`\n[3] falla ruidosa con datos malos (${CASOS_MALOS.length} casos)`); casosMalos()
 console.log(`\n[4] datos reales del repositorio`); casoRepoReal()
 

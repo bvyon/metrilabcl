@@ -1,0 +1,83 @@
+{
+  "_comment": "Entidad del autor. Especificada por FORJA (MET-152 seccion 3.3) sobre lo medido por NEXUS (MET-151 seccion 1) y EXPLORADOR (MET-149). Regla: cada forma del nombre, cada titulo y cada perfil llevan la fuente que lo midio; lo que no existe se declara en notFound en vez de rellenarse. Sin biografia: NEXUS comprobo con cuatro metodos independientes que no hay ninguna recuperable.",
+  "primaryName": "Metrilab Cl",
+  "alternateNames": ["Metrilab CL"],
+
+  "nameForms": [
+    {
+      "form": "Metrilab Cl",
+      "source": "Amazon byline on /dp/B0FP1RY9G4 (field-author link in the saved product HTML)",
+      "measuredBy": "MetrilabCL / MET-147, re-extracted from the saved HTML in MET-155 and MET-156 (TALLER), 2026-09-25T02:42Z"
+    },
+    {
+      "form": "Metrilab CL",
+      "source": "Amazon byline on /dp/B0HDPV63R4 (field-author link in the saved product HTML)",
+      "measuredBy": "MetrilabCL / MET-149 (EXPLORADOR), re-extracted from the saved HTML in MET-156 (TALLER), 2026-09-25T02:42Z"
+    },
+    {
+      "form": "Metrilab Cl",
+      "source": "Goodreads author profile 58723350 (URL slug and meta description), read directly",
+      "measuredBy": "MetrilabCL / MET-151 (NEXUS), 2026-09-25T02:15:35Z"
+    },
+    {
+      "form": "Metrilab CL",
+      "source": "Google Books bibliographic record, quoted from a SerpApi result",
+      "measuredBy": "MetrilabCL / MET-149 (EXPLORADOR), 2026-09-25T02:07:19Z"
+    }
+  ],
+
+  "knownTitles": [
+    {
+      "title": "Healthcare Marketing: The ultimate guide to healthcare lead generation - for hospitals marketers.",
+      "slug": "healthcare-marketing-lead-generation",
+      "corroboration": "Amazon product page read in full (ASIN B0FP1RY9G4) and listed on the Goodreads author profile."
+    },
+    {
+      "title": "Local SEO Without an Agency: What to Fix, What to Ignore, and How to Tell If It's Working (Spanish Edition)",
+      "slug": "local-seo-without-an-agency",
+      "corroboration": "Amazon product page read in full (ASIN B0HDPV63R4) and listed on the Goodreads author profile."
+    },
+    {
+      "title": "Your WhatsApp AI Chatbot",
+      "slug": null,
+      "corroboration": "Listed on the Goodreads author profile (read 2026-09-25T02:15:35Z) and in a Google Books record quoted from SerpApi. Its Amazon listing (ASIN B0H28T65JL) returned an interstitial instead of the product page, so no field of this title has been measured."
+    },
+    {
+      "title": "Fill Every Chair",
+      "slug": null,
+      "corroboration": "Listed on the Goodreads author profile (read 2026-09-25T02:15:35Z) and found by EXPLORADOR through a separate method. No Amazon listing of it has been read, so no field of this title has been measured."
+    },
+    {
+      "title": "Cited Or Invisible",
+      "slug": null,
+      "corroboration": "Listed on the Goodreads author profile (read 2026-09-25T02:15:35Z). An exact-title match appears on amazon.ae under ASIN B0H8H2T1C1 (RADAR, SerpApi, 2026-09-25T02:18:27Z); whether that is the same work as a Kindle edition on amazon.com is not confirmed, and no listing of it has been read."
+    }
+  ],
+
+  "sameAs": [
+    {
+      "url": "https://www.goodreads.com/author/show/58723350.Metrilab_Cl",
+      "label": "Goodreads author profile 58723350",
+      "verifiedAt": "2026-09-25T02:41:39Z",
+      "verifiedBy": "MetrilabCL / MET-156 (TALLER), HTTP HEAD request, http=200"
+    }
+  ],
+
+  "notFound": [
+    "No biography anywhere. The Goodreads profile is the only third-party profile found and its author-info block contains no text — no biography, no website, no external link of any kind. Checked by MetrilabCL / MET-151 (NEXUS) on 2026-09-25 with four independent methods.",
+    "No Wikidata item. Two queries (\"Metrilab\" and \"MetrilabCL\") returned zero results on 2026-09-25T02:15:00Z.",
+    "No press coverage. GDELT returns zero articles for the exact byline \"Metrilab Cl\" across online media since 2015 (query answered 2026-09-25T02:16:37Z).",
+    "No social or professional profile (LinkedIn, X, Instagram, Facebook) and no website of the publisher was found by any of the methods used. Not found is not the same as does not exist: it means no method tried revealed one.",
+    "No Amazon author page to link to. On both measured listings the byline links to a search-results URL (/s/ref=dp_byline_sr_ebooks_1?field-author=...), not to an author entity page, so there is no stable Amazon page for this author to point at. Read from the saved Amazon HTML by MetrilabCL / MET-156 (TALLER) on 2026-09-25T02:42Z.",
+    "No ratings and no reviews. The two measured Amazon listings and the Goodreads profile all show zero. Nothing is aggregated on this site because there is nothing to aggregate.",
+    "No organization. No company entity with verifiable contact details exists in any source measured, so this page describes the byline as it is published and does not invent an address, a phone number or a founding date."
+  ],
+
+  "measurement": {
+    "measuredAt": "2026-09-25T02:15:35Z",
+    "source": "Goodreads author profile 58723350, read directly; name forms cross-read from the saved Amazon product HTML of both measured titles",
+    "sourceUrl": "https://www.goodreads.com/author/show/58723350.Metrilab_Cl",
+    "method": "Direct HTTP read of the Goodreads author page (http=200, 113589 bytes) by NEXUS in MET-151; byline extraction from the saved Amazon HTML of B0FP1RY9G4 and B0HDPV63R4, and an HTTP HEAD check of every linked profile, by TALLER in MET-156 on 2026-09-25T02:41Z-02:42Z.",
+    "measuredBy": "MetrilabCL / MET-151 (NEXUS) and MET-156 (TALLER)"
+  }
+}

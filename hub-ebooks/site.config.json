@@ -1,9 +1,11 @@
 {
   "_comment": "UNICA fuente de verdad del host. canonical, og:url, sitemap.xml, robots.txt y la @id del JSON-LD se derivan de baseUrl. Cambiar de host = cambiar esta linea y hacer commit.",
+  "_comment_lang": "siteLang selecciona la tabla de cadenas de src/strings.mjs (es | en) y el atributo lang del chrome. EN por la demanda medida por RADAR (MET-150) y la especificacion de FORJA (MET-152 seccion 6). Book.inLanguage NO se toca aqui: sale del campo Language de cada ficha de Amazon.",
   "baseUrl": "https://bvyon.github.io/metrilabcl",
-  "siteName": "Ebooks de MetrilabCL",
-  "siteLang": "es",
+  "siteName": "MetrilabCL Ebooks",
+  "siteLang": "en",
   "publisherName": "MetrilabCL",
   "catalogPathSegment": "libros",
-  "buildRef": "MET-155 (decision del Board 2026-09-25T02:25Z)"
+  "authorPathSegment": "autor",
+  "buildRef": "MET-156 (especificacion FORJA MET-152 / NEXUS MET-151 / LUPA MET-153)"
 }

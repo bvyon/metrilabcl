@@ -53,6 +53,7 @@ Salida en `dist/` (no versionada):
 ```
 dist/index.html                          índice del catálogo
 dist/libros/<slug>/index.html            una ficha por título, URL limpia sin parámetros
+dist/autor/index.html                    página de entidad del autor (Person + sameAs verificados)
 dist/404.html                            noindex, fuera del sitemap
 dist/sitemap.xml                         generado desde baseUrl
 dist/robots.txt                          generado desde baseUrl
@@ -98,7 +99,32 @@ dist/.nojekyll                           GitHub Pages sirve dist/ tal cual, sin 
     "verifiedBy": "quién re-verificó"                  // opcional
   },
   "observations": ["Anomalía medida en la ficha de Amazon"],  // opcional; sección propia en la ficha
-  "notMeasured": ["Qué quedó sin medir y por qué"]     // opcional, se publica tal cual
+  "notMeasured": ["Qué quedó sin medir y por qué"],    // opcional, se publica tal cual
+
+  // opcional — preguntas reales sobre el TEMA, citadas de una fuente pública que no es este
+  // libro. Es el único contenido del hub que no sale de la ficha de Amazon (condición de
+  // citabilidad 2 de NEXUS, MET-151). La página publica siempre el aviso de que nadie ha leído
+  // el interior del libro: citar la pregunta no es afirmar que el libro la responde.
+  "demandContext": {
+    "source": {
+      "url": "https://...",                  // https absoluta
+      "label": "cómo se nombra la fuente en el texto",
+      "readAt": "2026-09-25",                // YYYY-MM-DD
+      "readBy": "quién la leyó",
+      "method": "cómo se leyó y cuántas preguntas literales tiene la fuente"
+    },
+    "questionsLang": "en",                   // BCP-47; idioma en que se citan, sin traducir
+    "questions": ["Pregunta literal 1"],     // verbatim; el build muere si el arreglo está vacío
+    "notes": ["Dato medido relacionado"]     // opcional
+  },
+
+  // opcional — otra edición de la misma obra, vista pero NO medida en amazon.com. Sólo texto
+  // visible: nunca entra al JSON-LD (NEXUS excluye workExample sin crudo propio del hermano).
+  "relatedEditions": [{
+    "asin": "B000000001", "format": "Print edition", "storefront": "amazon.es",
+    "url": "https://www.amazon.es/dp/B000000001",   // tiene que contener el ASIN
+    "confidence": "Medium", "note": "Qué se vio, dónde y qué queda sin verificar"
+  }]
 }
 ```
 
@@ -108,6 +134,36 @@ dist/.nojekyll                           GitHub Pages sirve dist/ tal cual, sin 
 4. Commit a `main`. El job `construir` del workflow valida y construye; el índice y el
    `sitemap.xml` recogen el título nuevo automáticamente. El despliegue sigue dependiendo de
    `PAGES_ACTIVO` (ver el estado al principio de este README).
+
+## La página de autor (`author.json`)
+
+`/autor/` es una de las cuatro páginas de fase 1 que especificó FORJA (MET-152 §3.3). Su
+contenido sale entero de `author.json`, en la raíz del proyecto. El build **muere sin ese
+archivo**: la entidad es parte del sitio, no un extra.
+
+Reglas que el generador hace cumplir, y por qué:
+
+- `primaryName` y cada `alternateNames` tienen que aparecer en `nameForms`. El nombre que se
+  publica es una forma **medida en una fuente**, nunca una elección editorial. Hoy la fuente
+  escribe el nombre de dos maneras («Metrilab Cl» y «Metrilab CL») y la página publica las dos.
+- Cada `sameAs` necesita `url`, `label`, `verifiedAt` (ISO-8601 UTC) y `verifiedBy`. Un perfil
+  que no se comprobó no se enlaza: `sameAs` es una afirmación de identidad, no un enlace suelto.
+- `knownTitles` tiene que incluir **todos** los títulos que el catálogo publica (el build
+  compara contra `data/`), y cada entrada lleva su `corroboration`. Los que no tienen `slug` se
+  publican nombrados y marcados como no medidos.
+- `notFound` es obligatorio y no puede estar vacío. Una entidad sin biografía, sin perfiles
+  sociales y sin cobertura de prensa tiene que **decirlo con su método de comprobación**; si
+  no, la página es indistinguible de una a medio hacer.
+
+## Idioma del sitio (`siteLang`)
+
+`siteLang` selecciona la tabla de cadenas de `src/strings.mjs` (`es` | `en`) y el atributo
+`lang` del chrome. Hoy es `en`: RADAR (MET-150) midió la demanda del contenido tipo guía en
+inglés y FORJA lo especificó en MET-152 §6. Volver a español es cambiar esa línea.
+
+`Book.inLanguage` **no** se toca desde aquí: sale del campo `Language` de cada ficha de Amazon
+(`languageCode`). Un `siteLang` sin tabla de cadenas mata el build — un sitio a medio traducir
+falla sin que se vea.
 
 ## Cómo se cambia la URL base
 
