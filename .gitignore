@@ -1,0 +1,4 @@
+hub-ebooks/dist/
+node_modules/
+tmp/
+.claude/

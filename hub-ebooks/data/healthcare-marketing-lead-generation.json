@@ -1,0 +1,30 @@
+{
+  "slug": "healthcare-marketing-lead-generation",
+  "title": "Healthcare Marketing: The ultimate guide to healthcare lead generation - for hospitals marketers.",
+  "author": "Metrilab Cl",
+  "asin": "B0FP1RY9G4",
+  "amazonUrl": "https://www.amazon.com/Healthcare-Marketing-healthcare-generation-marketers-ebook/dp/B0FP1RY9G4",
+  "format": "Kindle Edition",
+  "language": "English",
+  "languageCode": "en",
+  "printLength": 88,
+  "publicationDate": "2025-08-28",
+  "publicationDateLabel": "August 28, 2025",
+  "fileSize": "590 KB",
+  "price": { "amount": "6.99", "currency": "USD" },
+  "measurement": {
+    "measuredAt": "2026-09-25T01:36:00Z",
+    "source": "Página de producto de amazon.com",
+    "sourceUrl": "https://www.amazon.com/dp/B0FP1RY9G4",
+    "method": "Lectura del HTML público de la página /dp/<ASIN> y extracción de los campos del bloque de detalle del producto. HTML guardado como evidencia.",
+    "evidenceFile": "evidencia/cerebro-met147/amazon-dp-B0FP1RY9G4-2026-09-25T0136Z.html",
+    "measuredBy": "MetrilabCL / MET-147",
+    "verifiedAt": "2026-09-25T01:58:00Z",
+    "verifiedBy": "MetrilabCL / MET-155 (re-extracción sobre el mismo HTML guardado)"
+  },
+  "notMeasured": [
+    "Valoración media y número de reseñas: la página medida no contiene ningún bloque de reseñas ni valoración.",
+    "Best Sellers Rank: ausente en la página medida.",
+    "Descripción editorial del título: pendiente de MET-156."
+  ]
+}

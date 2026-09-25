@@ -1,0 +1,38 @@
+{
+  "slug": "local-seo-without-an-agency",
+  "title": "Local SEO Without an Agency: What to Fix, What to Ignore, and How to Tell If It's Working (Spanish Edition)",
+  "author": "Metrilab CL",
+  "asin": "B0HDPV63R4",
+  "amazonUrl": "https://www.amazon.com/Local-SEO-Without-Agency-Working-ebook/dp/B0HDPV63R4",
+  "format": "Kindle Edition",
+  "language": "Spanish",
+  "languageCode": "es",
+  "titleLanguageCode": "en",
+  "printLength": 235,
+  "publicationDate": "2026-08-10",
+  "publicationDateLabel": "August 10, 2026",
+  "fileSize": "1.1 MB",
+  "price": { "amount": "4.99", "currency": "USD" },
+  "measurement": {
+    "measuredAt": "2026-09-25T02:02:55Z",
+    "source": "Página de producto de amazon.com",
+    "sourceUrl": "https://www.amazon.com/dp/B0HDPV63R4",
+    "method": "Renderizado con Chromium (Playwright) por EXPLORADOR en MET-149: http=200, 751993 bytes, ficha completa. Campos re-extraídos del mismo HTML guardado por TALLER en MET-156 el 2026-09-25T02:14Z con comandos propios (productTitle, aria-label=\"Print length\", campo Language, Publication date, File size, input displayedPrice).",
+    "evidenceFile": "evidencia/explorador/www-amazon-com-dp-B0HDPV63R4-intento1-2026-09-25T020255805Z.html",
+    "measuredBy": "MetrilabCL / MET-149 (EXPLORADOR)",
+    "verifiedAt": "2026-09-25T02:14:36Z",
+    "verifiedBy": "MetrilabCL / MET-156 (TALLER, re-extracción propia sobre el mismo HTML guardado)"
+  },
+  "observations": [
+    "La ficha de Amazon declara idioma Spanish y el byline \"Spanish Edition\", pero el título está en inglés. Es lo que la fuente declara; determinar el idioma del contenido interior exigiría leer el libro y queda fuera de alcance.",
+    "El precio medido aparece en la propia ficha como precio con descuento: «$4.99 with 71 percent savings». Es un precio promocional y puede cambiar sin aviso.",
+    "El byline de esta ficha escribe el nombre del autor como «Metrilab CL»; la ficha del otro título medido lo escribe «Metrilab Cl». La inconsistencia está en la fuente, en las dos páginas de Amazon."
+  ],
+  "notMeasured": [
+    "Valoración media y número de reseñas: la página medida no contiene ningún bloque de reseñas ni valoración (búsqueda literal de los tres marcadores de valoración de Amazon en el HTML: cero coincidencias).",
+    "Best Sellers Rank: ausente en la página medida.",
+    "ISBN y editorial: no aparecen en la página medida.",
+    "El precio publicado es el de la edición Kindle de este ASIN (campo displayedPrice de la propia página). La edición en papel aparece en la misma ficha desde USD 16.99 y no se publica aquí porque es otra edición.",
+    "Descripción editorial del título: pendiente de la especificación de contenido (MET-152)."
+  ]
+}

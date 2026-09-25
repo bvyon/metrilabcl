@@ -1,0 +1,9 @@
+{
+  "_comment": "UNICA fuente de verdad del host. canonical, og:url, sitemap.xml, robots.txt y la @id del JSON-LD se derivan de baseUrl. Cambiar de host = cambiar esta linea y hacer commit.",
+  "baseUrl": "https://bvyon.github.io/metrilabcl",
+  "siteName": "Ebooks de MetrilabCL",
+  "siteLang": "es",
+  "publisherName": "MetrilabCL",
+  "catalogPathSegment": "libros",
+  "buildRef": "MET-155 (decision del Board 2026-09-25T02:25Z)"
+}

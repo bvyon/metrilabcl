@@ -1,0 +1,13 @@
+{
+  "name": "metrilab-ebooks",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Generador estatico del hub de ebooks de MetrilabCL. Sin dependencias.",
+  "type": "module",
+  "scripts": {
+    "build": "node src/build.mjs",
+    "selftest": "node src/selftest.mjs",
+    "check": "node src/selftest.mjs && node src/build.mjs"
+  },
+  "license": "UNLICENSED"
+}
