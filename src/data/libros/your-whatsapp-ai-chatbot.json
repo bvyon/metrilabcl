@@ -1,0 +1,47 @@
+{
+  "slug": "your-whatsapp-ai-chatbot",
+  "title": "Your WhatsApp AI Chatbot: Build a configurable assistant with your own API keys — no platform lock-in",
+  "author": "Metrilab CL",
+  "asin": "B0H28T65JL",
+  "amazonUrl": "https://www.amazon.com/Your-WhatsApp-Chatbot-configurable-lock-ebook/dp/B0H28T65JL",
+  "format": "Kindle Edition",
+  "language": "English",
+  "languageCode": "en",
+  "printLength": 47,
+  "publicationDate": "2026-07-07",
+  "publicationDateLabel": "July 7, 2026",
+  "fileSize": "567 KB",
+  "price": { "amount": "3.99", "currency": "USD" },
+  "measurement": {
+    "measuredAt": "2026-09-25T13:35:06Z",
+    "source": "amazon.com product page",
+    "sourceUrl": "https://www.amazon.com/dp/B0H28T65JL",
+    "method": "The public HTML of the /dp/<ASIN> page was fetched and saved by CEREBRO in MET-165: http=200, 745832 bytes after gunzip, full product page with no interstitial. Every field published here was extracted from that same saved HTML by TALLER in MET-166 on 2026-09-25T13:39:00Z with its own command (node extraer-dp.mjs), reading id=\"productTitle\", the field-author link of the byline, the rpi-attribute cards for Language, Publication date, Print length and File size, and the displayedPrice input, corroborating the price against a second place in the HTML.",
+    "evidenceFile": "evidencia/cerebro-met147-asin-faltantes/www-amazon-com-dp-B0H28T65JL-2026-09-25T133506Z.html",
+    "measuredBy": "MetrilabCL / MET-165 (CEREBRO, capture of the raw HTML)",
+    "verifiedAt": "2026-09-25T13:39:00Z",
+    "verifiedBy": "MetrilabCL / MET-166 (TALLER, own extraction from that same saved HTML)"
+  },
+  "relatedEditions": [
+    {
+      "asin": "B0H85WN76Z",
+      "format": "Paperback",
+      "storefront": "amazon.com",
+      "url": "https://www.amazon.com/Your-WhatsApp-Chatbot-configurable-lock/dp/B0H85WN76Z",
+      "confidence": "High",
+      "note": "Read from the edition selector of this same measured page, which shows it at USD 8.99. Only its ASIN, its format and that price were measured; its own listing was not read, so its length, its publication date and its description are not measured here and this edition is deliberately kept out of the structured data of this page."
+    }
+  ],
+  "observations": [
+    "The print-length help text of this listing reads \"Contains real page numbers based on the print edition (ISBN B0H85WN76Z)\". B0H85WN76Z is an Amazon ASIN, not an ISBN: the listing itself labels it wrongly. It is reported as read, not corrected, and no ISBN is published on this site because none was measured.",
+    "The byline of this listing spells the author's name \"Metrilab CL\", the same form as B0HDPV63R4 and not the \"Metrilab Cl\" of B0FP1RY9G4. The inconsistency is in the source, on the Amazon pages themselves.",
+    "The Kindle format button of the edition selector shows \"$0.00\" with the \"With Kindle Unlimited\" icon. That zero is the subscription icon, not the purchase price: the price published above is the one the buyer pays (displayedPrice = 3.99), corroborated a second time in the page's own price block."
+  ],
+  "notMeasured": [
+    "Average rating and number of reviews: the measured page contains no review block and no rating at all (literal search over the saved HTML for \"out of 5\", \"ratings\" and \"Customer review\": zero matches each).",
+    "Best Sellers Rank: absent from the measured page (zero matches).",
+    "ISBN and publisher: neither appears on the measured page. The only occurrence of the word ISBN is the mislabelled help text noted above.",
+    "What people ask about this topic: unlike the other two titles of this catalog, no question set from a citable source has been measured for the subject of this one, so no demand section is published here.",
+    "Whether the book delivers what its title announces: that would require reading the inside of the book, which is outside the scope of this catalog."
+  ]
+}

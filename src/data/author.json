@@ -23,6 +23,11 @@
       "form": "Metrilab CL",
       "source": "Google Books bibliographic record, quoted from a SerpApi result",
       "measuredBy": "MetrilabCL / MET-149 (EXPLORADOR), 2026-09-25T02:07:19Z"
+    },
+    {
+      "form": "Metrilab CL",
+      "source": "Amazon byline on /dp/B0H28T65JL (field-author link in the saved product HTML)",
+      "measuredBy": "MetrilabCL / MET-165 (CEREBRO, capture 2026-09-25T13:35:06Z), extracted from that saved HTML in MET-166 (TALLER), 2026-09-25T13:39:00Z"
     }
   ],
 
@@ -38,9 +43,9 @@
       "corroboration": "Amazon product page read in full (ASIN B0HDPV63R4) and listed on the Goodreads author profile."
     },
     {
-      "title": "Your WhatsApp AI Chatbot",
-      "slug": null,
-      "corroboration": "Listed on the Goodreads author profile (read 2026-09-25T02:15:35Z) and in a Google Books record quoted from SerpApi. Its Amazon listing (ASIN B0H28T65JL) returned an interstitial instead of the product page, so no field of this title has been measured."
+      "title": "Your WhatsApp AI Chatbot: Build a configurable assistant with your own API keys — no platform lock-in",
+      "slug": "your-whatsapp-ai-chatbot",
+      "corroboration": "Amazon product page read in full (ASIN B0H28T65JL) on 2026-09-25T13:35:06Z, after six earlier attempts the same day had failed to reach it (four returned Amazon's 3494-byte anti-bot interstitial with http=200, two returned nothing at all). Also listed on the Goodreads author profile and in a Google Books record quoted from SerpApi, both of which carry the short form of the title; the full title above is the one the Amazon listing publishes."
     },
     {
       "title": "Fill Every Chair",
@@ -51,6 +56,11 @@
       "title": "Cited Or Invisible",
       "slug": null,
       "corroboration": "Listed on the Goodreads author profile (read 2026-09-25T02:15:35Z). An exact-title match appears on amazon.ae under ASIN B0H8H2T1C1 (RADAR, SerpApi, 2026-09-25T02:18:27Z); whether that is the same work as a Kindle edition on amazon.com is not confirmed, and no listing of it has been read."
+    },
+    {
+      "title": "ASIN B0GX2VKG28 — title not measured",
+      "slug": null,
+      "corroboration": "A fourth Amazon listing attributed to this author, handed over by ASIN. Its product page has never been read: eight requests on 2026-09-25 (five by EXPLORADOR between 01:50Z and 02:03Z, two by CEREBRO at 13:35:15Z and 13:36:02Z, plus the ASIN's share of the same runs) returned either nothing or an http=200 page of 2656-3781 bytes whose entire content is Amazon's anti-bot notice — one of them stating that continued automated access violates its Conditions of Use. Sizes and markers re-checked by TALLER in MET-166 on 2026-09-25T13:41:02Z. No title, no length, no date and no price of this ASIN is published here, and none is guessed: getting past that notice would be evasion, not measurement."
     }
   ],
 
