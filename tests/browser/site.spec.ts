@@ -65,10 +65,16 @@ test('la identidad y las cuatro ilustraciones cargan en móvil', async ({ page, 
   }
 });
 
-test('contacto valida y prepara una consulta sin enviar datos', async ({ page, context }) => {
+test('contacto valida y prepara una consulta sin enviar sus campos', async ({ page, context, baseURL }) => {
   await context.grantPermissions(['clipboard-read', 'clipboard-write']);
   const submissions: string[] = [];
-  page.on('request', request => { if (request.method() === 'POST') submissions.push(request.url()); });
+  const transmittedFields: string[] = [];
+  page.on('request', request => {
+    if (request.method() === 'POST' && new URL(request.url()).origin === new URL(baseURL!).origin) submissions.push(request.url());
+    let payload = `${request.url()} ${request.postData() || ''}`;
+    try { payload = decodeURIComponent(payload.replace(/\+/g, ' ')); } catch {}
+    if (['Prueba de consulta', 'https://ejemplo.cl', 'Quiero investigar cómo mejorar mi sitio.'].some(value => payload.includes(value))) transmittedFields.push(request.url());
+  });
   await page.goto('/contacto/');
   await page.getByRole('button', { name: 'Copiar mensaje' }).click();
   expect(await page.locator('#contact-message').evaluate((element: HTMLTextAreaElement) => element.validity.valueMissing)).toBe(true);
@@ -93,6 +99,7 @@ test('contacto valida y prepara una consulta sin enviar datos', async ({ page, c
   await expect(page.locator('#draft-result')).toBeVisible();
   await expect(page.locator('#draft-result')).toHaveValue(/Quiero investigar/);
   expect(submissions).toEqual([]);
+  expect(transmittedFields).toEqual([]);
 });
 
 test('la ruta inexistente usa la 404 y vuelve al inicio', async ({ page }) => {
