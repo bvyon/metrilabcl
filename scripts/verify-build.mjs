@@ -21,6 +21,11 @@ for (const file of htmlFiles) {
   assert.match(html, /<html[^>]+lang="es-CL"/, `${route}: falta idioma`);
   assert.match(html, /<meta name="description" content="[^"]+"/, `${route}: falta descripción`);
   assert.match(html, /<link rel="canonical" href="https:\/\/metrilab\.cl\//, `${route}: falta canonical`);
+  const head = (html.match(/<head>(.*?)<\/head>/s)?.[1] || '').replace(/<!--.*?-->/gs, '');
+  const body = (html.match(/<body>(.*?)<\/body>/s)?.[1] || '').replace(/<!--.*?-->/gs, '');
+  assert.match(head, /^\s*<script>\(function\(w,d,s,l,i\)/, `${route}: GTM debe iniciar el head`);
+  assert.equal((head.match(/'GTM-WQVRDHQM'/g) || []).length, 1, `${route}: contenedor GTM ausente o duplicado`);
+  assert.match(body, /^\s*<noscript><iframe[^>]+src="https:\/\/www\.googletagmanager\.com\/ns\.html\?id=GTM-WQVRDHQM"/, `${route}: GTM noscript debe iniciar el body`);
   for (const match of html.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/gs)) {
     const schema = JSON.parse(match[1]);
     assert.equal(schema['@context'], 'https://schema.org');
