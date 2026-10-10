@@ -1,11 +1,9 @@
-<div class="signal" role="img" aria-label="Diagrama conceptual: demanda, contenido y entidad conectados alrededor de una estrategia de visibilidad. No representa mediciones.">
-  <div class="signal-grid"></div>
-  <div class="signal-top"><span><i></i> SISTEMA DE VISIBILIDAD</span><span>FIG. 01</span></div>
-  <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="orbit orbit-three"></div>
-  <div class="signal-axis axis-x"></div><div class="signal-axis axis-y"></div>
-  <div class="signal-core"><svg width="66" height="66" viewBox="0 0 30 30" aria-hidden="true"><path d="M3 24V6h6l6 9 6-9h6v18h-6V15l-6 9-6-9v9H3Z" fill="currentColor" /></svg></div>
-  <span class="signal-node node-demand"><span class="node-dot"></span> Demanda <small>Lo que buscan</small></span>
-  <span class="signal-node node-content"><span class="node-dot"></span> Contenido <small>Lo que respondes</small></span>
-  <span class="signal-node node-entity"><span class="node-dot"></span> Entidad <small>Quién eres</small></span>
-  <div class="signal-bottom"><span>DE LA EVIDENCIA A LA DECISIÓN</span><span class="signal-cross">+</span></div>
-</div>
+---
+import { Image } from 'astro:assets';
+import claridad from '../assets/illustrations/claridad.png';
+---
+<figure class="hero-art">
+  <div class="hero-art-top"><span><i></i> UNA MIRADA CON CRITERIO</span><span>FIG. 01</span></div>
+  <Image src={claridad} alt="Una lupa enfoca las capas de una web, conectadas con señales de búsqueda: investigar permite ver qué mejorar." width={960} widths={[400, 640, 960]} sizes="(max-width: 650px) calc(100vw - 40px), (max-width: 900px) 45vw, 40vw" format="webp" quality={82} loading="eager" fetchpriority="high" />
+  <figcaption class="hero-art-caption"><span><b>01</b> Lo que buscan</span><span><b>02</b> Lo que respondes</span><span><b>03</b> Tu siguiente paso</span></figcaption>
+</figure>

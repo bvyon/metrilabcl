@@ -41,6 +41,24 @@ test('menú móvil, teclado y filtro de recursos', async ({ page }) => {
   await expect(page.locator('.article-card:visible')).toHaveCount(3);
 });
 
+test('la identidad y las cuatro ilustraciones cargan en móvil', async ({ page, request }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await page.evaluate(() => document.fonts.ready);
+  await expect(page.locator('.site-header .brand-wordmark')).toHaveText('metrilabCL');
+  const illustrations = page.locator('.hero-art img, .service-visual img, .method-visual img');
+  await expect(illustrations).toHaveCount(4);
+  for (const illustration of await illustrations.all()) {
+    await illustration.scrollIntoViewIfNeeded();
+    await illustration.evaluate((image: HTMLImageElement) => image.decode());
+    expect(await illustration.evaluate((image: HTMLImageElement) => image.naturalWidth)).toBeGreaterThan(0);
+    expect(await illustration.evaluate((image: HTMLImageElement) => image.currentSrc)).toMatch(/\.webp$/);
+  }
+  for (const path of ['/owl.svg', '/brand.svg', '/favicon.svg', '/favicon-32.png', '/apple-touch-icon.png']) {
+    expect((await request.get(path)).status(), path).toBe(200);
+  }
+});
+
 test('contacto valida y prepara una consulta sin enviar datos', async ({ page, context }) => {
   await context.grantPermissions(['clipboard-read', 'clipboard-write']);
   const submissions: string[] = [];

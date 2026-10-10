@@ -33,7 +33,9 @@ if (path !== '/' && path !== '/404/') graph.push({
     <meta name="description" content={description} />
     <meta name="robots" content={noindex || !site.launchReady ? 'noindex, follow' : 'index, follow, max-image-preview:large'} />
     <link rel="canonical" href={canonical} />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.svg?v=2" type="image/svg+xml" />
+    <link rel="alternate icon" href="/favicon-32.png?v=2" type="image/png" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
     <meta property="og:type" content={type === 'Article' ? 'article' : 'website'} />
     <meta property="og:locale" content="es_CL" />
     <meta property="og:site_name" content={site.name} />
