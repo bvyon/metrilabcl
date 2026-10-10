@@ -1,0 +1,50 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import { site, mailto } from '../data/site';
+---
+<Layout title="Cuéntanos tu sitio | Contacto MetrilabCL" description="Escribe a MetrilabCL para conversar sobre tu sitio. Cuéntanos tu objetivo y si necesitas diagnóstico o ejecución. Contacto por correo." type="ContactPage" schema={{ mainEntity: { '@id': `${site.url}/#organization` }, ...(site.email ? { contactPoint: { '@type': 'ContactPoint', email: site.email, contactType: 'Consultas de servicios', availableLanguage: 'Spanish' } } : {}) }}>
+  <PageHero title="Una buena conversación empieza con tu sitio." label="CONTACTO / CONVERSEMOS" lead="Cuéntanos qué necesitas entender o mejorar. No hace falta llegar con todas las respuestas; basta con una pregunta y un objetivo." breadcrumb="Contacto" contact={false} />
+  <div class="container contact-grid"><section class="contact-info"><p class="eyebrow">CONTACTO DIRECTO</p><a class="contact-email" href={mailto('Consulta desde contacto | MetrilabCL')}>{site.email}<Icon name="diagonal" size={22} /></a><p>Escríbenos con la dirección de tu sitio, el objetivo que quieres resolver y si necesitas diagnóstico, ejecución o ayuda para elegir.</p><h2>Qué pasa después.</h2><ol class="contact-steps"><li>Revisamos tu consulta y el contexto que compartas.</li><li>Aclaramos el alcance y los accesos necesarios.</li><li>Preparamos una propuesta con entregables y condiciones.</li></ol><p>El plazo de respuesta y de trabajo se acuerda durante la conversación.</p><div class="note"><p>¿Todavía no tienes sitio? Cuéntanos el estado de tu proyecto. Podemos definir qué investigar antes de empezar.</p></div></section>
+    <section class="contact-form" aria-labelledby="composer-title"><h2 id="composer-title">Prepara tu primer mensaje.</h2><p>Te ayudamos a ordenarlo. Se prepara en tu navegador y tú decides cuándo enviarlo desde tu correo.</p>
+      <form id="contact-composer" data-email={site.email} data-authorization={`Autorizo a ${site.owner.name}, responsable de MetrilabCL, a tratar los datos de esta consulta para responderme y preparar la propuesta que solicito, y a conservarla por un máximo de ${site.privacyRetentionMonths} meses desde la última interacción si no contrato un servicio. He leído la política: ${site.url}/privacidad/. Puedo retirar esta autorización por correo.`}>
+        <div class="field"><label for="contact-name">Tu nombre <span>(opcional)</span></label><input id="contact-name" name="name" type="text" autocomplete="name" maxlength="100" placeholder="¿Cómo te llamas?" /></div>
+        <div class="field"><label for="contact-site">Tu sitio web <span>(opcional)</span></label><input id="contact-site" name="website" type="url" inputmode="url" autocomplete="url" maxlength="500" placeholder="https://tusitio.cl" /></div>
+        <div class="field"><label for="contact-service">¿En qué podemos ayudarte?</label><select id="contact-service" name="service"><option value="Necesito orientación">Necesito orientación</option><option value="Diagnóstico web">Diagnóstico web</option><option value="Ejecución SEO">Ejecución SEO</option><option value="Investigación">Investigación</option><option value="Visibilidad en IA">Visibilidad en IA</option></select></div>
+        <div class="field"><label for="contact-message">Tu objetivo <span>(obligatorio)</span></label><textarea id="contact-message" name="message" required minlength="10" maxlength="1800" placeholder="¿Qué te gustaría entender o mejorar en tu sitio?"></textarea></div>
+        <div class="consent-field"><input id="contact-consent" name="consent" type="checkbox" required aria-describedby="contact-consent-detail" /><div><label for="contact-consent">Autorizo a {site.owner.name} a usar los datos de mi consulta para responderme y preparar una propuesta solicitada.</label><p id="contact-consent-detail">Consultas sin contratación: hasta {site.privacyRetentionMonths} meses desde la última interacción. Puedes retirar tu autorización por correo. <a href="/privacidad/">Leer la política de privacidad</a>.</p></div></div>
+        <div class="form-actions"><button class="button button-dark" type="submit">Abrir en mi correo <Icon name="diagonal" /></button><button class="button button-outline" type="button" id="copy-message">Copiar mensaje</button></div>
+        <p class="form-privacy">Este sitio no envía ni guarda estos campos. Si envías el correo, recibiremos los datos incluidos en tu mensaje. <a href="/privacidad/">Consulta la información de privacidad.</a></p><p class="form-status" id="form-status" role="status" aria-live="polite"></p><textarea class="draft-result" id="draft-result" aria-label="Mensaje preparado para copiar manualmente" readonly hidden></textarea>
+      </form>
+      <noscript><p>Para contactarnos, escribe directamente a <a href={mailto('Consulta desde contacto | MetrilabCL')}>{site.email}</a>. La herramienta para preparar mensajes necesita JavaScript.</p></noscript>
+    </section>
+  </div>
+  <script>
+    const form = document.querySelector<HTMLFormElement>('#contact-composer');
+    const status = document.querySelector<HTMLElement>('#form-status');
+    const output = document.querySelector<HTMLTextAreaElement>('#draft-result');
+    function compose() {
+      if (!form || !form.reportValidity()) return null;
+      const data = new FormData(form);
+      const service = String(data.get('service') || 'Consulta');
+      const body = [`Hola, Equipo MetrilabCL:`, '', data.get('name') ? `Mi nombre: ${data.get('name')}` : '', data.get('website') ? `Mi sitio: ${data.get('website')}` : '', `Necesito: ${service}`, '', `Mi objetivo:`, String(data.get('message') || ''), '', form.dataset.authorization || '', '', 'Gracias.'].filter((line, i, all) => line !== '' || all[i - 1] !== '').join('\n');
+      return { body, subject: `${service} | Contacto MetrilabCL` };
+    }
+    form?.addEventListener('submit', event => {
+      event.preventDefault();
+      const message = compose();
+      if (!message || !form?.dataset.email) return;
+      window.location.href = `mailto:${form.dataset.email}?subject=${encodeURIComponent(message.subject)}&body=${encodeURIComponent(message.body)}`;
+      if (status) status.textContent = 'Se solicitó abrir tu aplicación de correo. Revisa el mensaje y envíalo desde ahí. Si no se abre, usa «Copiar mensaje».';
+    });
+    document.querySelector('#copy-message')?.addEventListener('click', async () => {
+      const message = compose();
+      if (!message) return;
+      const text = `Para: ${form?.dataset.email}\nAsunto: ${message.subject}\n\n${message.body}`;
+      try { await navigator.clipboard.writeText(text); if (status) status.textContent = 'Mensaje copiado. Pégalo en tu correo y envíalo cuando quieras.'; }
+      catch { if (output) { output.hidden = false; output.value = text; output.focus(); output.select(); } if (status) status.textContent = 'Puedes seleccionar y copiar el mensaje que aparece debajo.'; }
+    });
+    // Sin JavaScript el enlace directo al correo sigue funcionando.
+  </script>
+</Layout>

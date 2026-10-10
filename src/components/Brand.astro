@@ -1,0 +1,8 @@
+---
+interface Props { footer?: boolean; }
+const { footer = false } = Astro.props;
+---
+<a href="/" class:list={['brand', { 'brand-footer': footer }]} aria-label="MetrilabCL, inicio">
+  <svg class="brand-symbol" width="30" height="30" viewBox="0 0 30 30" fill="none" aria-hidden="true"><path d="M3 24V6h6l6 9 6-9h6v18h-6V15l-6 9-6-9v9H3Z" fill="currentColor" /></svg>
+  <span>metrilab<span class="brand-cl">CL</span><span class="brand-dot">.</span></span>
+</a>

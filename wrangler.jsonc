@@ -1,0 +1,16 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "metrilabcl",
+  "account_id": "eb833c0dad97e6ce75f96a7d8c3e4de6",
+  "workers_dev": true,
+  "preview_urls": false,
+  "routes": [
+    { "pattern": "metrilab.cl", "custom_domain": true, "previews_enabled": false },
+    { "pattern": "www.metrilab.cl", "custom_domain": true, "previews_enabled": false }
+  ],
+  "compatibility_date": "2026-10-10",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page"
+  }
+}

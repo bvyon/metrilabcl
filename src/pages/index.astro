@@ -1,78 +1,45 @@
 ---
-import Base from '../layouts/Base.astro'
-import { cargarLibros, cargarAutor } from '../lib/catalogo'
-import { SITIO, S, fecha, fechaHora, idiomaDelTitulo } from '../lib/sitio'
-import { ldIndice } from '../lib/jsonld'
-
-const libros = await cargarLibros()
-const autor = await cargarAutor(libros)
-
-const titulos = S.titulosCuenta(libros.length)
-const rutaFicha = (slug: string) => `/${SITIO.catalogPathSegment}/${slug}/`
-const urlDe = (b: { slug: string }) => new URL(rutaFicha(b.slug), Astro.site!).href
-
-const jsonLd = ldIndice(new URL('/', Astro.site!).href, libros, urlDe)
+import Layout from '../layouts/Layout.astro';
+import Icon from '../components/Icon.astro';
+import Signal from '../components/Signal.astro';
+import CTA from '../components/CTA.astro';
+import { steps } from '../data/site';
 ---
-
-<Base
-  ruta="/"
-  title={S.indiceTitulo(SITIO.siteName, titulos)}
-  description={S.indiceDescripcion(SITIO.publisherName, titulos)}
-  bodyClass="p-indice"
-  jsonLd={jsonLd}
->
-  <h1>{SITIO.siteName}</h1>
-  <p class="entrada">{S.indiceEntrada(SITIO.publisherName)}</p>
-
-  <h2 class="seccion">{S.indiceCatalogo(titulos)}</h2>
-  <ul class="catalogo">
-    {
-      libros.map((b) => (
-        <li class="tarjeta">
-          <h3>
-            <a href={rutaFicha(b.slug)} lang={idiomaDelTitulo(b)}>
-              {b.title}
-            </a>
-          </h3>
-          <dl class="datos">
-            <dt>{S.dtAutor}</dt>
-            <dd>{b.author}</dd>
-            <dt>{S.dtFormato}</dt>
-            <dd>{b.format ?? <span class="no-medido-inline">{S.noMedido}</span>}</dd>
-            <dt>{S.dtIdioma}</dt>
-            <dd>{b.language ?? <span class="no-medido-inline">{S.noMedido}</span>}</dd>
-            <dt>{S.dtExtension}</dt>
-            <dd>
-              {b.printLength ? S.paginas(b.printLength) : <span class="no-medido-inline">{S.noMedido}</span>}
-            </dd>
-            <dt>{S.dtPublicado}</dt>
-            <dd>
-              {
-                b.publicationDate ? (
-                  <time datetime={b.publicationDate}>{fecha(b.publicationDate)}</time>
-                ) : (
-                  <span class="no-medido-inline">{S.noMedido}</span>
-                )
-              }
-            </dd>
-            <dt>{S.dtAsin}</dt>
-            <dd>
-              <code>{b.asin}</code>
-            </dd>
-          </dl>
-          <p class="procedencia">
-            {
-              b.measurement
-                ? S.medidoEl(fechaHora(b.measurement.measuredAt))
-                : S.declaradoEl(fechaHora(b.declaration!.declaredAt))
-            }
-          </p>
-        </li>
-      ))
-    }
-  </ul>
-
-  <h2>{S.indiceAutorH2}</h2>
-  <p>{S.indiceAutorTexto(autor.primaryName)}</p>
-  <p><a href={`/${SITIO.authorPathSegment}/`}>{S.indiceAutorEnlace}</a></p>
-</Base>
+<Layout title="MetrilabCL | Agencia SEO e investigación web en Chile" description="Menos ruido. Más dirección. Investigamos cómo te buscan y qué tan bien responde tu sitio. Diagnóstico y ejecución SEO con método en Chile.">
+  <section class="hero container">
+    <div class="hero-copy">
+      <p class="eyebrow"><span class="status-dot"></span> ESTUDIO DE INVESTIGACIÓN Y VISIBILIDAD WEB</p>
+      <h1>Menos ruido.<br /><em>Más dirección.</em></h1>
+      <p class="hero-lead">Investigamos cómo te buscan y qué tan bien responde tu sitio.</p>
+      <p class="hero-description">Somos MetrilabCL. Convertimos la investigación en un plan claro para tu negocio: qué mejorar, por qué y cómo llevarlo a cabo.</p>
+      <div class="hero-actions"><a href="/contacto/" class="button button-dark">Conversemos sobre tu sitio <Icon name="diagonal" /></a><a href="/metodo/" class="text-link">Conoce el método <Icon /></a></div>
+      <p class="hero-note">Con fuentes y criterio. Sin promesas de posiciones.</p>
+    </div>
+    <Signal />
+  </section>
+  <div class="expertise-strip"><div class="container"><span>EL FOCO</span><p>Investigación <i></i> SEO técnico <i></i> Contenidos <i></i> Visibilidad en IA</p><a href="/servicios/" aria-label="Explorar todos los servicios"><Icon name="diagonal" /></a></div></div>
+  <section class="section-pad container" id="servicios">
+    <div class="section-heading"><p class="eyebrow">01 / DOS CAMINOS, UN MISMO CRITERIO</p><div><h2>Claridad para decidir.<br /><em>Método para avanzar.</em></h2><p>No todos los sitios necesitan lo mismo. Empezamos por entender el tuyo y elegimos el alcance contigo.</p></div></div>
+    <div class="service-grid">
+      <a href="/diagnostico/" class="service-card"><div class="card-top"><span class="eyebrow">01 / DIAGNÓSTICO</span><Icon name="search" size={26} /></div><h3>Primero, entender.</h3><p>Una mirada completa a tu sitio y a su contexto. Hallazgos con evidencia y recomendaciones en orden de prioridad.</p><ul><li>Investigación de demanda y competencia</li><li>SEO, contenido, accesibilidad y rendimiento</li><li>Un plan que tu equipo puede aplicar</li></ul><span class="card-link">Explorar diagnóstico <Icon name="diagonal" /></span></a>
+      <a href="/seo/" class="service-card execution"><div class="card-top"><span class="eyebrow">02 / EJECUCIÓN</span><Icon name="layers" size={26} /></div><h3>Después, hacer.</h3><p>Si necesitas un equipo que aplique el plan, implementamos las mejoras con los accesos y el alcance acordados.</p><ul><li>Correcciones técnicas y estructura web</li><li>Contenidos y datos estructurados</li><li>Verificación de cada cambio</li></ul><span class="card-link">Explorar ejecución <Icon name="diagonal" /></span></a>
+    </div>
+    <div class="section-footnote"><span>Propuestas según tu sitio y tu objetivo. Sin planes genéricos.</span><a href="/servicios/" class="text-link">Comparar los dos caminos <Icon /></a></div>
+  </section>
+  <section class="method-section section-pad"><div class="container method-grid">
+    <div class="method-intro"><p class="eyebrow">02 / UN MÉTODO A LA VISTA</p><h2>La confianza<br />se construye<br /><em>con evidencia.</em></h2><p>Cada dato tiene una fuente. Cada recomendación, una razón. Y cada límite se dice de frente.</p><a href="/metodo/" class="text-link">Así trabajamos <Icon name="diagonal" /></a><div class="method-stamp"><span>m.</span><p>CRITERIO ANTES<br />QUE SUPOSICIONES</p></div></div>
+    <div class="steps">{steps.map((step, i) => <div class="step"><span class="step-number">0{i + 1}</span><div><h3>{step.title}</h3><p>{step.text}</p></div><Icon name="diagonal" size={19} /></div>)}</div>
+  </div></section>
+  <section class="section-pad container focus-section"><p class="eyebrow">03 / VISIBILIDAD CON FUNDAMENTO</p><div class="focus-heading"><h2>Tu web debe poder<br /><em>entenderse.</em></h2><p>Por tus clientes. Por los buscadores. Por los sistemas que construyen respuestas. Trabajamos en lo que sí está en tus manos.</p></div><div class="focus-grid">
+    <a href="/investigacion/" class="focus-card"><Icon name="chart" size={30} /><span class="eyebrow">CONTEXTO</span><h3>Antes de publicar,<br />investigar.</h3><p>Qué busca tu público y cómo se presenta la oferta que ya encuentra.</p><span class="card-link">Investigación <Icon name="diagonal" /></span></a>
+    <a href="/seo/" class="focus-card"><Icon name="globe" size={30} /><span class="eyebrow">BASE TÉCNICA</span><h3>Una web fácil<br />de encontrar.</h3><p>Estructura, rastreo y contenido que ayuden a conectar una búsqueda con tu oferta.</p><span class="card-link">Ejecución SEO <Icon name="diagonal" /></span></a>
+    <a href="/visibilidad-en-ia/" class="focus-card"><Icon name="layers" size={30} /><span class="eyebrow">NUEVAS RESPUESTAS</span><h3>Información clara.<br />También para la IA.</h3><p>AEO y GEO con fuentes, identidad consistente y expectativas honestas.</p><span class="card-link">Visibilidad en IA <Icon name="diagonal" /></span></a>
+  </div></section>
+  <section class="principle-section"><div class="container principle-inner"><span class="eyebrow">NUESTRO COMPROMISO</span><h2>Prometemos rigor.<br /><em>Las posiciones no dependen de nosotros.</em></h2><p>Una agencia SEO puede investigar, mejorar y verificar tu sitio. No puede controlar las decisiones de Google o de un sistema de IA. Preferimos que lo sepas desde el primer día.</p></div></section>
+  <section class="section-pad container resources-home"><div class="resources-title"><div><p class="eyebrow">04 / IDEAS PARA DECIDIR MEJOR</p><h2>Criterio que<br /><em>compartimos.</em></h2></div><a href="/recursos/" class="text-link">Todos los recursos <Icon /></a></div><div class="resource-grid">
+    <a href="/recursos/diagnostico-o-ejecucion/" class="resource-card"><div class="resource-art art-path"><span>01</span><div>Entender <Icon /><strong>Hacer</strong></div></div><p class="eyebrow">DECISIONES · GUÍA</p><h3>Diagnóstico o ejecución: cómo elegir tu siguiente paso.</h3><span class="text-link">Leer guía <Icon name="diagonal" /></span></a>
+    <a href="/recursos/como-leer-un-diagnostico/" class="resource-card"><div class="resource-art art-evidence"><span>02</span><div><i></i><i></i><i></i><b>Fuente → Criterio → Acción</b></div></div><p class="eyebrow">MÉTODO · GUÍA</p><h3>Cómo leer un diagnóstico sin perderte en los datos.</h3><span class="text-link">Leer guía <Icon name="diagonal" /></span></a>
+    <a href="/recursos/visibilidad-ia-sin-promesas/" class="resource-card"><div class="resource-art art-ia"><span>03</span><div><span class="ia-orbit"></span><b>Una respuesta<br />con fundamento.</b></div></div><p class="eyebrow">VISIBILIDAD EN IA · GUÍA</p><h3>Qué puedes mejorar para la IA y qué nadie puede garantizar.</h3><span class="text-link">Leer guía <Icon name="diagonal" /></span></a>
+  </div></section>
+  <CTA />
+</Layout>

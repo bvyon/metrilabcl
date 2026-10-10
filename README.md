@@ -1,131 +1,100 @@
-# Hub de ebooks de MetrilabCL
+# MetrilabCL
 
-Hub público de los ebooks autopublicados de **MetrilabCL** en Amazon Kindle. Proyecto
-[Astro](https://astro.build) con TypeScript, contenido estático, **cero JavaScript en el
-cliente**. Se despliega en Vercel.
+Sitio editorial de investigación y visibilidad web para Chile. Construido con Astro 7 y TypeScript, con páginas estáticas y JavaScript limitado al menú móvil, filtros de recursos y preparación de correos.
 
-**URL prevista:** `https://libros.bvyon-marketing.cl` — **todavía no está desplegada.** El paso
-a paso para el Board está en [`DESPLIEGUE.md`](DESPLIEGUE.md).
+Publicado en Cloudflare Workers el 10 de octubre de 2026. Dominio principal: [metrilab.cl](https://metrilab.cl). Dirección alternativa: [metrilabcl.metrilabcl.workers.dev](https://metrilabcl.metrilabcl.workers.dev). La política de privacidad incluye los datos confirmados del responsable. La indexación sigue desactivada hasta aprobar el lanzamiento para buscadores.
 
-## Empezar
+## Vista local
 
-```bash
-npm install
-npm run dev      # http://localhost:4321
+Requiere Node.js 22.12 o superior.
+
+```sh
+npm ci
+npm run dev
 ```
 
-| Script | Qué hace |
-|---|---|
-| `npm run dev` | servidor de desarrollo con recarga |
-| `npm run build` | `astro build` **y** la guardia de salida; deja el sitio en `dist/` |
-| `npm run preview` | sirve `dist/` como lo servirá Vercel |
-| `npm run check` | `astro check` — tipos y plantillas |
-| `npm run verificar` | sólo la guardia de salida, sobre un `dist/` ya construido |
+Abre la dirección local que indique Astro, normalmente `http://127.0.0.1:4321`.
 
-Node 22+. `dist/` no está versionado: el build corre en el despliegue y en el CI.
-
-## Principio de contenido
-
-Este sitio **sólo publica datos medidos** sobre la página pública del producto en Amazon, con
-la fecha de la medición visible en cada ficha.
-
-- Sin reseñas, valoraciones, `aggregateRating` ni estrellas mientras no se midan.
-- Sin «bestseller» ni Best Sellers Rank mientras no se midan.
-- Un título que no se pudo medir **no tiene ficha**: se queda fuera del catálogo y del sitemap
-  en lugar de publicarse a medias.
-
-**Esto no depende de que nadie se acuerde.** Lo hacen cumplir dos mecanismos:
-
-1. **El esquema** (`src/content.config.ts`). Las colecciones se validan con Zod y cada objeto
-   es `.strict()`: un campo que no está en el esquema **no se puede publicar**. No hay campos
-   de valoración, ranking ni premios en ningún nivel, y es deliberado.
-2. **La guardia de salida** (`scripts/verificar-salida.mjs`), encadenada en `npm run build`.
-   Mide el HTML emitido y mata el build si aparece `aggregateRating`, `ratingValue`,
-   `reviewCount`, `bestseller` o `award`, si un canonical no es autorreferente o no termina en
-   barra, si `og:url` no coincide con el canonical, si el sitemap no cubre exactamente lo
-   publicado, si la 404 pierde el `noindex` o si hay títulos o meta descriptions duplicados.
-
-## Estructura
-
-```
-astro.config.mjs              resuelve `site` desde el entorno (ver abajo)
-vercel.json                   trailingSlash y cabeceras HTTP
-src/
-  content.config.ts           colecciones + esquema Zod (el contrato de los datos)
-  data/libros/<slug>.json     una ficha por título medido; el nombre del archivo ES la URL
-  data/author.json            la entidad del autor
-  lib/sitio.ts                nombre, idioma y segmentos de URL del sitio
-  lib/catalogo.ts             invariantes que cruzan varios archivos
-  lib/jsonld.ts               los bloques de datos estructurados y qué NO se emite
-  lib/strings.ts              cadenas de la plantilla por idioma
-  layouts/Base.astro          <head>, canonical, JSON-LD, chrome
-  pages/                      /, /libros/<slug>/, /autor/, 404, robots.txt
-scripts/verificar-salida.mjs  la guardia de salida
+```sh
+npm run check
+npm run build
+npm run verify
+npm run preview
 ```
 
-## Cómo se resuelve la URL base
+El resultado compilado se guarda en `dist/`. No requiere un servidor de aplicación, base de datos ni variables secretas.
 
-De la URL base salen `canonical`, `og:url`, el sitemap, la línea `Sitemap:` de `robots.txt` y
-los `@id` del JSON-LD. **No está clavada.** `astro.config.mjs` la resuelve en este orden y
-**escribe en el log qué usó y de dónde salió**:
+Para repetir las pruebas de navegador y accesibilidad: `npx playwright install chromium`, `npm run build` y `npm run test:browser`. La suite sirve el resultado compilado, comprueba las rutas en escritorio y móvil y prueba las interacciones. Si ya tienes Chromium instalado, puedes definir `METRILAB_BROWSER_PATH` con la ruta de su ejecutable.
 
-| # | Fuente | Cuándo manda |
-|---|---|---|
-| 1 | env `SITE_BASE_URL` | siempre que esté definida |
-| 2 | `https://$VERCEL_PROJECT_PRODUCTION_URL` | dentro de Vercel, si no hay `SITE_BASE_URL` |
-| 3 | `https://libros.bvyon-marketing.cl` | `npm run dev` y `npm run build` en local |
+## Contenido y diseño
 
-```
-[site] https://libros.bvyon-marketing.cl  (fuente: valor por defecto de astro.config.mjs)
-```
+- `src/data/site.ts`: identidad, correo y estado de lanzamiento.
+- `src/data/pages.ts`: contenido de páginas principales.
+- `src/data/privacy.ts`: política de privacidad, vinculada a los datos del responsable y al correo configurado.
+- `src/data/articles.ts`: guías de recursos y fechas editoriales.
+- `src/pages/index.astro`: composición de la portada.
+- `src/styles/global.css`: sistema visual y adaptación móvil.
+- `src/layouts/Layout.astro`: navegación, pie, SEO y datos estructurados.
+- `public/`: marca, imagen social y muestra ilustrativa descargable.
 
-Por qué `VERCEL_PROJECT_PRODUCTION_URL` y no `VERCEL_URL`: la documentación de Vercel («System
-environment variables», leída el 2026-09-25) dice de la primera *«A production domain name of
-the project. (…) Note, that this is always set, even in preview deployments»*. Es justo lo que
-queremos — **un preview no debe declararse canónico a sí mismo**, sino apuntar a producción.
-`VERCEL_URL` es el host del despliegue concreto.
+El correo público es **contacto@metrilab.cl**, con recepción y respuestas en **Zoho Mail gratuito**. Acceso: https://mail.zoho.com/. Cloudflare Email Routing está desactivado; los mensajes anteriores siguen en **metrilabcl@gmail.com**. Se comprobaron recepción y respuesta reales. No hay hub de libros ni sección de publicaciones.
 
-El valor por defecto es el subdominio recomendado por el informe de MET-147; **el Board aún no
-lo ha confirmado**, y por eso es una variable y no una constante repartida por las plantillas.
+El contacto permite abrir un mensaje en la aplicación de correo o copiarlo. No transmite ni guarda los campos. La apertura de `mailto:` depende de que el visitante tenga configurada una aplicación de correo; la copia ofrece una alternativa.
 
-## Barra final y canonical
+Las guías están redactadas para esta versión y requieren revisión editorial del propietario antes del lanzamiento. La muestra de diagnóstico es ilustrativa; no se presenta como una auditoría ni como un resultado de cliente.
 
-Las URL son de directorio: `/libros/<slug>/`. Eso son tres piezas que tienen que ir juntas:
+## GitHub
 
-- `trailingSlash: 'always'` y `build.format: 'directory'` en `astro.config.mjs`;
-- `"trailingSlash": true` en `vercel.json`;
-- la guardia de salida, que comprueba que cada canonical termina en barra y apunta al archivo
-  que realmente lo sirve.
+El proyecto contiene `.gitignore` y `package-lock.json`. `node_modules/`, `dist/`, archivos `.env`, archivos `.textClipping` y estado del hosting no deben subirse. Crea un repositorio en tu cuenta, agrega su URL como remoto y sube la carpeta. El repositorio local aún no tiene remoto de GitHub. Las credenciales de publicación no se incorporan a los archivos del sitio ni a Git.
 
-**Invariante:** la URL que el HTML declara como `canonical` responde **200 sin redirección**, y
-la forma sin barra final devuelve 308 hacia ella.
+## Vercel
 
-## Cómo se agrega un título
+1. Importa el repositorio desde GitHub.
+2. Selecciona Astro y Node.js 22 o superior.
+3. Usa el comando definido en `vercel.json`: `npm run check && npm run build && npm run verify`.
+4. La carpeta de salida es `dist`.
+5. Revisa la dirección de prueba antes de conectar `metrilab.cl`.
 
-1. Crea `src/data/libros/<slug>.json`. **El nombre del archivo es el slug y es la URL.**
-2. Rellena el esquema de `src/content.config.ts`. Si falta un campo requerido, si sobra uno que
-   no existe o si un formato no cuadra (ASIN de 10 caracteres, fecha ISO, `measuredAt` en UTC,
-   `amazonUrl` que contenga el ASIN), **el build muere con el campo en el mensaje**.
-3. Añade el título a `knownTitles` en `src/data/author.json`: la página de autor no puede
-   omitir un título que el catálogo sí publica, y el build lo comprueba.
-4. `npm run build`. El índice, el sitemap y la página de autor lo recogen solos.
+No hace falta adaptador de Vercel para esta salida estática. El archivo `vercel.json` incluye cabeceras básicas. Configura HTTPS y el dominio principal en el hosting; las redirecciones entre dominios no se fuerzan en el código para conservar las vistas de prueba.
 
-## Cabeceras HTTP
+## Cloudflare
 
-Servirse desde Vercel permite tocar la respuesta, cosa que en GitHub Pages era imposible.
-`vercel.json` lo usa: `X-Content-Type-Options: nosniff` y `Referrer-Policy:
-strict-origin-when-cross-origin` en todas las rutas, y `Cache-Control: public,
-max-age=31536000, immutable` en `/_astro/*`.
+Cloudflare recomienda Workers para proyectos nuevos. Este sitio puede desplegarse como activos estáticos usando `wrangler.jsonc`, sin código de Worker ni adaptador de Astro.
 
-Ese `immutable` **sólo es correcto porque los assets llevan hash de contenido en el nombre**
-(por eso `build.inlineStylesheets: 'never'`): si cambia el CSS, cambia el nombre del archivo, y
-no hay manera de servirle a nadie una versión vieja.
+1. El repositorio publica automáticamente desde `main` mediante GitHub Actions; consulta [DESPLIEGUE.md](DESPLIEGUE.md).
+2. Construcción: `npm run check && npm run build && npm run verify`.
+3. Publicación y comprobaciones desde la carpeta del proyecto: `npm run deploy:cloudflare`.
+4. El archivo de configuración entrega `dist` y la página de error propia (`404-page`).
 
-## Estado y origen
+Si prefieres Cloudflare Pages: build igual, salida `dist`, sin adaptador. Los archivos `_headers` se aplican al hosting compatible. No configures una redirección SPA a `index.html`, porque este sitio tiene páginas reales y una 404 propia.
 
-Catálogo de MET-147. Hoy tiene **2 de los 4 títulos conocidos**: `B0FP1RY9G4` y `B0HDPV63R4`
-tienen su página de Amazon medida y guardada como evidencia. Los otros dos se nombran en
-`/autor/` y se marcan explícitamente como no medidos, con su corroboración.
+El proyecto de Workers es `metrilabcl`. La configuración conserva los dominios `metrilab.cl` y `www.metrilab.cl` en futuras publicaciones. Para autenticar Wrangler usa su inicio de sesión o un token con permisos limitados, suministrado mediante el entorno; nunca incorpores un token al repositorio.
 
-Contenido y datos estructurados según MET-156 (FORJA MET-152, NEXUS MET-151, LUPA MET-153).
-Migración a Astro y a Vercel en MET-158.
+La cabecera `no-transform` en `public/_headers` impide la inserción automática del script de Web Analytics de Cloudflare. Si decides agregar estadísticas, revisa primero la política de privacidad y la configuración de analítica.
+
+## Antes de habilitar la indexación
+
+Esta entrega mantiene `launchReady: false`, por lo que las páginas llevan `noindex`. El sitio está publicado y puede visitarse, pero solicita a los buscadores que no lo indexen. `noindex` no restringe el acceso al sitio.
+
+1. La política identifica a Bastian Vega Yon, ubicación pública Iquique, Chile, conservación por 12 meses, proveedores y procedimiento de solicitudes. Revisa su aplicación en la operación de la agencia y la actualización normativa del 1 de diciembre de 2026; consulta `docs/privacidad-y-correo.md`.
+2. Revisa y aprueba el método, las guías y el alcance de servicio. No hay clientes, certificaciones, testimonios ni estudios estadísticos inventados.
+3. El dominio registrado es `metrilab.cl`. Si cambia, actualiza `site.url`, `astro.config.mjs`, `wrangler.jsonc` y las referencias de marca.
+4. Cambia `launchReady` a `true` después de completar lo anterior.
+5. Ejecuta `npm run check:launch`, `npm run check`, `npm run build` y `npm run verify`.
+6. Comprueba la vista real, HTTPS, cabeceras, 404 y correo. Registra Search Console y envía `sitemap.xml`.
+
+Mantén los entornos de vista previa sin indexación, mediante la configuración del proveedor, al activar producción.
+
+El script `check:launch` detecta el estado de borrador; no sustituye la revisión de contenido ni una evaluación legal.
+
+## Documentación
+
+- [Análisis del brief y decisiones de diseño](docs/brief-y-propuesta.md)
+- [Registro de verificación](docs/verificacion.md)
+- [Privacidad y correo](docs/privacidad-y-correo.md)
+- [Publicación automática y recuperación](DESPLIEGUE.md)
+- [Astro en Vercel](https://docs.astro.build/en/guides/deploy/vercel/)
+- [Astro en Cloudflare](https://docs.astro.build/en/guides/deploy/cloudflare/)
+- [Activos estáticos de Cloudflare Workers](https://developers.cloudflare.com/workers/static-assets/)
+
+El sitio se publica en la cuenta de Cloudflare del propietario desde [bvyon/metrilabcl](https://github.com/bvyon/metrilabcl). Cada cambio enviado a `main` activa comprobaciones y publicación automática; las ejecuciones están en [GitHub Actions](https://github.com/bvyon/metrilabcl/actions).

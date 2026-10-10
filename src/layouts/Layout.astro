@@ -1,0 +1,84 @@
+---
+import '../styles/global.css';
+import '@fontsource-variable/dm-sans';
+import '@fontsource-variable/newsreader';
+import Brand from '../components/Brand.astro';
+import Icon from '../components/Icon.astro';
+import { navigation, site } from '../data/site';
+interface Props { title: string; description: string; type?: string; schema?: Record<string, unknown>; noindex?: boolean; }
+const { title, description, type = 'WebPage', schema, noindex = false } = Astro.props;
+const path = Astro.url.pathname;
+const canonical = new URL(path, site.url).href;
+const organization = {
+  '@type': 'Organization', '@id': `${site.url}/#organization`, name: site.name, alternateName: 'Metrilab CL',
+  url: site.url, description: site.description, areaServed: { '@type': 'Country', name: 'Chile' },
+  logo: `${site.url}/brand.svg`, ...(site.email ? { email: site.email } : {}),
+};
+const graph = [organization, {
+  '@type': path === '/' ? 'WebSite' : type, '@id': `${canonical}#webpage`, name: title, description, url: canonical,
+  inLanguage: 'es-CL', publisher: { '@id': `${site.url}/#organization` }, ...schema,
+}];
+if (path !== '/' && path !== '/404/') graph.push({
+  '@type': 'BreadcrumbList', '@id': `${canonical}#breadcrumb`,
+  itemListElement: [{ '@type': 'ListItem', position: 1, name: 'Inicio', item: site.url }, { '@type': 'ListItem', position: 2, name: title.split(' | ')[0], item: canonical }],
+} as any);
+---
+<!doctype html>
+<html lang="es-CL">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f5f4ee" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content={noindex || !site.launchReady ? 'noindex, follow' : 'index, follow, max-image-preview:large'} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta property="og:type" content={type === 'Article' ? 'article' : 'website'} />
+    <meta property="og:locale" content="es_CL" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={`${site.url}/social.jpg`} />
+    <meta property="og:image:width" content="1200" /><meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="MetrilabCL. Menos ruido. Más dirección. Investigación y visibilidad web en Chile." />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', '@graph': graph }).replace(/</g, '\\u003c')} />
+  </head>
+  <body>
+    <a class="skip-link" href="#contenido">Saltar al contenido</a>
+    <header class="site-header">
+      <div class="container header-inner">
+        <Brand />
+        <nav class="desktop-nav" aria-label="Navegación principal">{navigation.map(({ href, label }) => <a href={href} aria-current={path.startsWith(href) ? 'page' : undefined}>{label}</a>)}</nav>
+        <a href="/contacto/" class="header-cta">Hablemos <Icon name="diagonal" size={17} /></a>
+        <button class="menu-toggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="mobile-nav"><span></span><span></span></button>
+      </div>
+      <nav id="mobile-nav" class="mobile-nav" aria-label="Navegación móvil" hidden>{navigation.map(({ href, label }) => <a href={href}>{label}<Icon /></a>)}<a href="/contacto/">Contacto<Icon /></a></nav>
+    </header>
+    <main id="contenido"><slot /></main>
+    <footer class="site-footer">
+      <div class="container footer-top">
+        <div class="footer-brand"><Brand footer /><p>Investigación que da claridad.<br />Visibilidad que tiene fundamento.</p><span class="eyebrow">CHILE · ESPAÑOL · WEB</span></div>
+        <div><p class="footer-label">EXPLORA</p><a href="/diagnostico/">Diagnóstico web</a><a href="/seo/">Ejecución SEO</a><a href="/investigacion/">Investigación</a><a href="/visibilidad-en-ia/">Visibilidad en IA</a></div>
+        <div><p class="footer-label">METRILABCL</p><a href="/metodo/">Nuestro método</a><a href="/nosotros/">El estudio</a><a href="/recursos/">Recursos</a><a href="/contacto/">Contacto</a></div>
+      </div>
+      <div class="container footer-bottom"><span>© {new Date().getFullYear()} MetrilabCL</span><span>Hecho con criterio.</span><a href="/privacidad/">Privacidad</a></div>
+    </footer>
+    <script>
+      const toggle = document.querySelector<HTMLButtonElement>('.menu-toggle');
+      const menu = document.querySelector<HTMLElement>('#mobile-nav');
+      const setMenu = (open: boolean) => {
+        if (!toggle || !menu) return;
+        toggle.setAttribute('aria-expanded', String(open));
+        toggle.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
+        menu.hidden = !open;
+      };
+      toggle?.addEventListener('click', () => setMenu(toggle.getAttribute('aria-expanded') !== 'true'));
+      document.addEventListener('keydown', (event) => { if (event.key === 'Escape' && toggle?.getAttribute('aria-expanded') === 'true') { setMenu(false); toggle.focus(); } });
+      const desktop = window.matchMedia('(min-width: 901px)');
+      desktop.addEventListener('change', (event) => { if (event.matches) setMenu(false); });
+    </script>
+  </body>
+</html>

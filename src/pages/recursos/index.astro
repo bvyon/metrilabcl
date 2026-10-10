@@ -1,0 +1,23 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PageHero from '../../components/PageHero.astro';
+import CTA from '../../components/CTA.astro';
+import Icon from '../../components/Icon.astro';
+import { articles } from '../../data/articles';
+---
+<Layout title="Recursos para decidir mejor sobre tu sitio | MetrilabCL" description="Guías del Equipo MetrilabCL sobre diagnóstico, ejecución y visibilidad en IA. Ideas concretas, fuentes y límites para evaluar el trabajo web.">
+  <PageHero title="Criterio que compartimos." label="RECURSOS / EQUIPO METRILABCL" lead="Guías para hacer mejores preguntas, leer la evidencia y decidir tu siguiente paso. Sin rankings de agencias ni recetas para prometer lo que nadie controla." breadcrumb="Recursos" contact={false} />
+  <div class="container page-grid"><aside class="page-sidebar"><p>LECTURAS CON CONTEXTO</p><span>Autoría de la organización.<br />Fuentes y límites visibles.<br />Fechas de revisión reales.</span></aside><div class="prose"><h2>Ideas para tu próxima decisión.</h2><div class="resource-filters" role="group" aria-label="Filtrar guías por tema">{['Todos', 'Decisiones', 'Método', 'IA'].map((category, i) => <button class="filter-button" data-filter={category} aria-pressed={i === 0 ? 'true' : 'false'}>{category === 'IA' ? 'Visibilidad en IA' : category}</button>)}</div><p class="filter-status source-link" role="status" aria-live="polite">3 guías disponibles</p><div class="article-list">{articles.map(article => <a class="article-card" href={`/recursos/${article.slug}/`} data-category={article.category}><span class="eyebrow">{article.category === 'IA' ? 'VISIBILIDAD EN IA' : article.category.toUpperCase()} · GUÍA</span><h3>{article.title}</h3><p>{article.description}</p><span class="text-link">Leer guía <Icon name="diagonal" /></span></a>)}</div><div class="note"><p>Estas guías explican criterios de trabajo. Los estudios con datos de mercado se publicarán cuando tengan fuentes reproducibles, alcance y permisos de uso definidos.</p></div></div></div>
+  <CTA />
+  <script>
+    const filters = document.querySelectorAll<HTMLButtonElement>('[data-filter]');
+    const cards = document.querySelectorAll<HTMLElement>('[data-category]');
+    const status = document.querySelector<HTMLElement>('.filter-status');
+    filters.forEach(button => button.addEventListener('click', () => {
+      filters.forEach(filter => filter.setAttribute('aria-pressed', String(filter === button)));
+      let count = 0;
+      cards.forEach(card => { const visible = button.dataset.filter === 'Todos' || card.dataset.category === button.dataset.filter; card.hidden = !visible; if (visible) count++; });
+      if (status) status.textContent = `${count} ${count === 1 ? 'guía disponible' : 'guías disponibles'}`;
+    }));
+  </script>
+</Layout>

@@ -1,0 +1,14 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import CTA from '../../components/CTA.astro';
+import { articles, type Article } from '../../data/articles';
+import { site } from '../../data/site';
+export function getStaticPaths() { return articles.map(article => ({ params: { slug: article.slug }, props: { article } })); }
+const { article } = Astro.props as { article: Article };
+---
+<Layout title={`${article.title.replace(/\.$/, '')} | MetrilabCL`} description={article.description} type="Article" schema={{ headline: article.title, author: { '@id': `${site.url}/#organization` }, datePublished: site.revision, dateModified: site.revision }}>
+  <nav class="container breadcrumb" aria-label="Ruta de navegación"><a href="/">Inicio</a><span aria-hidden="true">/</span><a href="/recursos/">Recursos</a><span aria-hidden="true">/</span><span>{article.category}</span></nav>
+  <section class="page-hero"><div class="container"><p class="eyebrow">{article.category.toUpperCase()} / GUÍA DEL ESTUDIO</p><h1>{article.title}</h1><p class="lead">{article.description}</p><div class="article-meta"><span>Por Equipo MetrilabCL</span><span>Publicado: 10 de octubre de 2026</span><span>Revisado: 10 de octubre de 2026</span></div></div></section>
+  <div class="container page-grid"><aside class="page-sidebar"><p>EN ESTA GUÍA</p><nav aria-label="Secciones de la guía">{article.sections.map(section => <a href={`#${section.id}`}>{section.title}</a>)}</nav><a href="/recursos/">← Todas las guías</a></aside><article class="prose">{article.sections.map(section => <section id={section.id}><h2>{section.title}</h2><div set:html={section.html} /></section>)}<p class="review-date">Equipo MetrilabCL · Las fechas cambian cuando se revisa el contenido.</p></article></div>
+  <CTA subject={`Consulta desde guía: ${article.slug} | MetrilabCL`} />
+</Layout>
