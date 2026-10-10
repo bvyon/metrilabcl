@@ -1,0 +1,36 @@
+# Ilustraciones de las subpáginas
+
+Se generaron cuatro ilustraciones nuevas con la herramienta integrada de generación de imágenes. Se utilizó `src/assets/illustrations/claridad.png` como referencia de estilo: fondo marfil, verde bosque y salvia, papel y cerámica mate, vidrio esmerilado y luz suave.
+
+## Originales guardados
+
+- `src/assets/illustrations/campanas.png`: publicidad de búsqueda y redes sociales.
+- `src/assets/illustrations/contenidos.png`: redacción y edición de textos.
+- `src/assets/illustrations/respuestas.png`: respuestas conectadas con sus fuentes.
+- `src/assets/illustrations/conversacion.png`: consultas y diálogo.
+
+Las quince subpáginas públicas tienen una ilustración en la cabecera, incluidas las tres guías. Las cuatro imágenes anteriores se combinan con estas nuevas piezas según el tema. Los originales se conservan; Astro publica versiones WebP de varios tamaños. Las imágenes describen conceptos, no resultados medidos ni interfaces reales de plataformas.
+
+La correspondencia entre páginas e imágenes está en `src/data/illustrations.ts`. Los textos explicativos se muestran como HTML para mantenerlos legibles y accesibles; no forman parte de la imagen.
+
+## Verificación
+
+La revisión de Astro pasó sin errores, advertencias ni sugerencias en 34 archivos. La compilación produjo 17 documentos HTML y la comprobación de enlaces validó 587 referencias internas. Las cinco pruebas de navegador pasaron: las quince ilustraciones cargan correctamente, las páginas se adaptan a 1440, 390 y 320 píxeles, y las comprobaciones de accesibilidad, navegación y contacto no detectaron problemas. También se revisaron visualmente campañas, contenidos, método, una guía, contacto y privacidad.
+
+## Prompts finales
+
+### campanas
+
+Use case: stylized-concept. Asset type: illustration for a premium digital marketing agency service-page hero. Input image 1 is a STYLE REFERENCE ONLY: use the same quiet premium tactile 3D studio photography, matte ceramic and embossed paper, frosted glass, warm ivory #f5f4ee, forest green #36503e, muted sage #98ad6c and small pale chartreuse accents #dceba0. Create a completely new subject, not another magnifying glass. Seamless ivory ground and background, no horizon. Soft natural side light and precise realistic contact shadows. Elegant editorial miniature still life. Landscape 4:3 composition, objects centered and fully within the middle 70% with generous breathing room on every side. No text, letters, digits, logos, brands, watermark, chart-axis labels, fake results, people, neon or cheap plastic. Subject: a sculptural matte forest-green megaphone lying diagonally on an ivory platform, projecting a subtle curved sage route that connects two beautiful abstract ad cards. One card is a frosted glass search-result panel with three embossed ivory rectangular lines and a small chartreuse circular node; the other is a sage portrait social-media card with a minimal embossed picture window and rounded geometric call-to-action block. Three tiny ceramic audience spheres arranged around the two cards suggest reaching the right audience. Tangible visual metaphor for coordinated search and social advertising, no real UI, no actual brand icons.
+
+### contenidos
+
+Use case: stylized-concept. Asset type: illustration for a premium digital marketing agency service-page hero. Input image 1 is a STYLE REFERENCE ONLY: use the same quiet premium tactile 3D studio photography, matte ceramic and embossed paper, frosted glass, warm ivory #f5f4ee, forest green #36503e, muted sage #98ad6c and small pale chartreuse accents #dceba0. Create a completely new subject, not another magnifying glass. Seamless ivory ground and background, no horizon. Soft natural side light and precise realistic contact shadows. Elegant editorial miniature still life. Landscape 4:3 composition, objects centered and fully within the middle 70% with generous breathing room on every side. No text, letters, digits, logos, brands, watermark, chart-axis labels, fake results, people, neon or cheap plastic. Subject: a refined forest-green fountain pen lying diagonally across three layered ivory and sage manuscript sheets. One raised frosted-glass editing panel highlights a precise title block and three neat embossed content lines using a sage outline. A tiny chartreuse bookmark and two green circular reference nodes add restrained detail. Clear tactile metaphor for research becoming deliberate copy, page titles and useful descriptions. Beautiful paper texture, clean hierarchy in the geometric panels, no writing or typographic characters anywhere.
+
+### respuestas
+
+Use case: stylized-concept. Asset type: illustration for a premium digital marketing agency service-page hero. Input image 1 is a STYLE REFERENCE ONLY: use the same quiet premium tactile 3D studio photography, matte ceramic and embossed paper, frosted glass, warm ivory #f5f4ee, forest green #36503e, muted sage #98ad6c and small pale chartreuse accents #dceba0. Create a completely new subject, not another magnifying glass. Seamless ivory ground and background, no horizon. Soft natural side light and precise realistic contact shadows. Elegant editorial miniature still life. Landscape 4:3 composition, objects centered and fully within the middle 70% with generous breathing room on every side. No text, letters, digits, logos, brands, watermark, chart-axis labels, fake results, people, neon or cheap plastic. Subject: a single upright frosted-glass answer panel resting on a low sage ceramic base, with one ivory rounded response block and three embossed line shapes. Thin graceful forest-green connecting lines lead to two small ivory source-document tiles placed beside it, each with a subtle raised circular node. Communicate understandable answers supported by connected sources, thoughtful order and attribution. Use geometric documents rather than robots or brains. Precise composed study of translucent materials, no text or claims of results.
+
+### conversacion
+
+Use case: stylized-concept. Asset type: illustration for a premium digital marketing agency service-page hero. Input image 1 is a STYLE REFERENCE ONLY: use the same quiet premium tactile 3D studio photography, matte ceramic and embossed paper, frosted glass, warm ivory #f5f4ee, forest green #36503e, muted sage #98ad6c and small pale chartreuse accents #dceba0. Create a completely new subject, not another magnifying glass. Seamless ivory ground and background, no horizon. Soft natural side light and precise realistic contact shadows. Elegant editorial miniature still life. Landscape 4:3 composition, objects centered and fully within the middle 70% with generous breathing room on every side. No text, letters, digits, logos, brands, watermark, chart-axis labels, fake results, people, neon or cheap plastic. Subject: a sculptural ivory envelope with a sage folded flap, standing on a small forest-green ceramic platform. Two elegant frosted-glass speech tiles sit above and beside the envelope, one with two raised sage geometric lines and one with a small forest-green circular node. A thin chartreuse pathway gently connects the three objects. Calm tactile metaphor for a clear conversation and careful handling of a consultation, welcoming premium still life. No locks, security certification symbols, text or real personal data.

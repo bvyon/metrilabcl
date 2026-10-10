@@ -35,3 +35,20 @@
 .focus-card h3{font-size:23px}.focus-card+.focus-card{padding-left:24px}.focus-card{padding-right:24px}
 @media(max-width:900px) and (min-width:651px){.focus-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.focus-card:nth-child(3){border-left:0;padding-left:0}.focus-card:nth-child(n+3){border-top:1px solid var(--line)}}
 @media(max-width:650px){.expertise-strip p{gap:7px 10px;padding:0}.focus-grid{grid-template-columns:1fr}.focus-card,.focus-card+.focus-card{padding:28px 0}.focus-card h3{font-size:24px}}
+
+/* Interior pages share the landing's tactile editorial imagery. */
+.page-hero-grid{display:grid;grid-template-columns:1.25fr 1fr;gap:64px;align-items:center}
+.page-hero-copy{min-width:0}
+.page-hero-illustrated h1{font-size:clamp(46px,4.8vw,70px);max-width:none}
+.page-hero-illustrated .lead{font-size:17px;line-height:1.65;margin-bottom:18px}
+.page-illustration{margin:0;min-width:0;overflow:hidden;border:1px solid var(--line);border-radius:12px;background:var(--paper)}
+.illustration-label{display:flex;justify-content:space-between;gap:12px;padding:17px 21px 0;font-size:8px;letter-spacing:.1em;color:var(--muted)}
+.illustration-label>span:last-child{font-size:14px;line-height:1}
+.page-illustration img{display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:contain}
+.page-illustration figcaption{padding:15px 21px;border-top:1px solid var(--line);font-size:11px;color:var(--green-dark)}
+.illustration-dark{background:var(--ink);border-color:#7b867542}
+.illustration-dark .illustration-label,.illustration-dark figcaption{color:#dceba0}
+.illustration-dark figcaption{border-color:#7b867542}
+@media(max-width:1150px){.page-hero-grid{gap:36px}.page-hero-illustrated h1{font-size:56px}}
+@media(max-width:900px){.page-hero-grid{gap:26px;grid-template-columns:1.15fr 1fr}.page-hero-illustrated h1{font-size:46px}.page-hero-illustrated .lead{font-size:15px}.illustration-label{font-size:7px;padding:15px 16px 0}.page-illustration figcaption{padding:13px 16px;font-size:10px}}
+@media(max-width:650px){.page-hero-grid{grid-template-columns:1fr;gap:30px}.page-hero-illustrated h1{font-size:49px}.page-hero-illustrated .lead{font-size:17px}.page-illustration{width:100%;max-width:440px}.illustration-label{font-size:8px;padding:17px 20px 0}.page-illustration figcaption{padding:14px 20px;font-size:11px}}

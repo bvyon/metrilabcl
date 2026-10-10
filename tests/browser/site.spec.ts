@@ -16,6 +16,12 @@ test('páginas compiladas: navegación, accesibilidad y adaptación móvil', asy
       const dimensions = await page.evaluate(() => ({ width: document.documentElement.clientWidth, scroll: document.documentElement.scrollWidth }));
       expect(dimensions.scroll, `${route} a ${width}px`).toBeLessThanOrEqual(dimensions.width + 1);
       if (width === 390) {
+        if (route !== '/') {
+          const illustration = page.locator('.page-illustration img');
+          await expect(illustration, route).toHaveCount(1);
+          await illustration.evaluate((image: HTMLImageElement) => image.decode());
+          expect(await illustration.evaluate((image: HTMLImageElement) => image.naturalWidth), route).toBeGreaterThan(0);
+        }
         await page.addScriptTag({ content: axe.source });
         const result = await page.evaluate(async () => (window as any).axe.run(document, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'] } }));
         expect(result.violations.map((violation: any) => ({ id: violation.id, nodes: violation.nodes.map((node: any) => node.target) })), route).toEqual([]);

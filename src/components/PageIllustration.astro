@@ -1,0 +1,12 @@
+---
+import { Image } from 'astro:assets';
+import { illustrations, type IllustrationName } from '../data/illustrations';
+interface Props { name: IllustrationName; }
+const { name } = Astro.props;
+const illustration = illustrations[name];
+---
+<figure class:list={['page-illustration', { 'illustration-dark': illustration.dark }]}>
+  <div class="illustration-label"><span>METRILABCL / UNA IDEA A LA VISTA</span><span aria-hidden="true">↗</span></div>
+  <Image src={illustration.src} alt={illustration.alt} width={840} widths={[360, 560, 840]} sizes="(max-width: 650px) calc(100vw - 40px), (max-width: 900px) 42vw, 36vw" format="webp" quality={82} loading="eager" />
+  <figcaption>{illustration.caption}</figcaption>
+</figure>

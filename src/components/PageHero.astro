@@ -1,8 +1,10 @@
 ---
 import Icon from './Icon.astro';
 import { mailto } from '../data/site';
+import PageIllustration from './PageIllustration.astro';
+import { illustrationForRoute } from '../data/illustrations';
 interface Props { label: string; title: string; lead: string; breadcrumb: string; contact?: boolean; }
 const { label, title, lead, breadcrumb, contact = true } = Astro.props;
 ---
 <div class="container breadcrumb" aria-label="Ruta de navegación"><a href="/">Inicio</a><span aria-hidden="true">/</span><span>{breadcrumb}</span></div>
-<section class="page-hero"><div class="container"><p class="eyebrow"><span class="status-dot"></span> {label}</p><h1>{title}</h1><p class="lead">{lead}</p>{contact && <a href={mailto(`Consulta sobre ${breadcrumb} | MetrilabCL`)} class="button button-dark">Escríbenos sobre tu sitio <Icon name="diagonal" /></a>}</div></section>
+<section class="page-hero page-hero-illustrated"><div class="container page-hero-grid"><div class="page-hero-copy"><p class="eyebrow"><span class="status-dot"></span> {label}</p><h1>{title}</h1><p class="lead">{lead}</p>{contact && <a href={mailto(`Consulta sobre ${breadcrumb} | MetrilabCL`)} class="button button-dark">Conversemos sobre tu proyecto <Icon name="diagonal" /></a>}</div><PageIllustration name={illustrationForRoute(Astro.url.pathname)} /></div></section>
