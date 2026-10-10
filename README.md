@@ -72,16 +72,17 @@ El proyecto de Workers es `metrilabcl`. La configuración conserva los dominios 
 
 La cabecera `no-transform` en `public/_headers` impide la inserción automática del script de Web Analytics de Cloudflare. Si decides agregar estadísticas, revisa primero la política de privacidad y la configuración de analítica.
 
-## Antes de habilitar la indexación
+## Indexación y Search Console
 
-Esta entrega mantiene `launchReady: false`, por lo que las páginas llevan `noindex`. El sitio está publicado y puede visitarse, pero solicita a los buscadores que no lo indexen. `noindex` no restringe el acceso al sitio.
+Desde el 10 de octubre de 2026, `launchReady: true` habilita la indexación de las páginas publicadas a petición del titular. La página 404 conserva `noindex`.
 
-1. La política identifica a Bastian Vega Yon, ubicación pública Iquique, Chile, conservación por 12 meses, proveedores y procedimiento de solicitudes. Revisa su aplicación en la operación de la agencia y la actualización normativa del 1 de diciembre de 2026; consulta `docs/privacidad-y-correo.md`.
-2. Revisa y aprueba el método, las guías y el alcance de servicio. No hay clientes, certificaciones, testimonios ni estudios estadísticos inventados.
-3. El dominio registrado es `metrilab.cl`. Si cambia, actualiza `site.url`, `astro.config.mjs`, `wrangler.jsonc` y las referencias de marca.
-4. Cambia `launchReady` a `true` después de completar lo anterior.
-5. Ejecuta `npm run check:launch`, `npm run check`, `npm run build` y `npm run verify`.
-6. Comprueba la vista real, HTTPS, cabeceras, 404 y correo. Registra Search Console y envía `sitemap.xml`.
+- Sitemap: https://metrilab.cl/sitemap.xml, generado automáticamente a partir de las páginas y artículos publicados.
+- Robots: https://metrilab.cl/robots.txt, permite el rastreo y declara la dirección del sitemap.
+- En la propiedad de `metrilab.cl` en Search Console, abrir **Sitemaps** y enviar `https://metrilab.cl/sitemap.xml` (o `sitemap.xml` si el formulario ya muestra el dominio).
+- Si la propiedad aún no está verificada, completar primero su verificación de titularidad; el archivo robots no se envía por separado.
+- Tras enviar el sitemap, usar **Inspección de URLs** para revisar `https://metrilab.cl/` y solicitar su indexación. La inclusión en el sitemap no garantiza indexación ni posiciones.
+
+El dominio registrado es `metrilab.cl`. Si cambia, actualizar `site.url`, `astro.config.mjs`, `wrangler.jsonc` y las referencias de marca. Las comprobaciones de construcción validan URLs canónicas, cobertura del sitemap y ausencia de `noindex` en las páginas publicadas; el despliegue verifica también que sitemap y robots responden HTTP 200 y coinciden con los archivos compilados.
 
 Mantén los entornos de vista previa sin indexación, mediante la configuración del proveedor, al activar producción.
 

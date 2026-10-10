@@ -11,7 +11,17 @@ async function verify() {
     const route = file === 'index.html' ? '/' : '/' + file.replace(/index\.html$/, '');
     const response = await fetch(origin + route, { signal: AbortSignal.timeout(15_000) });
     assert.equal(response.status, 200, route);
+    assert.ok(!/\bnoindex\b|\bnone\b/i.test(response.headers.get('x-robots-tag') || ''), `${route}: cabecera bloquea la indexación`);
     assert.equal(await response.text(), await readFile('dist/' + file, 'utf8'), `${route}: contenido publicado distinto`);
+  }));
+  await Promise.all([
+    ['sitemap.xml', /application\/xml|text\/xml/i],
+    ['robots.txt', /text\/plain/i],
+  ].map(async ([file, contentType]) => {
+    const response = await fetch(`${origin}/${file}`, { signal: AbortSignal.timeout(15_000) });
+    assert.equal(response.status, 200, file);
+    assert.match(response.headers.get('content-type') || '', contentType, `${file}: tipo de contenido incorrecto`);
+    assert.equal(await response.text(), await readFile(`dist/${file}`, 'utf8'), `${file}: contenido publicado distinto`);
   }));
   const www = await fetch('https://www.metrilab.cl/privacidad/', { signal: AbortSignal.timeout(15_000) });
   assert.equal(www.status, 200, 'Privacidad en www');
@@ -23,7 +33,7 @@ async function verify() {
 for (let attempt = 1; attempt <= 4; attempt++) {
   try {
     await verify();
-    console.log(`Publicación verificada: ${files.length} páginas coinciden con la compilación; HTTPS, www y 404 correctos.`);
+    console.log(`Publicación verificada: ${files.length} páginas coinciden con la compilación; sitemap, robots.txt, HTTPS, www y 404 correctos.`);
     break;
   } catch (error) {
     if (attempt === 4) {

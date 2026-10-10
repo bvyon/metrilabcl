@@ -10,7 +10,7 @@ export const site = {
     linkedin: 'https://www.linkedin.com/in/bvyon/',
   },
   privacyRetentionMonths: 12,
-  launchReady: false,
+  launchReady: true,
   revision: '2026-10-10',
 };
 

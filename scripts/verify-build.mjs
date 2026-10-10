@@ -3,6 +3,7 @@ import { join, resolve } from 'node:path';
 import assert from 'node:assert/strict';
 
 const root = resolve('dist');
+const launchReady = /launchReady:\s*true/.test(await readFile('src/data/site.ts', 'utf8'));
 async function files(directory) {
   const entries = await readdir(directory, { withFileTypes: true });
   return (await Promise.all(entries.map(entry => entry.isDirectory() ? files(join(directory, entry.name)) : join(directory, entry.name)))).flat();
@@ -21,6 +22,13 @@ for (const file of htmlFiles) {
   assert.match(html, /<html[^>]+lang="es-CL"/, `${route}: falta idioma`);
   assert.match(html, /<meta name="description" content="[^"]+"/, `${route}: falta descripción`);
   assert.match(html, /<link rel="canonical" href="https:\/\/metrilab\.cl\//, `${route}: falta canonical`);
+  const robots = html.match(/<meta name="robots" content="([^"]+)"/)?.[1];
+  assert.ok(robots, `${route}: falta instrucción para buscadores`);
+  if (file === join(root, '404.html')) {
+    assert.match(robots, /\bnoindex\b/, 'La página 404 debe conservar noindex');
+  } else if (launchReady) {
+    assert.ok(!/\bnoindex\b/.test(robots), `${route}: la página publicada bloquea la indexación`);
+  }
   const head = (html.match(/<head>(.*?)<\/head>/s)?.[1] || '').replace(/<!--.*?-->/gs, '');
   const body = (html.match(/<body>(.*?)<\/body>/s)?.[1] || '').replace(/<!--.*?-->/gs, '');
   assert.match(head, /^\s*<script>\(function\(w,d,s,l,i\)/, `${route}: GTM debe iniciar el head`);
@@ -48,9 +56,12 @@ for (const file of htmlFiles) {
 }
 const sitemap = await readFile(join(root, 'sitemap.xml'), 'utf8');
 const sitemapUrls = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map(match => match[1]);
+assert.match(sitemap, /<urlset xmlns="http:\/\/www\.sitemaps\.org\/schemas\/sitemap\/0\.9">/);
+assert.equal(new Set(sitemapUrls).size, sitemapUrls.length, 'No repetir URLs en el sitemap');
 assert.equal(sitemapUrls.length, htmlFiles.length - 1, 'Cada página publicada, salvo 404, debe figurar en el sitemap');
 assert.ok(!sitemapUrls.some(url => url.includes('404')), 'No incluir 404 en sitemap');
 for (const url of sitemapUrls) {
+  assert.equal(new URL(url).origin, 'https://metrilab.cl', `Dominio incorrecto en sitemap: ${url}`);
   const html = await readFile(join(root, new URL(url).pathname, 'index.html'), 'utf8');
   assert.ok(html.includes(`href="${url}"`), `Canonical incorrecto: ${url}`);
 }
