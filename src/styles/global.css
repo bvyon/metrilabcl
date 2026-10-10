@@ -28,3 +28,10 @@
 @media(max-width:900px){.hero-art-top{padding:16px 15px 0;font-size:7px}.hero-art-caption{padding:15px;gap:7px;font-size:9px}}
 @media(max-width:650px){.hero-art-top{padding:18px 20px 0;font-size:8px}.hero-art-caption{padding:16px 20px;font-size:10px;gap:10px}.brand-symbol{width:30px;height:29px}.service-visual{margin-bottom:23px}.method-visual{margin-top:28px}}
 @media(max-width:380px){.header-cta{display:none}.hero-art-caption{font-size:9px;padding:14px 16px}}
+
+/* Keep the expanded offer readable across desktop and mobile. */
+.expertise-strip p{flex-wrap:wrap;gap:12px 22px;padding-block:12px}
+.focus-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+.focus-card h3{font-size:23px}.focus-card+.focus-card{padding-left:24px}.focus-card{padding-right:24px}
+@media(max-width:900px) and (min-width:651px){.focus-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.focus-card:nth-child(3){border-left:0;padding-left:0}.focus-card:nth-child(n+3){border-top:1px solid var(--line)}}
+@media(max-width:650px){.expertise-strip p{gap:7px 10px;padding:0}.focus-grid{grid-template-columns:1fr}.focus-card,.focus-card+.focus-card{padding:28px 0}.focus-card h3{font-size:24px}}

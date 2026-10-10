@@ -43,7 +43,7 @@ for (const file of htmlFiles) {
 }
 const sitemap = await readFile(join(root, 'sitemap.xml'), 'utf8');
 const sitemapUrls = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map(match => match[1]);
-assert.equal(sitemapUrls.length, 14, 'Deben existir 11 páginas principales y 3 guías en el sitemap');
+assert.equal(sitemapUrls.length, htmlFiles.length - 1, 'Cada página publicada, salvo 404, debe figurar en el sitemap');
 assert.ok(!sitemapUrls.some(url => url.includes('404')), 'No incluir 404 en sitemap');
 for (const url of sitemapUrls) {
   const html = await readFile(join(root, new URL(url).pathname, 'index.html'), 'utf8');

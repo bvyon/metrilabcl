@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import axe from 'axe-core';
 
-const routes = ['/', '/servicios/', '/diagnostico/', '/seo/', '/visibilidad-en-ia/', '/investigacion/', '/metodo/', '/nosotros/', '/recursos/', '/contacto/', '/privacidad/', '/recursos/diagnostico-o-ejecucion/', '/recursos/como-leer-un-diagnostico/', '/recursos/visibilidad-ia-sin-promesas/'];
+const routes = ['/', '/servicios/', '/diagnostico/', '/seo/', '/visibilidad-en-ia/', '/investigacion/', '/publicidad-digital/', '/contenidos/', '/metodo/', '/nosotros/', '/recursos/', '/contacto/', '/privacidad/', '/recursos/diagnostico-o-ejecucion/', '/recursos/como-leer-un-diagnostico/', '/recursos/visibilidad-ia-sin-promesas/'];
 
 test('páginas compiladas: navegación, accesibilidad y adaptación móvil', async ({ page }) => {
   const errors: string[] = [];
@@ -68,6 +68,7 @@ test('contacto valida y prepara una consulta sin enviar datos', async ({ page, c
   expect(await page.locator('#contact-message').evaluate((element: HTMLTextAreaElement) => element.validity.valueMissing)).toBe(true);
   await page.locator('#contact-name').fill('Prueba de consulta');
   await page.locator('#contact-site').fill('https://ejemplo.cl');
+  await page.locator('#contact-service').selectOption('Google Ads');
   await page.locator('#contact-message').fill('Quiero investigar cómo mejorar mi sitio.');
   await page.getByRole('button', { name: 'Copiar mensaje' }).click();
   expect(await page.locator('#contact-consent').evaluate((element: HTMLInputElement) => element.validity.valueMissing)).toBe(true);
@@ -77,6 +78,7 @@ test('contacto valida y prepara una consulta sin enviar datos', async ({ page, c
   const copied = await page.evaluate(() => navigator.clipboard.readText());
   expect(copied).toContain('contacto@metrilab.cl');
   expect(copied).toContain('https://ejemplo.cl');
+  expect(copied).toContain('Necesito: Google Ads');
   expect(copied).toContain('Quiero investigar');
   expect(copied).toContain('Autorizo a Bastian Vega Yon');
   expect(copied).toContain('12 meses desde la última interacción');
