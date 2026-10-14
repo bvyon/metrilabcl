@@ -3,49 +3,64 @@ import Layout from '../layouts/Layout.astro';
 import Icon from '../components/Icon.astro';
 import Signal from '../components/Signal.astro';
 import CTA from '../components/CTA.astro';
-import { steps } from '../data/site';
+import { campaignHighlights } from '../data/marketing';
+import { articles } from '../data/articles';
 import { Image } from 'astro:assets';
 import Brand from '../components/Brand.astro';
 import diagnostico from '../assets/illustrations/diagnostico.png';
 import ejecucion from '../assets/illustrations/ejecucion.png';
-import evidencia from '../assets/illustrations/evidencia.png';
+import campanas from '../assets/illustrations/campanas.png';
+import funnels from '../assets/illustrations/funnels.png';
 ---
-<Layout title="MetrilabCL | Agencia de marketing digital, SEO y Ads en Chile" description="SEO, Google Ads, Meta Ads y contenidos con estrategia. Investigamos, creamos anuncios y optimizamos tu presencia digital con un método claro en Chile.">
+<Layout title="MetrilabCL | Agencia de marketing digital, SEO y Ads en Chile" description="SEO, Google Ads, Meta Ads, contenidos, automatizaciones y funnels de ventas. Estrategia, captación y seguimiento comercial para negocios en Chile.">
   <section class="hero container">
     <div class="hero-copy">
       <p class="eyebrow"><span class="status-dot"></span> MARKETING DIGITAL CON ESTRATEGIA Y CRITERIO</p>
       <h1>Menos ruido.<br /><em>Más dirección.</em></h1>
-      <p class="hero-lead">SEO, Google Ads, Meta Ads y contenidos para conectar tu negocio con las personas correctas.</p>
-      <p class="hero-description">Somos MetrilabCL. Investigamos palabras clave, creamos anuncios y textos optimizados, y aplicamos un plan claro para tu web y tus campañas.</p>
+      <p class="hero-lead">SEO, publicidad digital, contenidos y automatizaciones para conectar tu negocio con las personas correctas y acompañarlas hacia la venta.</p>
+      <p class="hero-description">Somos MetrilabCL. Investigamos, creamos anuncios y contenidos, y conectamos tus campañas con funnels de ventas y seguimiento automatizado.</p>
       <div class="hero-actions"><a href="/contacto/" class="button button-dark">Conversemos sobre tu negocio <Icon name="diagonal" /></a><a href="/metodo/" class="text-link">Conoce el método <Icon /></a></div>
       <p class="hero-note">Con fuentes y criterio. Sin promesas de posiciones.</p>
     </div>
     <Signal />
   </section>
-  <div class="expertise-strip"><div class="container"><span>EL FOCO</span><p>SEO <i></i> Google Ads <i></i> Meta Ads <i></i> Contenidos <i></i> Investigación <i></i> Visibilidad en IA</p><a href="/servicios/" aria-label="Explorar todos los servicios"><Icon name="diagonal" /></a></div></div>
+  <div class="expertise-strip"><div class="container"><span>EL FOCO</span><p>SEO <i></i> Google Ads <i></i> Meta Ads <i></i> Contenidos <i></i> Automatizaciones <i></i> Funnels <i></i> Visibilidad en IA</p><a href="/servicios/" aria-label="Explorar todos los servicios"><Icon name="diagonal" /></a></div></div>
   <section class="section-pad container" id="servicios">
     <div class="section-heading"><p class="eyebrow">01 / DOS CAMINOS, UN MISMO CRITERIO</p><div><h2>Claridad para decidir.<br /><em>Método para avanzar.</em></h2><p>No todos los sitios necesitan lo mismo. Empezamos por entender el tuyo y elegimos el alcance contigo.</p></div></div>
     <div class="service-grid">
       <a href="/diagnostico/" class="service-card"><div class="card-top"><span class="eyebrow">01 / DIAGNÓSTICO</span><Icon name="search" size={26} /></div><div class="service-visual"><Image src={diagnostico} alt="Una lupa sobre documentos y capas de información representa la revisión de evidencia antes de decidir." width={760} widths={[400, 760]} sizes="(max-width: 650px) calc(100vw - 94px), 40vw" format="webp" quality={80} loading="lazy" /><span>Observar → Priorizar</span></div><h3>Primero, entender.</h3><p>Una mirada completa a tu sitio y a su contexto. Hallazgos con evidencia y recomendaciones en orden de prioridad.</p><ul><li>Investigación de demanda y competencia</li><li>SEO, contenidos y revisión de campañas</li><li>Palabras clave y un plan para tu equipo</li></ul><span class="card-link">Explorar diagnóstico <Icon name="diagonal" /></span></a>
-      <a href="/servicios/#alcance" class="service-card execution"><div class="card-top"><span class="eyebrow">02 / EJECUCIÓN</span><Icon name="layers" size={26} /></div><div class="service-visual"><Image src={ejecucion} alt="Módulos de una web conectados paso a paso terminan en una verificación: aplicar el plan y comprobar cada cambio." width={760} widths={[400, 760]} sizes="(max-width: 650px) calc(100vw - 94px), 40vw" format="webp" quality={80} loading="lazy" /><span>Implementar → Verificar</span></div><h3>Después, hacer.</h3><p>Aplicamos el plan en tu web y tus campañas: SEO, Google Ads, Meta Ads y creación de contenidos con el alcance acordado.</p><ul><li>SEO técnico y textos optimizados</li><li>Gestión de Google Ads y Meta Ads</li><li>Creación de anuncios y seguimiento</li></ul><span class="card-link">Explorar ejecución <Icon name="diagonal" /></span></a>
+      <a href="/servicios/#alcance" class="service-card execution"><div class="card-top"><span class="eyebrow">02 / EJECUCIÓN</span><Icon name="layers" size={26} /></div><div class="service-visual"><Image src={ejecucion} alt="Módulos de una web conectados paso a paso terminan en una verificación: aplicar el plan y comprobar cada cambio." width={760} widths={[400, 760]} sizes="(max-width: 650px) calc(100vw - 94px), 40vw" format="webp" quality={80} loading="lazy" /><span>Implementar → Verificar</span></div><h3>Después, hacer.</h3><p>Aplicamos el plan en tu web y tus campañas: SEO, Google Ads, Meta Ads, contenidos, automatizaciones y funnels de ventas con el alcance acordado.</p><ul><li>SEO técnico y textos optimizados</li><li>Gestión de Google Ads y Meta Ads</li><li>Creación de anuncios y seguimiento</li><li>Automatizaciones y funnels de ventas</li></ul><span class="card-link">Explorar ejecución <Icon name="diagonal" /></span></a>
     </div>
     <div class="section-footnote"><span>Propuestas según tu sitio y tu objetivo. Sin planes genéricos.</span><a href="/servicios/" class="text-link">Comparar los dos caminos <Icon /></a></div>
   </section>
-  <section class="method-section section-pad"><div class="container method-grid">
-    <div class="method-intro"><p class="eyebrow">02 / UN MÉTODO A LA VISTA</p><h2>La confianza<br />se construye<br /><em>con evidencia.</em></h2><p>Cada dato tiene una fuente. Cada recomendación, una razón. Y cada límite se dice de frente.</p><a href="/metodo/" class="text-link">Así trabajamos <Icon name="diagonal" /></a><figure class="method-visual"><Image src={evidencia} alt="Tres paneles transforman piezas dispersas en una estructura ordenada: de los hallazgos al plan de acción." width={1000} widths={[420, 680, 1000]} sizes="(max-width: 650px) calc(100vw - 40px), 40vw" format="webp" quality={82} loading="lazy" /><figcaption><span>Hallazgos</span><span>Criterio</span><span>Plan</span></figcaption></figure><div class="method-signature"><Brand inverse /></div></div>
-    <div class="steps">{steps.map((step, i) => <div class="step"><span class="step-number">0{i + 1}</span><div><h3>{step.title}</h3><p>{step.text}</p></div><Icon name="diagonal" size={19} /></div>)}</div>
+  <section class="method-section section-pad" id="campanas"><div class="container method-grid">
+    <div class="method-intro"><p class="eyebrow">02 / GOOGLE ADS Y META ADS</p><h2>Google Ads.<br />Meta Ads.<br /><em>Campañas ganadoras.</em></h2><p>Investigación, palabras y creatividad multimedia para ejecutar campañas con foco en tus objetivos de negocio.</p><a href="/publicidad-digital/" class="text-link">Conoce nuestra gestión de campañas <Icon name="diagonal" /></a><figure class="method-visual"><Image src={campanas} alt="Un megáfono conecta anuncios de búsqueda y piezas multimedia con distintas audiencias." width={1000} widths={[420, 680, 1000]} sizes="(max-width: 650px) calc(100vw - 40px), 40vw" format="webp" quality={82} loading="lazy" /><figcaption><span>Investigación</span><span>Multimedia</span><span>Campañas</span></figcaption></figure><div class="method-signature"><Brand inverse /></div></div>
+    <div class="steps">{campaignHighlights.map((highlight, i) => <div class="step"><span class="step-number">0{i + 1}</span><div><h3>{highlight.title}</h3><p>{highlight.text}</p></div><Icon name="diagonal" size={19} /></div>)}</div>
   </div></section>
-  <section class="section-pad container focus-section"><p class="eyebrow">03 / VISIBILIDAD CON FUNDAMENTO</p><div class="focus-heading"><h2>Tu web debe poder<br /><em>entenderse.</em></h2><p>Por tus clientes. Por los buscadores. Por los sistemas que construyen respuestas. Conectamos investigación, contenido, publicidad y una base técnica clara.</p></div><div class="focus-grid">
+  <section class="section-pad container funnels-section" id="automatizaciones">
+    <div class="section-heading"><p class="eyebrow">03 / AUTOMATIZACIONES Y FUNNELS DE VENTAS</p><div><h2>Del primer interés<br /><em>a una oportunidad de venta.</em></h2><p>Creamos funnels y automatizaciones que conectan tus campañas con la captación y el seguimiento comercial. Tu equipo recibe oportunidades con un recorrido definido.</p></div></div>
+    <div class="funnels-content">
+    <figure class="funnels-visual"><Image src={funnels} alt="Un embudo de tres niveles conecta prospectos con contactos, mensajes de seguimiento y una oportunidad de venta, mediante enlaces y un engranaje de automatización." width={1000} widths={[420, 680, 1000]} sizes="(max-width: 650px) calc(100vw - 40px), (max-width: 1000px) 80vw, 42vw" format="webp" quality={82} loading="lazy" /><figcaption>Captación → Seguimiento → Venta</figcaption></figure>
+    <div class="detail-grid">
+      <div class="detail-card"><h3>Funnels de ventas</h3><p>Diseñamos páginas de captación, ofertas y recorridos para acompañar a tus prospectos hacia una consulta, reserva o compra.</p></div>
+      <div class="detail-card"><h3>Seguimiento automatizado</h3><p>Creamos comunicaciones y secuencias que mantienen el contacto con cada prospecto según su etapa comercial.</p></div>
+      <div class="detail-card"><h3>Herramientas conectadas</h3><p>Integramos formularios, CRM y herramientas de gestión para organizar contactos, avisos y tareas de tu equipo.</p></div>
+      <div class="detail-card"><h3>Implementación y mejora</h3><p>Nos encargamos de crear, conectar y mejorar el funnel según tu operación y los objetivos acordados.</p></div>
+    </div>
+    </div>
+    <div class="hero-actions"><a href="/automatizaciones-funnels/" class="button button-dark">Conocer automatizaciones y funnels <Icon name="diagonal" /></a><a href="/contacto/" class="text-link">Conversemos sobre tu proceso de ventas <Icon name="diagonal" /></a></div>
+  </section>
+  <section class="section-pad container focus-section"><p class="eyebrow">04 / VISIBILIDAD CON FUNDAMENTO</p><div class="focus-heading"><h2>Tu web debe poder<br /><em>entenderse.</em></h2><p>Por tus clientes. Por los buscadores. Por los sistemas que construyen respuestas. Conectamos investigación, contenido, publicidad y una base técnica clara.</p></div><div class="focus-grid">
     <a href="/investigacion/" class="focus-card"><Icon name="chart" size={30} /><span class="eyebrow">CONTEXTO</span><h3>Antes de publicar,<br />investigar.</h3><p>Palabras clave, intención de búsqueda y competencia para orientar tu web y tus campañas.</p><span class="card-link">Investigación <Icon name="diagonal" /></span></a>
     <a href="/seo/" class="focus-card"><Icon name="globe" size={30} /><span class="eyebrow">BASE TÉCNICA</span><h3>Una web fácil<br />de encontrar.</h3><p>SEO técnico, títulos, meta descripciones y contenidos que conecten una búsqueda con tu oferta.</p><span class="card-link">SEO y contenidos <Icon name="diagonal" /></span></a>
     <a href="/publicidad-digital/" class="focus-card"><Icon name="ads" size={30} /><span class="eyebrow">PUBLICIDAD DIGITAL</span><h3>Google Ads.<br />Meta Ads.</h3><p>Gestión de campañas, creación de anuncios, textos y piezas visuales con seguimiento.</p><span class="card-link">Campañas y anuncios <Icon name="diagonal" /></span></a>
     <a href="/visibilidad-en-ia/" class="focus-card"><Icon name="layers" size={30} /><span class="eyebrow">NUEVAS RESPUESTAS</span><h3>Información clara.<br />También para la IA.</h3><p>AEO y GEO con fuentes, identidad consistente y expectativas honestas.</p><span class="card-link">Visibilidad en IA <Icon name="diagonal" /></span></a>
   </div></section>
   <section class="principle-section"><div class="container principle-inner"><span class="eyebrow">NUESTRO COMPROMISO</span><h2>Prometemos rigor.<br /><em>Las posiciones no dependen de nosotros.</em></h2><p>Una agencia SEO puede investigar, mejorar y verificar tu sitio. No puede controlar las decisiones de Google o de un sistema de IA. Preferimos que lo sepas desde el primer día.</p></div></section>
-  <section class="section-pad container resources-home"><div class="resources-title"><div><p class="eyebrow">04 / IDEAS PARA DECIDIR MEJOR</p><h2>Criterio que<br /><em>compartimos.</em></h2></div><a href="/recursos/" class="text-link">Todos los recursos <Icon /></a></div><div class="resource-grid">
-    <a href="/recursos/diagnostico-o-ejecucion/" class="resource-card"><div class="resource-art art-path"><span>01</span><div>Entender <Icon /><strong>Hacer</strong></div></div><p class="eyebrow">DECISIONES · GUÍA</p><h3>Diagnóstico o ejecución: cómo elegir tu siguiente paso.</h3><span class="text-link">Leer guía <Icon name="diagonal" /></span></a>
-    <a href="/recursos/como-leer-un-diagnostico/" class="resource-card"><div class="resource-art art-evidence"><span>02</span><div><i></i><i></i><i></i><b>Fuente → Criterio → Acción</b></div></div><p class="eyebrow">MÉTODO · GUÍA</p><h3>Cómo leer un diagnóstico sin perderte en los datos.</h3><span class="text-link">Leer guía <Icon name="diagonal" /></span></a>
-    <a href="/recursos/visibilidad-ia-sin-promesas/" class="resource-card"><div class="resource-art art-ia"><span>03</span><div><span class="ia-orbit"></span><b>Una respuesta<br />con fundamento.</b></div></div><p class="eyebrow">VISIBILIDAD EN IA · GUÍA</p><h3>Qué puedes mejorar para la IA y qué nadie puede garantizar.</h3><span class="text-link">Leer guía <Icon name="diagonal" /></span></a>
+  <section class="section-pad container resources-home"><div class="resources-title"><div><p class="eyebrow">05 / APOYO PARA TU NEGOCIO</p><h2>¿Es momento<br /><em>de pedir apoyo?</em></h2></div><a href="/recursos/" class="text-link">Todos los recursos <Icon /></a></div><div class="resource-grid">
+    <a href={`/recursos/${articles[0].slug}/`} class="resource-card"><div class="resource-art art-path"><span>01</span><div>Tu proyecto <Icon /><strong>Apoyo</strong></div></div><p class="eyebrow">DECISIONES</p><h3>{articles[0].title}</h3><span class="text-link">Conocer el apoyo de la agencia <Icon name="diagonal" /></span></a>
+    <a href={`/recursos/${articles[1].slug}/`} class="resource-card"><div class="resource-art art-evidence"><span>02</span><div><i></i><i></i><i></i><b>Tu informe → Próximo paso</b></div></div><p class="eyebrow">DIAGNÓSTICO</p><h3>{articles[1].title}</h3><span class="text-link">Conocer el apoyo de la agencia <Icon name="diagonal" /></span></a>
+    <a href={`/recursos/${articles[2].slug}/`} class="resource-card"><div class="resource-art art-ia"><span>03</span><div><span class="ia-orbit"></span><b>Tu negocio.<br />Su presencia en IA.</b></div></div><p class="eyebrow">VISIBILIDAD EN IA</p><h3>{articles[2].title}</h3><span class="text-link">Conocer el apoyo de la agencia <Icon name="diagonal" /></span></a>
   </div></section>
   <CTA />
 </Layout>

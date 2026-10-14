@@ -11,7 +11,7 @@ const schema = page.service ? {
 } : page.type === 'AboutPage' ? { about: { '@id': `${site.url}/#organization` } } : undefined;
 ---
 <Layout title={page.seoTitle} description={page.description} type={page.type} schema={schema}>
-  <PageHero title={page.title} label={page.label} lead={page.lead} breadcrumb={page.breadcrumb} contact={page.contact} />
-  <div class="container page-grid"><aside class="page-sidebar"><p>EN ESTA PÁGINA</p><nav aria-label="Secciones de la página">{page.sections.map(section => <a href={`#${section.id}`}>{section.title}</a>)}</nav></aside><article class="prose">{page.sections.map(section => <section id={section.id}><h2>{section.title}</h2><div set:html={section.html} /></section>)}<div class="review-date">Equipo MetrilabCL · Versión editorial: 10 de octubre de 2026</div></article></div>
-  {page.contact !== false && <CTA subject={`Consulta desde ${page.breadcrumb} | MetrilabCL`} />}
+  <PageHero title={page.title} label={page.label} lead={page.lead} breadcrumb={page.breadcrumb} contact={page.contact} contactHref={page.contactHref} />
+  <div class="container page-grid"><aside class="page-sidebar"><p>EN ESTA PÁGINA</p><nav aria-label="Secciones de la página">{page.sections.map(section => <a href={`#${section.id}`}>{section.title}</a>)}</nav></aside><article class="prose">{page.sections.map(section => <section id={section.id}><h2>{section.title}</h2><div set:html={section.html} /></section>)}<div class="review-date">{page.reviewDate ?? 'Equipo MetrilabCL · Versión editorial: 10 de octubre de 2026'}</div></article></div>
+  {page.contact !== false && <CTA subject={`Consulta desde ${page.breadcrumb} | MetrilabCL`} href={page.contactHref} />}
 </Layout>

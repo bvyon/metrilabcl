@@ -39,9 +39,11 @@ Para repetir las pruebas de navegador y accesibilidad: `npx playwright install c
 
 El correo público es **contacto@metrilab.cl**, con recepción y respuestas en **Zoho Mail gratuito**. Acceso: https://mail.zoho.com/. Cloudflare Email Routing está desactivado; los mensajes anteriores siguen en **metrilabcl@gmail.com**. Se comprobaron recepción y respuesta reales. No hay hub de libros ni sección de publicaciones.
 
-El contacto permite abrir un mensaje en la aplicación de correo o copiarlo. No transmite ni guarda los campos. La apertura de `mailto:` depende de que el visitante tenga configurada una aplicación de correo; la copia ofrece una alternativa.
+El contacto prepara un mensaje y muestra el borrador junto a opciones para abrir Gmail, Outlook o la aplicación de correo, además de copiarlo. Preparar el mensaje no transmite ni guarda los campos. Los enlaces de Gmail y Outlook abren el borrador en el proveedor elegido; el visitante revisa y envía desde allí. La apertura de `mailto:` depende de una aplicación configurada y conserva el borrador visible como alternativa. Al editar los campos se invalidan las opciones anteriores para no abrir un mensaje desactualizado.
 
-Las guías están redactadas para esta versión y requieren revisión editorial del propietario antes del lanzamiento. La muestra de diagnóstico es ilustrativa; no se presenta como una auditoría ni como un resultado de cliente.
+La oferta incluye automatizaciones y funnels de ventas, con una sección en portada y la página `/automatizaciones-funnels/`. Presenta captación, organización de contactos, seguimiento comercial e integración de herramientas como servicios de la agencia. Servicios, Nosotros, publicidad y el pie enlazan a esa página; el formulario incluye las opciones «Automatizaciones» y «Funnel de ventas». Sus llamadas a la acción llevan al contacto del sitio.
+
+Los recursos orientan a reconocer una necesidad y consultar a la agencia: diagnóstico o ejecución, apoyo con un informe pendiente y evaluación de visibilidad en IA. Desde la revisión del 13 de octubre de 2026 no incluyen listas de comprobación, ejemplos de acciones ni procedimientos para ejecutar el servicio por cuenta propia. Las lecturas y sus llamadas a la acción llevan a `/contacto/`; las rutas existentes se conservan. La muestra de diagnóstico de la página del servicio es ilustrativa; no se presenta como una auditoría ni como un resultado de cliente.
 
 ## GitHub
 

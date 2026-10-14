@@ -1,16 +1,20 @@
 # Privacidad y correo de MetrilabCL
 
-Actualización: 10 de octubre de 2026.
+Actualización: 13 de octubre de 2026.
 
 ## Datos confirmados por el propietario
 
-Responsable: Bastian Vega Yon. Ubicación comercial pública: Iquique, Chile. No se publica su dirección particular. Web personal: https://bvyon-marketing.cl. Perfil profesional: https://www.linkedin.com/in/bvyon/.
+Responsable: Bastian Vega Yon. MetrilabCL es el nombre de la agencia. La política de privacidad no publica ubicación ni dirección particular, ni enlaces personales del responsable.
 
 Conservación de consultas sin contratación: un máximo de 12 meses desde la última interacción. Correo activo: contacto@metrilab.cl, con recepción y respuestas en Zoho Mail gratuito. Los mensajes anteriores permanecen en metrilabcl@gmail.com.
 
 ## Alcance implementado
 
-La política se encuentra en `src/data/privacy.ts`. Describe datos, finalidades, consentimiento, conservación, proveedores, derechos, funcionamiento local del preparador y HTTPS. El consentimiento del preparador queda sin marcar y se incluye en el mensaje escrito que el visitante decide enviar. No se guarda en el servidor ni activa envíos automáticos.
+La política se encuentra en `src/data/privacy.ts`. Desde el 13 de octubre se resume en seis apartados: responsable y contacto, datos y uso, conservación, proveedores, cookies y estadísticas, y derechos. Se retiraron explicaciones genéricas sobre seguridad, instrucciones extensas de contacto y el apartado de versión y normativa. Conserva la información de Google Tag Manager y Analytics 4 activos, además de Cloudflare, Zoho y Gmail histórico. La fecha de actualización sustituye a la firma editorial genérica en esta página.
+
+El consentimiento del preparador queda sin marcar y se incluye en el mensaje escrito que el visitante decide enviar. No se guarda en el servidor ni activa envíos automáticos.
+
+El botón «Preparar correo» muestra el borrador y permite elegir Gmail, Outlook, la aplicación del dispositivo o copiar el mensaje. Prepararlo no abre servicios externos; al elegir Gmail u Outlook se entrega el borrador a ese proveedor. La política incluye esa aclaración. El sitio no puede detectar si hay una aplicación configurada para los enlaces `mailto:`, por lo que mantiene el borrador y alternativas visibles. Los enlaces preparados se invalidan al cambiar los campos o retirar el consentimiento.
 
 La política cubre visitas y consultas; el tratamiento de datos de clientes y sus usuarios durante un servicio debe definirse en el acuerdo correspondiente. No se declara que el proveedor borre inmediatamente sus copias técnicas ni que todos los registros estén en Chile.
 

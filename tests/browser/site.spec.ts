@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import axe from 'axe-core';
 
-const routes = ['/', '/servicios/', '/diagnostico/', '/seo/', '/visibilidad-en-ia/', '/investigacion/', '/publicidad-digital/', '/contenidos/', '/metodo/', '/nosotros/', '/recursos/', '/contacto/', '/privacidad/', '/recursos/diagnostico-o-ejecucion/', '/recursos/como-leer-un-diagnostico/', '/recursos/visibilidad-ia-sin-promesas/'];
+const routes = ['/', '/servicios/', '/diagnostico/', '/seo/', '/visibilidad-en-ia/', '/investigacion/', '/publicidad-digital/', '/contenidos/', '/automatizaciones-funnels/', '/metodo/', '/nosotros/', '/recursos/', '/contacto/', '/privacidad/', '/recursos/diagnostico-o-ejecucion/', '/recursos/como-leer-un-diagnostico/', '/recursos/visibilidad-ia-sin-promesas/'];
 
 test('páginas compiladas: navegación, accesibilidad y adaptación móvil', async ({ page }) => {
   const errors: string[] = [];
@@ -47,13 +47,13 @@ test('menú móvil, teclado y filtro de recursos', async ({ page }) => {
   await expect(page.locator('.article-card:visible')).toHaveCount(3);
 });
 
-test('la identidad y las cuatro ilustraciones cargan en móvil', async ({ page, request }) => {
+test('la identidad y las cinco ilustraciones cargan en móvil', async ({ page, request }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
   await page.evaluate(() => document.fonts.ready);
   await expect(page.locator('.site-header .brand-wordmark')).toHaveText('metrilabCL');
-  const illustrations = page.locator('.hero-art img, .service-visual img, .method-visual img');
-  await expect(illustrations).toHaveCount(4);
+  const illustrations = page.locator('.hero-art img, .service-visual img, .method-visual img, .funnels-visual img');
+  await expect(illustrations).toHaveCount(5);
   for (const illustration of await illustrations.all()) {
     await illustration.scrollIntoViewIfNeeded();
     await illustration.evaluate((image: HTMLImageElement) => image.decode());
@@ -100,6 +100,71 @@ test('contacto valida y prepara una consulta sin enviar sus campos', async ({ pa
   await expect(page.locator('#draft-result')).toHaveValue(/Quiero investigar/);
   expect(submissions).toEqual([]);
   expect(transmittedFields).toEqual([]);
+});
+
+test('preparar correo muestra opciones y conserva el borrador sin una aplicación configurada', async ({ page, context }) => {
+  const transmittedFields: string[] = [];
+  page.on('request', request => {
+    let payload = `${request.url()} ${request.postData() || ''}`;
+    try { payload = decodeURIComponent(payload.replace(/\+/g, ' ')); } catch {}
+    if (payload.includes('Consulta de botón: análisis & ejecución')) transmittedFields.push(request.url());
+  });
+  await page.goto('/contacto/');
+  const prepare = page.getByRole('button', { name: 'Preparar correo' });
+  await prepare.click();
+  await expect(page.locator('#delivery-options')).toBeHidden();
+  await page.locator('#contact-message').fill('Consulta de botón: análisis & ejecución');
+  await prepare.click();
+  await expect(page.locator('#delivery-options')).toBeHidden();
+  await page.locator('#contact-consent').check();
+  await prepare.click();
+  await expect(page.locator('#delivery-options')).toBeVisible();
+  await expect(prepare).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.locator('#delivery-title')).toBeFocused();
+  await expect(page.locator('#draft-result')).toHaveValue(/Consulta de botón: análisis & ejecución/);
+  await expect(page).toHaveURL(/\/contacto\/$/);
+  expect(transmittedFields).toEqual([]);
+
+  for (const id of ['open-gmail', 'open-outlook', 'open-mail-app']) {
+    const url = new URL((await page.locator(`#${id}`).getAttribute('href'))!);
+    if (id === 'open-gmail') expect(url.origin).toBe('https://mail.google.com');
+    if (id === 'open-outlook') expect(url.origin).toBe('https://outlook.live.com');
+    if (id === 'open-mail-app') {
+      expect(url.protocol).toBe('mailto:');
+      expect(url.pathname).toBe('contacto@metrilab.cl');
+    } else expect(url.searchParams.get('to')).toBe('contacto@metrilab.cl');
+    expect(url.searchParams.get('subject')).toBe('Necesito orientación | Contacto MetrilabCL');
+    expect(url.searchParams.get('body')).toContain('Consulta de botón: análisis & ejecución');
+    expect(url.searchParams.get('body')).toContain('Autorizo a Bastian Vega Yon');
+  }
+
+  // Se intercepta el destino para comprobar la apertura sin crear ni enviar un correo real.
+  await context.route('https://mail.google.com/**', route => route.fulfill({ contentType: 'text/html', body: '<p>Correo de prueba</p>' }));
+  const popupPromise = page.waitForEvent('popup');
+  await page.getByRole('link', { name: 'Abrir Gmail', exact: true }).click();
+  const popup = await popupPromise;
+  await expect(popup).toHaveURL(/https:\/\/mail\.google\.com\/mail\//);
+  await expect(page.locator('#draft-result')).toHaveValue(/Consulta de botón: análisis & ejecución/);
+  await popup.close();
+
+  await page.locator('#contact-message').fill('Objetivo actualizado para la segunda propuesta.');
+  await expect(page.locator('#delivery-options')).toBeHidden();
+  await expect(prepare).toHaveAttribute('aria-expanded', 'false');
+  await expect(page.locator('#open-gmail')).not.toHaveAttribute('href');
+  await prepare.click();
+  await expect(page.locator('#draft-result')).toHaveValue(/Objetivo actualizado/);
+  expect(new URL((await page.locator('#open-gmail').getAttribute('href'))!).searchParams.get('body')).not.toContain('Consulta de botón');
+  for (const width of [1440, 390, 320]) {
+    await page.setViewportSize({ width, height: 900 });
+    const dimensions = await page.evaluate(() => ({ width: document.documentElement.clientWidth, scroll: document.documentElement.scrollWidth }));
+    expect(dimensions.scroll, `Opciones de correo abiertas a ${width}px`).toBeLessThanOrEqual(dimensions.width + 1);
+  }
+  await page.addScriptTag({ content: axe.source });
+  const accessibility = await page.evaluate(async () => (window as any).axe.run(document, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'] } }));
+  expect(accessibility.violations.map((violation: any) => violation.id)).toEqual([]);
+  await page.locator('#contact-consent').uncheck();
+  await prepare.click();
+  await expect(page.locator('#delivery-options')).toBeHidden();
 });
 
 test('la ruta inexistente usa la 404 y vuelve al inicio', async ({ page }) => {

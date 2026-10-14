@@ -4,18 +4,25 @@ import PageHero from '../components/PageHero.astro';
 import Icon from '../components/Icon.astro';
 import { site, mailto } from '../data/site';
 ---
-<Layout title="Cuéntanos tu sitio | Contacto MetrilabCL" description="Escribe a MetrilabCL para conversar sobre tu sitio. Cuéntanos si necesitas SEO, Google Ads, Meta Ads, contenidos o un diagnóstico. Contacto por correo." type="ContactPage" schema={{ mainEntity: { '@id': `${site.url}/#organization` }, ...(site.email ? { contactPoint: { '@type': 'ContactPoint', email: site.email, contactType: 'Consultas de servicios', availableLanguage: 'Spanish' } } : {}) }}>
+<Layout title="Cuéntanos tu sitio | Contacto MetrilabCL" description="Escribe a MetrilabCL para conversar sobre tu sitio. Cuéntanos si necesitas SEO, Ads, contenidos, automatizaciones, un funnel de ventas o un diagnóstico. Contacto por correo." type="ContactPage" schema={{ mainEntity: { '@id': `${site.url}/#organization` }, ...(site.email ? { contactPoint: { '@type': 'ContactPoint', email: site.email, contactType: 'Consultas de servicios', availableLanguage: 'Spanish' } } : {}) }}>
   <PageHero title="Una buena conversación empieza con tu sitio." label="CONTACTO / CONVERSEMOS" lead="Cuéntanos qué necesitas entender o mejorar. No hace falta llegar con todas las respuestas; basta con una pregunta y un objetivo." breadcrumb="Contacto" contact={false} />
-  <div class="container contact-grid"><section class="contact-info"><p class="eyebrow">CONTACTO DIRECTO</p><a class="contact-email" href={mailto('Consulta desde contacto | MetrilabCL')}>{site.email}<Icon name="diagonal" size={22} /></a><p>Escríbenos con la dirección de tu sitio, el objetivo que quieres resolver y si necesitas SEO, campañas de Google Ads o Meta Ads, contenidos, un diagnóstico o ayuda para elegir.</p><h2>Qué pasa después.</h2><ol class="contact-steps"><li>Revisamos tu consulta y el contexto que compartas.</li><li>Aclaramos el alcance y los accesos necesarios.</li><li>Preparamos una propuesta con entregables y condiciones.</li></ol><p>El plazo de respuesta y de trabajo se acuerda durante la conversación.</p><div class="note"><p>¿Todavía no tienes sitio? Cuéntanos el estado de tu proyecto. Podemos definir qué investigar antes de empezar.</p></div></section>
+  <div class="container contact-grid"><section class="contact-info"><p class="eyebrow">CONTACTO DIRECTO</p><a class="contact-email" href={mailto('Consulta desde contacto | MetrilabCL')}>{site.email}<Icon name="diagonal" size={22} /></a><p>Escríbenos con la dirección de tu sitio, el objetivo que quieres resolver y si necesitas SEO, campañas de Google Ads o Meta Ads, contenidos, automatizaciones, un funnel de ventas, un diagnóstico o ayuda para elegir.</p><h2>Qué pasa después.</h2><ol class="contact-steps"><li>Revisamos tu consulta y el contexto que compartas.</li><li>Aclaramos el alcance y los accesos necesarios.</li><li>Preparamos una propuesta con entregables y condiciones.</li></ol><p>El plazo de respuesta y de trabajo se acuerda durante la conversación.</p><div class="note"><p>¿Todavía no tienes sitio? Cuéntanos el estado de tu proyecto. Podemos definir qué investigar antes de empezar.</p></div></section>
     <section class="contact-form" aria-labelledby="composer-title"><h2 id="composer-title">Prepara tu primer mensaje.</h2><p>Te ayudamos a ordenarlo. Se prepara en tu navegador y tú decides cuándo enviarlo desde tu correo.</p>
       <form id="contact-composer" data-email={site.email} data-authorization={`Autorizo a ${site.owner.name}, responsable de MetrilabCL, a tratar los datos de esta consulta para responderme y preparar la propuesta que solicito, y a conservarla por un máximo de ${site.privacyRetentionMonths} meses desde la última interacción si no contrato un servicio. He leído la política: ${site.url}/privacidad/. Puedo retirar esta autorización por correo.`}>
         <div class="field"><label for="contact-name">Tu nombre <span>(opcional)</span></label><input id="contact-name" name="name" type="text" autocomplete="name" maxlength="100" placeholder="¿Cómo te llamas?" /></div>
         <div class="field"><label for="contact-site">Tu sitio web <span>(opcional)</span></label><input id="contact-site" name="website" type="url" inputmode="url" autocomplete="url" maxlength="500" placeholder="https://tusitio.cl" /></div>
-        <div class="field"><label for="contact-service">¿En qué podemos ayudarte?</label><select id="contact-service" name="service"><option value="Necesito orientación">Necesito orientación</option><option value="Diagnóstico web">Diagnóstico web</option><option value="Ejecución SEO">Ejecución SEO</option><option value="Google Ads">Google Ads</option><option value="Meta Ads">Meta Ads</option><option value="Creación de anuncios">Creación de anuncios</option><option value="Contenidos y copywriting">Contenidos y copywriting</option><option value="Investigación de palabras clave">Investigación de palabras clave</option><option value="Visibilidad en IA">Visibilidad en IA</option></select></div>
-        <div class="field"><label for="contact-message">Tu objetivo <span>(obligatorio)</span></label><textarea id="contact-message" name="message" required minlength="10" maxlength="1800" placeholder="¿Qué te gustaría mejorar en tu web o campañas? Cuéntanos tu objetivo."></textarea></div>
+        <div class="field"><label for="contact-service">¿En qué podemos ayudarte?</label><select id="contact-service" name="service"><option value="Necesito orientación">Necesito orientación</option><option value="Diagnóstico web">Diagnóstico web</option><option value="Ejecución SEO">Ejecución SEO</option><option value="Google Ads">Google Ads</option><option value="Meta Ads">Meta Ads</option><option value="Creación de anuncios">Creación de anuncios</option><option value="Contenidos y copywriting">Contenidos y copywriting</option><option value="Automatizaciones">Automatizaciones</option><option value="Funnel de ventas">Funnel de ventas</option><option value="Investigación de palabras clave">Investigación de palabras clave</option><option value="Visibilidad en IA">Visibilidad en IA</option></select></div>
+        <div class="field"><label for="contact-message">Tu objetivo <span>(obligatorio)</span></label><textarea id="contact-message" name="message" required minlength="10" maxlength="1800" placeholder="¿Qué te gustaría mejorar en tu web, campañas o proceso de ventas? Cuéntanos tu objetivo."></textarea></div>
         <div class="consent-field"><input id="contact-consent" name="consent" type="checkbox" required aria-describedby="contact-consent-detail" /><div><label for="contact-consent">Autorizo a {site.owner.name} a usar los datos de mi consulta para responderme y preparar una propuesta solicitada.</label><p id="contact-consent-detail">Consultas sin contratación: hasta {site.privacyRetentionMonths} meses desde la última interacción. Puedes retirar tu autorización por correo. <a href="/privacidad/">Leer la política de privacidad</a>.</p></div></div>
-        <div class="form-actions"><button class="button button-dark" type="submit">Abrir en mi correo <Icon name="diagonal" /></button><button class="button button-outline" type="button" id="copy-message">Copiar mensaje</button></div>
-        <p class="form-privacy">Este sitio no envía ni guarda estos campos. Si envías el correo, recibiremos los datos incluidos en tu mensaje. <a href="/privacidad/">Consulta la información de privacidad.</a></p><p class="form-status" id="form-status" role="status" aria-live="polite"></p><textarea class="draft-result" id="draft-result" aria-label="Mensaje preparado para copiar manualmente" readonly hidden></textarea>
+        <div class="form-actions"><button class="button button-dark" id="prepare-message" type="submit" aria-controls="delivery-options" aria-expanded="false">Preparar correo <Icon name="diagonal" /></button><button class="button button-outline" type="button" id="copy-message">Copiar mensaje</button></div>
+        <p class="form-privacy">Este sitio no envía ni guarda estos campos. Si envías el correo, recibiremos los datos incluidos en tu mensaje. <a href="/privacidad/">Consulta la información de privacidad.</a></p><p class="form-status" id="form-status" role="status" aria-live="polite"></p>
+        <section id="delivery-options" class="delivery-options" aria-labelledby="delivery-title" hidden>
+          <h3 id="delivery-title" tabindex="-1">Tu correo está listo.</h3>
+          <p>Elige dónde abrirlo, revisa el mensaje y envíalo desde tu correo.</p>
+          <div class="form-actions"><a id="open-gmail" class="button button-outline" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">Abrir Gmail</a><a id="open-outlook" class="button button-outline" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">Abrir Outlook</a><a id="open-mail-app" class="button button-outline">Abrir aplicación de correo</a></div>
+          <p id="mail-app-help">La aplicación de correo necesita estar configurada en tu dispositivo. Si no se abre, usa Gmail, Outlook o copia el mensaje.</p>
+          <label for="draft-result">Mensaje para copiar</label><textarea class="draft-result" id="draft-result" readonly></textarea>
+        </section>
       </form>
       <noscript><p>Para contactarnos, escribe directamente a <a href={mailto('Consulta desde contacto | MetrilabCL')}>{site.email}</a>. La herramienta para preparar mensajes necesita JavaScript.</p></noscript>
     </section>
@@ -24,6 +31,11 @@ import { site, mailto } from '../data/site';
     const form = document.querySelector<HTMLFormElement>('#contact-composer');
     const status = document.querySelector<HTMLElement>('#form-status');
     const output = document.querySelector<HTMLTextAreaElement>('#draft-result');
+    const deliveryOptions = document.querySelector<HTMLElement>('#delivery-options');
+    const prepareButton = document.querySelector<HTMLButtonElement>('#prepare-message');
+    const gmailLink = document.querySelector<HTMLAnchorElement>('#open-gmail');
+    const outlookLink = document.querySelector<HTMLAnchorElement>('#open-outlook');
+    const mailAppLink = document.querySelector<HTMLAnchorElement>('#open-mail-app');
     function compose() {
       if (!form || !form.reportValidity()) return null;
       const data = new FormData(form);
@@ -31,19 +43,44 @@ import { site, mailto } from '../data/site';
       const body = [`Hola, Equipo MetrilabCL:`, '', data.get('name') ? `Mi nombre: ${data.get('name')}` : '', data.get('website') ? `Mi sitio: ${data.get('website')}` : '', `Necesito: ${service}`, '', `Mi objetivo:`, String(data.get('message') || ''), '', form.dataset.authorization || '', '', 'Gracias.'].filter((line, i, all) => line !== '' || all[i - 1] !== '').join('\n');
       return { body, subject: `${service} | Contacto MetrilabCL` };
     }
+    function prepare(message: { body: string; subject: string }) {
+      const email = form?.dataset.email;
+      if (!email || !deliveryOptions || !output) return null;
+      const params = new URLSearchParams({ to: email, subject: message.subject, body: message.body });
+      if (gmailLink) gmailLink.href = `https://mail.google.com/mail/?view=cm&fs=1&${params}`;
+      if (outlookLink) outlookLink.href = `https://outlook.live.com/mail/0/deeplink/compose?${params}`;
+      if (mailAppLink) mailAppLink.href = `mailto:${email}?subject=${encodeURIComponent(message.subject)}&body=${encodeURIComponent(message.body)}`;
+      const text = `Para: ${email}\nAsunto: ${message.subject}\n\n${message.body}`;
+      output.value = text;
+      deliveryOptions.hidden = false;
+      prepareButton?.setAttribute('aria-expanded', 'true');
+      return text;
+    }
     form?.addEventListener('submit', event => {
       event.preventDefault();
       const message = compose();
-      if (!message || !form?.dataset.email) return;
-      window.location.href = `mailto:${form.dataset.email}?subject=${encodeURIComponent(message.subject)}&body=${encodeURIComponent(message.body)}`;
-      if (status) status.textContent = 'Se solicitó abrir tu aplicación de correo. Revisa el mensaje y envíalo desde ahí. Si no se abre, usa «Copiar mensaje».';
+      if (!message || prepare(message) === null) return;
+      if (status) status.textContent = 'Mensaje preparado. Elige dónde abrirlo o usa «Copiar mensaje».';
+      document.querySelector<HTMLElement>('#delivery-title')?.focus();
+    });
+    form?.addEventListener('input', event => {
+      if (!(event.target instanceof HTMLElement) || deliveryOptions?.contains(event.target)) return;
+      if (deliveryOptions) deliveryOptions.hidden = true;
+      if (output) output.value = '';
+      for (const link of [gmailLink, outlookLink, mailAppLink]) link?.removeAttribute('href');
+      prepareButton?.setAttribute('aria-expanded', 'false');
+      if (status) status.textContent = '';
+    });
+    mailAppLink?.addEventListener('click', () => {
+      if (status) status.textContent = 'Si no se abre tu aplicación de correo, usa Gmail, Outlook o «Copiar mensaje».';
     });
     document.querySelector('#copy-message')?.addEventListener('click', async () => {
       const message = compose();
       if (!message) return;
-      const text = `Para: ${form?.dataset.email}\nAsunto: ${message.subject}\n\n${message.body}`;
+      const text = prepare(message);
+      if (text === null) return;
       try { await navigator.clipboard.writeText(text); if (status) status.textContent = 'Mensaje copiado. Pégalo en tu correo y envíalo cuando quieras.'; }
-      catch { if (output) { output.hidden = false; output.value = text; output.focus(); output.select(); } if (status) status.textContent = 'Puedes seleccionar y copiar el mensaje que aparece debajo.'; }
+      catch { if (output) { output.focus(); output.select(); } if (status) status.textContent = 'Puedes seleccionar y copiar el mensaje que aparece debajo.'; }
     });
     // Sin JavaScript el enlace directo al correo sigue funcionando.
   </script>

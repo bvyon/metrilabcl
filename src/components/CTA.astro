@@ -1,12 +1,12 @@
 ---
 import Icon from './Icon.astro';
 import { mailto } from '../data/site';
-interface Props { title?: string; text?: string; subject?: string; }
-const { title = 'Tu próxima decisión empieza con una buena pregunta.', text = 'Cuéntanos tu sitio, tus campañas y tu objetivo. Definimos juntos el siguiente paso.', subject = 'Consulta desde MetrilabCL' } = Astro.props;
+interface Props { title?: string; text?: string; subject?: string; href?: string; label?: string; }
+const { title = 'Tu próxima decisión empieza con una buena pregunta.', text = 'Cuéntanos tu sitio, tus campañas y tu objetivo. Definimos juntos el siguiente paso.', subject = 'Consulta desde MetrilabCL', href = mailto(subject), label = 'Cuéntanos tu sitio' } = Astro.props;
 ---
 <section class="cta-section section-pad">
   <div class="container cta-inner">
     <div><p class="eyebrow"><span class="status-dot"></span> CONVERSEMOS</p><h2>{title}</h2><p>{text}</p></div>
-    <a href={mailto(subject)} class="button button-lime">Cuéntanos tu sitio <Icon name="diagonal" /></a>
+    <a href={href} class="button button-lime">{label} <Icon name="diagonal" /></a>
   </div>
 </section>

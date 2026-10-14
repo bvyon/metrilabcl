@@ -5,10 +5,10 @@ import CTA from '../../components/CTA.astro';
 import Icon from '../../components/Icon.astro';
 import { articles } from '../../data/articles';
 ---
-<Layout title="Recursos para decidir mejor sobre tu sitio | MetrilabCL" description="Guías del Equipo MetrilabCL sobre diagnóstico, ejecución y visibilidad en IA. Ideas concretas, fuentes y límites para evaluar el trabajo web.">
-  <PageHero title="Criterio que compartimos." label="RECURSOS / EQUIPO METRILABCL" lead="Guías para hacer mejores preguntas, leer la evidencia y decidir tu siguiente paso. Sin rankings de agencias ni recetas para prometer lo que nadie controla." breadcrumb="Recursos" contact={false} />
-  <div class="container page-grid"><aside class="page-sidebar"><p>LECTURAS CON CONTEXTO</p><span>Autoría de la organización.<br />Fuentes y límites visibles.<br />Fechas de revisión reales.</span></aside><div class="prose"><h2>Ideas para tu próxima decisión.</h2><div class="resource-filters" role="group" aria-label="Filtrar guías por tema">{['Todos', 'Decisiones', 'Método', 'IA'].map((category, i) => <button class="filter-button" data-filter={category} aria-pressed={i === 0 ? 'true' : 'false'}>{category === 'IA' ? 'Visibilidad en IA' : category}</button>)}</div><p class="filter-status source-link" role="status" aria-live="polite">3 guías disponibles</p><div class="article-list">{articles.map(article => <a class="article-card" href={`/recursos/${article.slug}/`} data-category={article.category}><span class="eyebrow">{article.category === 'IA' ? 'VISIBILIDAD EN IA' : article.category.toUpperCase()} · GUÍA</span><h3>{article.title}</h3><p>{article.description}</p><span class="text-link">Leer guía <Icon name="diagonal" /></span></a>)}</div><div class="note"><p>Estas guías explican criterios de trabajo. Los estudios con datos de mercado se publicarán cuando tengan fuentes reproducibles, alcance y permisos de uso definidos.</p></div></div></div>
-  <CTA />
+<Layout title="Cuándo pedir apoyo para tu web | Recursos MetrilabCL" description="Situaciones en las que MetrilabCL puede ayudarte con diagnóstico, ejecución y visibilidad en IA. Conoce el apoyo de la agencia y consulta por tu proyecto.">
+  <PageHero title="¿Es momento de pedir apoyo?" label="RECURSOS / METRILABCL" lead="Si tu web no avanza, tienes mejoras pendientes o no sabes dónde invertir, estas lecturas te ayudan a reconocer cuándo conversar con nuestra agencia." breadcrumb="Recursos" contact={false} />
+  <div class="container page-grid"><aside class="page-sidebar"><p>APOYO PARA TU NEGOCIO</p><span>Diagnóstico.<br />Ejecución.<br />Visibilidad en IA.</span><a href="/contacto/">Conversemos sobre tu proyecto</a></aside><div class="prose"><h2>Situaciones en las que podemos ayudarte.</h2><div class="resource-filters" role="group" aria-label="Filtrar recursos por tema">{['Todos', 'Decisiones', 'Diagnóstico', 'IA'].map((category, i) => <button class="filter-button" data-filter={category} aria-pressed={i === 0 ? 'true' : 'false'}>{category === 'IA' ? 'Visibilidad en IA' : category}</button>)}</div><p class="filter-status source-link" role="status" aria-live="polite">3 lecturas disponibles</p><div class="article-list">{articles.map(article => <a class="article-card" href={`/recursos/${article.slug}/`} data-category={article.category}><span class="eyebrow">{article.category === 'IA' ? 'VISIBILIDAD EN IA' : article.category.toUpperCase()}</span><h3>{article.title}</h3><p>{article.description}</p><span class="text-link">Conocer el apoyo de la agencia <Icon name="diagonal" /></span></a>)}</div><div class="note"><p>No necesitas llegar con un plan definido. <a href="/contacto/">Cuéntanos qué necesita tu negocio</a> y conversemos sobre el servicio que podemos ofrecerte.</p></div></div></div>
+  <CTA title="Tu proyecto puede avanzar con apoyo." text="Cuéntanos qué está pasando con tu web o tus campañas. Definamos contigo el alcance de una propuesta." href="/contacto/" label="Pedir ayuda a MetrilabCL" />
   <script>
     const filters = document.querySelectorAll<HTMLButtonElement>('[data-filter]');
     const cards = document.querySelectorAll<HTMLElement>('[data-category]');
@@ -17,7 +17,7 @@ import { articles } from '../../data/articles';
       filters.forEach(filter => filter.setAttribute('aria-pressed', String(filter === button)));
       let count = 0;
       cards.forEach(card => { const visible = button.dataset.filter === 'Todos' || card.dataset.category === button.dataset.filter; card.hidden = !visible; if (visible) count++; });
-      if (status) status.textContent = `${count} ${count === 1 ? 'guía disponible' : 'guías disponibles'}`;
+      if (status) status.textContent = `${count} ${count === 1 ? 'lectura disponible' : 'lecturas disponibles'}`;
     }));
   </script>
 </Layout>

@@ -1,7 +1,7 @@
 export const site = {
   name: 'MetrilabCL',
   url: 'https://metrilab.cl',
-  description: 'Agencia de marketing digital en Chile. SEO, Google Ads, Meta Ads, investigación de palabras clave y contenidos con estrategia, ejecución y seguimiento.',
+  description: 'Agencia de marketing digital en Chile. SEO, Google Ads, Meta Ads, contenidos, automatizaciones y funnels de ventas con estrategia, ejecución y seguimiento.',
   email: 'contacto@metrilab.cl',
   owner: {
     name: 'Bastian Vega Yon',
@@ -23,11 +23,4 @@ export const navigation = [
   { href: '/metodo/', label: 'Método' },
   { href: '/recursos/', label: 'Recursos' },
   { href: '/nosotros/', label: 'El estudio' },
-];
-
-export const steps = [
-  { title: 'Entender', text: 'Tu negocio, tu sitio y la decisión que necesitas tomar. Definimos la pregunta antes de buscar la respuesta.' },
-  { title: 'Investigar', text: 'Demanda, competencia y estado de tu web. Cada hallazgo conserva su fuente, fecha y límites.' },
-  { title: 'Priorizar', text: 'Un plan con criterio: qué hacer primero, quién puede hacerlo y cómo comprobar cada cambio.' },
-  { title: 'Verificar', text: 'Tu equipo o el nuestro aplica. Contrastamos el antes y el después con el mismo método.' },
 ];
