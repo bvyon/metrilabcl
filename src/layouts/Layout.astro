@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import '@fontsource-variable/dm-sans';
 import '@fontsource-variable/newsreader';
+import '@fontsource-variable/newsreader/wght-italic.css';
 import Brand from '../components/Brand.astro';
 import Icon from '../components/Icon.astro';
 import { navigation, site } from '../data/site';
@@ -35,7 +36,8 @@ if (path !== '/' && path !== '/404/') graph.push({
     <!-- End Google Tag Manager -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#f5f4ee" />
+    <meta name="theme-color" content="#060807" />
+    <script is:inline>(function(d){d.classList.add('js');setTimeout(function(){if(!d.classList.contains('io'))d.classList.remove('js')},3000)})(document.documentElement)</script>
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="robots" content={noindex || !site.launchReady ? 'noindex, follow' : 'index, follow, max-image-preview:large'} />
@@ -51,7 +53,7 @@ if (path !== '/' && path !== '/404/') graph.push({
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={`${site.url}/social.jpg`} />
     <meta property="og:image:width" content="1200" /><meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="MetrilabCL. Menos ruido. Más dirección. SEO, publicidad digital y contenidos en Chile." />
+    <meta property="og:image:alt" content="MetrilabCL. Del clic al cliente. Google Ads, Meta Ads, tracking y chatbots de WhatsApp en Chile." />
     <meta name="twitter:card" content="summary_large_image" />
     <script type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', '@graph': graph }).replace(/</g, '\\u003c')} />
   </head>
@@ -64,21 +66,24 @@ if (path !== '/' && path !== '/404/') graph.push({
       <div class="container header-inner">
         <Brand />
         <nav class="desktop-nav" aria-label="Navegación principal">{navigation.map(({ href, label }) => <a href={href} aria-current={path.startsWith(href) ? 'page' : undefined}>{label}</a>)}</nav>
-        <a href="/contacto/" class="header-cta">Hablemos <Icon name="diagonal" size={17} /></a>
+        <a href="/contacto/" class="header-cta" data-track="clic_hablemos">Hablemos <Icon name="diagonal" size={14} /></a>
         <button class="menu-toggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="mobile-nav"><span></span><span></span></button>
       </div>
       <nav id="mobile-nav" class="mobile-nav" aria-label="Navegación móvil" hidden>{navigation.map(({ href, label }) => <a href={href}>{label}<Icon /></a>)}<a href="/contacto/">Contacto<Icon /></a></nav>
     </header>
-    <main id="contenido"><slot /></main>
+    <main id="contenido" class={path === '/' ? 'home' : undefined}><slot /></main>
     <footer class="site-footer">
       <div class="container footer-top">
-        <div class="footer-brand"><Brand footer /><p>Investigación que da claridad.<br />Visibilidad que tiene fundamento.</p><span class="eyebrow">CHILE · ESPAÑOL · WEB</span></div>
-        <div><p class="footer-label">EXPLORA</p><a href="/diagnostico/">Diagnóstico web</a><a href="/seo/">Ejecución SEO</a><a href="/publicidad-digital/">Google Ads y Meta Ads</a><a href="/contenidos/">Contenidos y copywriting</a><a href="/automatizaciones-funnels/">Automatizaciones y funnels</a><a href="/investigacion/">Investigación</a><a href="/visibilidad-en-ia/">Visibilidad en IA</a></div>
-        <div><p class="footer-label">METRILABCL</p><a href="/metodo/">Nuestro método</a><a href="/nosotros/">El estudio</a><a href="/recursos/">Recursos</a><a href="/contacto/">Contacto</a></div>
+        <div class="footer-brand"><Brand footer /><p>Anuncios, medición y automatización.<br />Del clic al cliente.</p><span class="eyebrow">Iquique · Chile</span></div>
+        <div><p class="footer-label">Servicios</p><a href="/publicidad-digital/">Google Ads y Meta Ads</a><a href="/tracking-conversiones/">Tracking y conversiones</a><a href="/chatbots-whatsapp/">Chatbots y CRM en WhatsApp</a><a href="/automatizaciones-funnels/">Automatizaciones y funnels</a><a href="/contenidos/">Contenidos y piezas</a><a href="/seo/">SEO y sitio web</a><a href="/diagnostico/">Diagnóstico</a><a href="/investigacion/">Investigación</a><a href="/visibilidad-en-ia/">Visibilidad en IA</a></div>
+        <div><p class="footer-label">MetrilabCL</p><a href="/servicios/">Todos los servicios</a><a href="/metodo/">Nuestro método</a><a href="/nosotros/">El estudio</a><a href="/recursos/">Recursos</a><a href="/contacto/">Contacto</a></div>
       </div>
-      <div class="container footer-bottom"><span>© {new Date().getFullYear()} MetrilabCL</span><span>Hecho con criterio.</span><a href="/privacidad/">Privacidad</a></div>
+      <div class="container footer-bottom"><span>© {new Date().getFullYear()} MetrilabCL</span><span>Hecho y medido en Chile.</span><a href="/privacidad/">Privacidad</a></div>
+      <div class="footer-mega" aria-hidden="true" data-text="metrilabCL"></div>
     </footer>
     <script>
+      const root = document.documentElement;
+      root.classList.add('io');
       const toggle = document.querySelector<HTMLButtonElement>('.menu-toggle');
       const menu = document.querySelector<HTMLElement>('#mobile-nav');
       const setMenu = (open: boolean) => {
@@ -88,9 +93,27 @@ if (path !== '/' && path !== '/404/') graph.push({
         menu.hidden = !open;
       };
       toggle?.addEventListener('click', () => setMenu(toggle.getAttribute('aria-expanded') !== 'true'));
+      menu?.addEventListener('click', (event) => { if ((event.target as HTMLElement).closest('a')) setMenu(false); });
       document.addEventListener('keydown', (event) => { if (event.key === 'Escape' && toggle?.getAttribute('aria-expanded') === 'true') { setMenu(false); toggle.focus(); } });
       const desktop = window.matchMedia('(min-width: 901px)');
       desktop.addEventListener('change', (event) => { if (event.matches) setMenu(false); });
+
+      // Entrada escalonada y revelado al entrar en pantalla. Sin JavaScript todo queda visible.
+      requestAnimationFrame(() => requestAnimationFrame(() => root.classList.add('loaded')));
+      const revealed = new IntersectionObserver((entries) => {
+        for (const entry of entries) if (entry.isIntersecting) { entry.target.classList.add('is-in'); revealed.unobserve(entry.target); }
+      }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+      document.querySelectorAll('[data-reveal]').forEach((element) => revealed.observe(element));
+      const onScroll = () => root.classList.toggle('is-scrolled', window.scrollY > 40);
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+      if (window.matchMedia('(hover: hover)').matches) {
+        document.querySelectorAll<HTMLElement>('.spot').forEach((card) => card.addEventListener('pointermove', (event) => {
+          const box = card.getBoundingClientRect();
+          card.style.setProperty('--mx', `${event.clientX - box.left}px`);
+          card.style.setProperty('--my', `${event.clientY - box.top}px`);
+        }));
+      }
     </script>
   </body>
 </html>

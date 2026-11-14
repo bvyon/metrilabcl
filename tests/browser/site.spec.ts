@@ -1,11 +1,13 @@
 import { test, expect } from '@playwright/test';
 import axe from 'axe-core';
 
-const routes = ['/', '/servicios/', '/diagnostico/', '/seo/', '/visibilidad-en-ia/', '/investigacion/', '/publicidad-digital/', '/contenidos/', '/automatizaciones-funnels/', '/metodo/', '/nosotros/', '/recursos/', '/contacto/', '/privacidad/', '/recursos/diagnostico-o-ejecucion/', '/recursos/como-leer-un-diagnostico/', '/recursos/visibilidad-ia-sin-promesas/'];
+const routes = ['/', '/servicios/', '/diagnostico/', '/seo/', '/visibilidad-en-ia/', '/investigacion/', '/publicidad-digital/', '/contenidos/', '/automatizaciones-funnels/', '/tracking-conversiones/', '/chatbots-whatsapp/', '/metodo/', '/nosotros/', '/recursos/', '/contacto/', '/privacidad/', '/recursos/anuncios-sin-consultas/', '/recursos/medicion-que-no-cuadra/', '/recursos/whatsapp-sin-responder/', '/recursos/diagnostico-o-ejecucion/', '/recursos/como-leer-un-diagnostico/', '/recursos/visibilidad-ia-sin-promesas/'];
 
 test('páginas compiladas: navegación, accesibilidad y adaptación móvil', async ({ page }) => {
   const errors: string[] = [];
   page.on('pageerror', error => errors.push(error.message));
+  // El análisis de accesibilidad se hace sobre el estado final, sin animaciones de entrada en curso.
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   for (const width of [1440, 390, 320]) {
     await page.setViewportSize({ width, height: 900 });
     for (const route of routes) {
@@ -44,23 +46,31 @@ test('menú móvil, teclado y filtro de recursos', async ({ page }) => {
   await page.getByRole('button', { name: 'Visibilidad en IA', exact: true }).click();
   await expect(page.locator('.article-card:visible')).toHaveCount(1);
   await page.getByRole('button', { name: 'Todos', exact: true }).click();
-  await expect(page.locator('.article-card:visible')).toHaveCount(3);
+  await expect(page.locator('.article-card:visible')).toHaveCount(6);
 });
 
-test('la identidad y las cinco ilustraciones cargan en móvil', async ({ page, request }) => {
+test('la identidad carga y las demostraciones de la portada responden en móvil', async ({ page, request }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
   await page.evaluate(() => document.fonts.ready);
   await expect(page.locator('.site-header .brand-wordmark')).toHaveText('metrilabCL');
-  const illustrations = page.locator('.hero-art img, .service-visual img, .method-visual img, .funnels-visual img');
-  await expect(illustrations).toHaveCount(5);
-  for (const illustration of await illustrations.all()) {
-    await illustration.scrollIntoViewIfNeeded();
-    await illustration.evaluate((image: HTMLImageElement) => image.decode());
-    expect(await illustration.evaluate((image: HTMLImageElement) => image.naturalWidth)).toBeGreaterThan(0);
-    expect(await illustration.evaluate((image: HTMLImageElement) => image.currentSrc)).toMatch(/\.webp$/);
-  }
-  for (const path of ['/owl.svg', '/brand.svg', '/favicon.svg', '/favicon-32.png', '/apple-touch-icon.png']) {
+  await expect(page.locator('h1')).toHaveText(/Del\s+clic\s+al\s+cliente\./);
+  await expect(page.locator('#event-log li').first()).toContainText('page_view');
+  await expect(page.locator('.hero-video video')).toHaveAttribute('src', '/media/hero-mobile.mp4');
+
+  await page.getByRole('tab', { name: 'Meta Ads' }).click();
+  await expect(page.locator('#ad-meta')).toBeVisible();
+  await expect(page.locator('#ad-google')).toBeHidden();
+
+  await page.getByRole('button', { name: 'Agendar una hora' }).click();
+  await page.getByRole('button', { name: 'Kinesiología' }).click();
+  await page.getByRole('button', { name: 'Jueves, 16:00' }).click();
+  await expect(page.locator('#chat-thread')).toContainText('Reservé tu hora de kinesiología para jueves, 16:00');
+  await expect(page.locator('.crm-col[data-col="booked"] #crm-card')).toBeVisible();
+  await expect(page.locator('.funnel [data-step="conversion"]')).toHaveClass(/done/);
+  await expect(page.locator('#event-log li.is-conversion')).toContainText('booking_complete');
+
+  for (const path of ['/owl-inverse.svg', '/brand.svg', '/favicon.svg', '/favicon-32.png', '/apple-touch-icon.png']) {
     expect((await request.get(path)).status(), path).toBe(200);
   }
 });
@@ -154,6 +164,8 @@ test('preparar correo muestra opciones y conserva el borrador sin una aplicació
   await prepare.click();
   await expect(page.locator('#draft-result')).toHaveValue(/Objetivo actualizado/);
   expect(new URL((await page.locator('#open-gmail').getAttribute('href'))!).searchParams.get('body')).not.toContain('Consulta de botón');
+  // El análisis de accesibilidad se hace sobre el estado final, sin animaciones de entrada en curso.
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   for (const width of [1440, 390, 320]) {
     await page.setViewportSize({ width, height: 900 });
     const dimensions = await page.evaluate(() => ({ width: document.documentElement.clientWidth, scroll: document.documentElement.scrollWidth }));
@@ -173,5 +185,5 @@ test('la ruta inexistente usa la 404 y vuelve al inicio', async ({ page }) => {
   await expect(page.locator('h1')).toContainText('Un desvío');
   await page.getByRole('link', { name: 'Ir al inicio', exact: true }).click();
   await expect(page).toHaveURL(/\/$/);
-  await expect(page.locator('h1')).toContainText('Menos ruido');
+  await expect(page.locator('h1')).toContainText('Del clic');
 });

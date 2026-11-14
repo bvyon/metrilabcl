@@ -1,8 +1,8 @@
 # MetrilabCL
 
-Sitio editorial de investigación y visibilidad web para Chile. Construido con Astro 7 y TypeScript, con páginas estáticas y JavaScript limitado al menú móvil, filtros de recursos y preparación de correos.
+Sitio de la agencia de marketing digital MetrilabCL: gestión de Google Ads y Meta Ads, tracking de conversiones, chatbots y CRM en WhatsApp, automatizaciones, contenidos y SEO para negocios en Chile. Construido con Astro 7 y TypeScript, con páginas estáticas y JavaScript propio, sin frameworks ni librerías de animación.
 
-Publicado en Cloudflare Workers el 10 de octubre de 2026. Dominio principal: [metrilab.cl](https://metrilab.cl). Dirección alternativa: [metrilabcl.metrilabcl.workers.dev](https://metrilabcl.metrilabcl.workers.dev). La política de privacidad incluye los datos confirmados del responsable. La indexación sigue desactivada hasta aprobar el lanzamiento para buscadores.
+Publicado en Cloudflare Workers. Dominio principal: [metrilab.cl](https://metrilab.cl). Dirección alternativa: [metrilabcl.metrilabcl.workers.dev](https://metrilabcl.metrilabcl.workers.dev). Desde el 14 de noviembre de 2026 usa el diseño oscuro e interactivo descrito en [el spec del rediseño](docs/superpowers/specs/2026-11-14-rediseno-interactivo-design.md).
 
 ## Vista local
 
@@ -24,26 +24,40 @@ npm run preview
 
 El resultado compilado se guarda en `dist/`. No requiere un servidor de aplicación, base de datos ni variables secretas.
 
-Para repetir las pruebas de navegador y accesibilidad: `npx playwright install chromium`, `npm run build` y `npm run test:browser`. La suite sirve el resultado compilado, comprueba las rutas en escritorio y móvil y prueba las interacciones. Si ya tienes Chromium instalado, puedes definir `METRILAB_BROWSER_PATH` con la ruta de su ejecutable.
+Para repetir las pruebas de navegador y accesibilidad: `npx playwright install chromium`, `npm run build` y `npm run test:browser`. La suite sirve el resultado compilado, comprueba las rutas en escritorio y móvil y prueba las interacciones, incluidas las demostraciones de la portada. Si prefieres usar un navegador ya instalado, define `METRILAB_BROWSER_PATH` con la ruta de su ejecutable; por ejemplo, en macOS: `METRILAB_BROWSER_PATH="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" npm run test:browser`.
 
 ## Contenido y diseño
 
 - `src/data/site.ts`: identidad, correo y estado de lanzamiento.
-- `src/data/pages.ts`: contenido de páginas principales.
+- `src/data/pages.ts` y `src/data/marketing.ts`: contenido de las páginas de servicios, método y estudio.
 - `src/data/privacy.ts`: política de privacidad, vinculada a los datos del responsable y al correo configurado.
-- `src/data/articles.ts`: guías de recursos y fechas editoriales.
-- `src/pages/index.astro`: composición de la portada.
-- `src/styles/global.css`: sistema visual y adaptación móvil.
-- `src/layouts/Layout.astro`: navegación, pie, SEO y datos estructurados.
+- `src/data/articles.ts`: lecturas de Recursos, con sus fechas de publicación y revisión.
+- `src/pages/index.astro`: portada, con sus tres demostraciones y el script que las mueve.
+- `src/styles/global.css`: sistema visual (colores, tipografía, vidrio, movimiento) y adaptación móvil.
+- `src/layouts/Layout.astro`: navegación flotante, pie, SEO, datos estructurados y animaciones de entrada.
+- `public/media/`: video del encabezado (`hero.mp4`, `hero-mobile.mp4`) e imagen fija (`hero-poster.jpg`).
 - `public/`: marca, imagen social y muestra ilustrativa descargable.
+- `scripts/generate-brand-assets.mjs` y `scripts/render-social.mjs`: regeneran logos, iconos y la imagen para compartir.
+
+### Portada interactiva
+
+La portada presenta la oferta como un sistema —anuncio, medición y conversación— y deja probarlo:
+
+- **Anuncios:** maqueta conmutable entre Google Ads y Meta Ads con un negocio ficticio, rotulada como ejemplo.
+- **Medición en vivo:** una consola muestra los eventos de la propia visita (scroll, secciones, clics) y un embudo de cuatro etapas. Es una demostración local: no envía ni guarda esos eventos, y no modifica la medición real del sitio (GTM y GA4).
+- **WhatsApp:** un chat guiado con datos ficticios que agenda una hora y mueve al contacto por un tablero CRM.
+
+El video del encabezado es material del catálogo gratuito de MotionSites (© MotionSites, con permiso de uso en sitios construidos con su skill), recodificado y alojado en el sitio. Con «reducir movimiento» o ahorro de datos se muestra una imagen fija; sin JavaScript, todo el contenido queda visible. Para reemplazarlo basta con sustituir los tres archivos de `public/media/`.
+
+Los trabajos se mencionan solo por rubro (una clínica, una empresa de construcción y ampliaciones, una tienda de materiales de costura), sin nombres ni cifras.
 
 El correo público es **contacto@metrilab.cl**, con recepción y respuestas en **Zoho Mail gratuito**. Acceso: https://mail.zoho.com/. Cloudflare Email Routing está desactivado; los mensajes anteriores siguen en **metrilabcl@gmail.com**. Se comprobaron recepción y respuesta reales. No hay hub de libros ni sección de publicaciones.
 
 El contacto prepara un mensaje y muestra el borrador junto a opciones para abrir Gmail, Outlook o la aplicación de correo, además de copiarlo. Preparar el mensaje no transmite ni guarda los campos. Los enlaces de Gmail y Outlook abren el borrador en el proveedor elegido; el visitante revisa y envía desde allí. La apertura de `mailto:` depende de una aplicación configurada y conserva el borrador visible como alternativa. Al editar los campos se invalidan las opciones anteriores para no abrir un mensaje desactualizado.
 
-La oferta incluye automatizaciones y funnels de ventas, con una sección en portada y la página `/automatizaciones-funnels/`. Presenta captación, organización de contactos, seguimiento comercial e integración de herramientas como servicios de la agencia. Servicios, Nosotros, publicidad y el pie enlazan a esa página; el formulario incluye las opciones «Automatizaciones» y «Funnel de ventas». Sus llamadas a la acción llevan al contacto del sitio.
+La oferta tiene página propia para cada servicio: `/publicidad-digital/`, `/tracking-conversiones/`, `/chatbots-whatsapp/`, `/automatizaciones-funnels/`, `/contenidos/` (textos, gráficas y video) y `/seo/`. Diagnóstico, investigación y visibilidad en IA se conservan como servicios secundarios. El formulario de contacto incluye las opciones «Tracking y medición» y «Chatbot de WhatsApp». Las llamadas a la acción llevan al contacto del sitio.
 
-Los recursos orientan a reconocer una necesidad y consultar a la agencia: diagnóstico o ejecución, apoyo con un informe pendiente y evaluación de visibilidad en IA. Desde la revisión del 13 de octubre de 2026 no incluyen listas de comprobación, ejemplos de acciones ni procedimientos para ejecutar el servicio por cuenta propia. Las lecturas y sus llamadas a la acción llevan a `/contacto/`; las rutas existentes se conservan. La muestra de diagnóstico de la página del servicio es ilustrativa; no se presenta como una auditoría ni como un resultado de cliente.
+Los recursos orientan a reconocer una necesidad y consultar a la agencia. Seis lecturas: anuncios que no traen consultas, medición que no cuadra, WhatsApp sin responder, diagnóstico o ejecución, apoyo con un informe pendiente y evaluación de visibilidad en IA. No incluyen listas de comprobación, ejemplos de acciones ni procedimientos para ejecutar el servicio por cuenta propia. Las lecturas y sus llamadas a la acción llevan a `/contacto/`. La muestra de diagnóstico de la página del servicio es ilustrativa; no se presenta como una auditoría ni como un resultado de cliente.
 
 ## GitHub
 
@@ -92,7 +106,8 @@ El script `check:launch` detecta el estado de borrador; no sustituye la revisió
 
 ## Documentación
 
-- [Análisis del brief y decisiones de diseño](docs/brief-y-propuesta.md)
+- [Rediseño interactivo y nueva oferta](docs/superpowers/specs/2026-11-14-rediseno-interactivo-design.md)
+- [Análisis del brief y decisiones de diseño (histórico)](docs/brief-y-propuesta.md)
 - [Registro de verificación](docs/verificacion.md)
 - [Privacidad y correo](docs/privacidad-y-correo.md)
 - [Publicación automática y recuperación](DESPLIEGUE.md)

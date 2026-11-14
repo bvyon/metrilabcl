@@ -74,3 +74,11 @@ Versión: `8cda37dc-693d-4842-85a1-4d8836ac0968`. La política informa Zoho Mail
 Migración completada en Zoho; MX, SPF y DKIM verificados por su asistente. DNS público y API de Cloudflare confirman únicamente los tres MX de Zoho. Los tres MX anteriores se eliminaron con confirmación explícita y Email Routing está desactivado.
 
 Con autorización expresa se enviaron exactamente dos mensajes: Gmail → contacto@metrilab.cl, recibido en Zoho a las 14:11, y respuesta Zoho → Gmail, recibida a las 14:12. Se comprobó el remitente contacto@metrilab.cl, SPF PASS, DKIM PASS para metrilab.cl y TLS. DMARC aparecía FAIL porque faltaba el registro. Se añadió después `v=DMARC1; p=none; adkim=r; aspf=r` y se verificó en DNS público; no se envió otra prueba ni se comprobó DMARC PASS en un correo posterior. Detalles operativos y conservación en `docs/privacidad-y-correo.md`.
+
+## Rediseño interactivo y nueva oferta — 14 de noviembre de 2026
+
+Diseño oscuro con acento lima, portada con tres demostraciones (anuncios, medición en vivo, chat de WhatsApp con CRM), páginas nuevas `/tracking-conversiones/` y `/chatbots-whatsapp/`, tres lecturas nuevas en Recursos e imagen para compartir rehecha. Detalle en `docs/superpowers/specs/2026-11-14-rediseno-interactivo-design.md`.
+
+Verificación local: análisis de Astro sin errores, advertencias ni sugerencias; 23 páginas HTML y 912 enlaces y recursos internos comprobados; seis pruebas de navegador aprobadas con Chrome, incluidas 22 rutas a 1440, 390 y 320 px, accesibilidad con axe (WCAG 2.2 AA), menú, filtros de Recursos, contacto, 404 y las demostraciones de la portada (pestañas de anuncios, chat hasta «hora agendada», tarjeta del CRM y conversión en la consola). La prueba de accesibilidad se ejecuta con movimiento reducido para evaluar el estado final de cada página.
+
+Se inspeccionaron capturas de la portada en escritorio y móvil, al inicio y a la mitad del bucle del video, y de una página interior. La portada no solicita recursos de terceros distintos de Google Tag Manager: el video se sirve desde `public/media/` (H.264, 1,3 MB en escritorio y 0,5 MB en móvil). Las demostraciones no envían ni guardan datos.

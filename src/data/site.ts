@@ -1,7 +1,7 @@
 export const site = {
   name: 'MetrilabCL',
   url: 'https://metrilab.cl',
-  description: 'Agencia de marketing digital en Chile. SEO, Google Ads, Meta Ads, contenidos, automatizaciones y funnels de ventas con estrategia, ejecución y seguimiento.',
+  description: 'Agencia de marketing digital en Chile. Google Ads, Meta Ads, tracking de conversiones, chatbots y CRM en WhatsApp, automatizaciones, contenidos y SEO.',
   email: 'contacto@metrilab.cl',
   owner: {
     name: 'Bastian Vega Yon',
