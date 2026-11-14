@@ -47,7 +47,7 @@ La portada presenta la oferta como un sistema —anuncio, medición y conversaci
 - **Medición en vivo:** una consola muestra los eventos de la propia visita (scroll, secciones, clics) y un embudo de cuatro etapas. Es una demostración local: no envía ni guarda esos eventos, y no modifica la medición real del sitio (GTM y GA4).
 - **WhatsApp:** un chat guiado con datos ficticios que agenda una hora y mueve al contacto por un tablero CRM.
 
-El video del encabezado es material del catálogo gratuito de MotionSites (© MotionSites, con permiso de uso en sitios construidos con su skill), recodificado y alojado en el sitio. Con «reducir movimiento» o ahorro de datos se muestra una imagen fija; sin JavaScript, todo el contenido queda visible. Para reemplazarlo basta con sustituir los tres archivos de `public/media/`.
+El video del encabezado y las ilustraciones de las páginas interiores son material propio, generado para el sitio; los conceptos, prompts y el proceso están en [docs/ilustraciones-y-video-propios.md](docs/ilustraciones-y-video-propios.md). El video se sirve desde `public/media/` en bucle continuo. Con «reducir movimiento» o ahorro de datos se muestra una imagen fija; sin JavaScript, todo el contenido queda visible. Para reemplazarlo basta con sustituir los tres archivos de `public/media/`.
 
 Los trabajos se mencionan solo por rubro (una clínica, una empresa de construcción y ampliaciones, una tienda de materiales de costura), sin nombres ni cifras.
 
@@ -107,6 +107,7 @@ El script `check:launch` detecta el estado de borrador; no sustituye la revisió
 ## Documentación
 
 - [Rediseño interactivo y nueva oferta](docs/superpowers/specs/2026-11-14-rediseno-interactivo-design.md)
+- [Ilustraciones y video propios](docs/ilustraciones-y-video-propios.md)
 - [Análisis del brief y decisiones de diseño (histórico)](docs/brief-y-propuesta.md)
 - [Registro de verificación](docs/verificacion.md)
 - [Privacidad y correo](docs/privacidad-y-correo.md)
