@@ -1,8 +1,8 @@
 ---
-interface Props { footer?: boolean; inverse?: boolean; }
-const { footer = false, inverse = false } = Astro.props;
+interface Props { footer?: boolean; }
+const { footer = false } = Astro.props;
 ---
-<a href="/" class:list={['brand', { 'brand-footer': footer, 'brand-inverse': inverse }]} aria-label="MetrilabCL, inicio">
-  <img class="brand-symbol" src={inverse ? '/owl-inverse.svg' : '/owl.svg'} width="38" height="36" alt="" />
+<a href="/" class:list={['brand', { 'brand-footer': footer }]} aria-label="MetrilabCL, inicio">
+  <img class="brand-symbol" src="/owl-inverse.svg" width="30" height="28" alt="" />
   <span class="brand-wordmark">metrilab<strong class="brand-cl">CL</strong></span>
 </a>
