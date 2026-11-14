@@ -82,3 +82,9 @@ Diseño oscuro con acento lima, portada con tres demostraciones (anuncios, medic
 Verificación local: análisis de Astro sin errores, advertencias ni sugerencias; 23 páginas HTML y 912 enlaces y recursos internos comprobados; seis pruebas de navegador aprobadas con Chrome, incluidas 22 rutas a 1440, 390 y 320 px, accesibilidad con axe (WCAG 2.2 AA), menú, filtros de Recursos, contacto, 404 y las demostraciones de la portada (pestañas de anuncios, chat hasta «hora agendada», tarjeta del CRM y conversión en la consola). La prueba de accesibilidad se ejecuta con movimiento reducido para evaluar el estado final de cada página.
 
 Se inspeccionaron capturas de la portada en escritorio y móvil, al inicio y a la mitad del bucle del video, y de una página interior. La portada no solicita recursos de terceros distintos de Google Tag Manager: el video se sirve desde `public/media/` (H.264, 1,3 MB en escritorio y 0,5 MB en móvil). Las demostraciones no envían ni guardan datos.
+
+## Video e ilustraciones propios — 14 de noviembre de 2026
+
+El video del encabezado y las ilustraciones de las páginas interiores se reemplazaron por material generado para el sitio (detalle en `docs/ilustraciones-y-video-propios.md`). La imagen para compartir se rehízo con el cuadro fijo del video nuevo.
+
+La versión anterior se comprobó en producción tras su publicación: portada, páginas nuevas, una lectura nueva, video e imagen social respondieron HTTP 200 desde `metrilab.cl`, y la publicación automática aprobó sus comprobaciones previas y posteriores.

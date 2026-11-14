@@ -1,6 +1,6 @@
 # Identidad e ilustraciones de MetrilabCL
 
-> Desde el 14 de noviembre de 2026 el sitio usa un sistema visual oscuro con acento lima, descrito en `docs/superpowers/specs/2026-11-14-rediseno-interactivo-design.md`. El nombre, el búho y las ilustraciones de este documento se conservan: las ilustraciones aparecen como láminas claras en las páginas interiores y ya no en la portada. La imagen para compartir se genera con `scripts/generate-brand-assets.mjs` y `scripts/render-social.mjs`.
+> Desde el 14 de noviembre de 2026 el sitio usa un sistema visual oscuro con acento lima, descrito en `docs/superpowers/specs/2026-11-14-rediseno-interactivo-design.md`. Se conservan el nombre y el búho. Las ilustraciones claras descritas más abajo fueron reemplazadas por un conjunto nuevo, documentado en `docs/ilustraciones-y-video-propios.md`; este documento queda como registro histórico. La imagen para compartir se genera con `scripts/generate-brand-assets.mjs` y `scripts/render-social.mjs`.
 
 Nombre: **metrilabCL**, con DM Sans de peso 400 para «metrilab» y peso 700 para «CL», sin punto. El búho se redibujó como SVG para conservar nitidez; el favicon circular simplifica los detalles para tamaños pequeños.
 
