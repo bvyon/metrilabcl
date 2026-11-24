@@ -2,9 +2,11 @@
 // nunca el contenido de una consulta ni los campos del preparador de mensajes.
 type DataLayerWindow = Window & { dataLayer?: Record<string, unknown>[] };
 
+// La capa de datos conserva el último valor de cada clave. Cada evento declara las tres, aunque sea vacías,
+// para no heredar el canal o la zona del clic anterior.
 export function pushEvent(event: string, detail: Record<string, string> = {}) {
   const target = window as DataLayerWindow;
-  (target.dataLayer ||= []).push({ event, ...detail });
+  (target.dataLayer ||= []).push({ event, method: undefined, placement: undefined, cta: undefined, ...detail });
 }
 
 function contactMethod(link: HTMLAnchorElement) {

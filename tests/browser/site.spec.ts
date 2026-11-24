@@ -139,6 +139,9 @@ test('los canales de contacto y los llamados a la acción dejan un evento para T
     { event: 'generate_lead', method: 'whatsapp', placement: 'contenido' },
     { event: 'cta_click', cta: 'Hablemos', placement: 'encabezado' },
   ]);
+  // Cada evento declara las tres claves para que Tag Manager no arrastre el valor del clic anterior.
+  const keys = await page.evaluate(() => ((window as any).dataLayer as any[]).filter(entry => ['generate_lead', 'cta_click'].includes(entry?.event)).map(entry => ['method', 'placement', 'cta'].every(key => key in entry)));
+  expect(keys).toEqual([true, true, true, true]);
   await page.goto('/privacidad/');
   await page.evaluate(() => document.addEventListener('click', event => event.preventDefault(), true));
   await page.locator('#derechos a[href^="mailto:"]').click();

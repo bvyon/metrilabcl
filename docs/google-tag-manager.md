@@ -39,6 +39,8 @@ El sitio envía a `dataLayer` tres eventos propios. El código está en `src/scr
 
 `generate_lead` registra un intento de contacto, no un mensaje recibido: el sitio no sabe si la persona envió el WhatsApp o el correo. Una misma visita puede generar más de uno (por ejemplo, abrir Gmail y después copiar). Los enlaces de correo de la política de privacidad llevan `data-no-lead` y no cuentan.
 
+Cada evento envía las tres claves (`method`, `placement`, `cta`), vacías cuando no aplican: la capa de datos conserva el último valor de cada clave y, sin eso, un evento heredaría los parámetros del clic anterior.
+
 Ningún evento incluye los campos del preparador: ni nombre, ni sitio, ni servicio elegido, ni mensaje. La prueba de navegador lo comprueba.
 
 ### Pendiente en Tag Manager

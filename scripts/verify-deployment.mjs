@@ -30,18 +30,20 @@ async function verify() {
   assert.equal(missing.status, 404, 'Ruta inexistente');
 }
 
-for (let attempt = 1; attempt <= 4; attempt++) {
+// La publicación puede tardar en propagarse a todos los nodos: se reintenta durante un minuto.
+const attempts = 10;
+for (let attempt = 1; attempt <= attempts; attempt++) {
   try {
     await verify();
     console.log(`Publicación verificada: ${files.length} páginas coinciden con la compilación; sitemap, robots.txt, HTTPS, www y 404 correctos.`);
     break;
   } catch (error) {
-    if (attempt === 4) {
+    if (attempt === attempts) {
       console.error(error.message);
       process.exitCode = 1;
     } else {
-      console.log(`Esperando propagación de la publicación (${attempt}/4).`);
-      await delay(5_000);
+      console.log(`Esperando propagación de la publicación (${attempt}/${attempts}).`);
+      await delay(6_000);
     }
   }
 }
