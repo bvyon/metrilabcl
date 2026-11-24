@@ -3,6 +3,10 @@ export const site = {
   url: 'https://metrilab.cl',
   description: 'Agencia de marketing digital en Chile. Google Ads, Meta Ads, tracking de conversiones, chatbots y CRM en WhatsApp, automatizaciones, contenidos y SEO.',
   email: 'contacto@metrilab.cl',
+  phone: '+56937441215',
+  phoneLabel: '+56 9 3744 1215',
+  locality: 'Iquique',
+  region: 'Tarapacá',
   owner: {
     name: 'Bastian Vega Yon',
     location: 'Iquique, Chile',
@@ -16,6 +20,12 @@ export const site = {
 
 export function mailto(subject: string, body = '') {
   return site.email ? `mailto:${site.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}` : '/contacto/';
+}
+
+export const tel = `tel:${site.phone}`;
+
+export function whatsapp(text = 'Hola, MetrilabCL. Vengo desde metrilab.cl y quiero hacer una consulta.') {
+  return `https://wa.me/${site.phone.replace(/\D/g, '')}?text=${encodeURIComponent(text)}`;
 }
 
 export const navigation = [

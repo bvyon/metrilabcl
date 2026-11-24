@@ -1,12 +1,14 @@
 # Privacidad y correo de MetrilabCL
 
-Actualización: 13 de octubre de 2026.
+Actualización: 24 de noviembre de 2026.
 
 ## Datos confirmados por el propietario
 
 Responsable: Bastian Vega Yon. MetrilabCL es el nombre de la agencia. La política de privacidad no publica ubicación ni dirección particular, ni enlaces personales del responsable.
 
 Conservación de consultas sin contratación: un máximo de 12 meses desde la última interacción. Correo activo: contacto@metrilab.cl, con recepción y respuestas en Zoho Mail gratuito. Los mensajes anteriores permanecen en metrilabcl@gmail.com.
+
+Desde el 24 de noviembre de 2026 el sitio publica el teléfono +56 9 3744 1215, entregado por el propietario, para llamadas y WhatsApp. La política informa qué datos se reciben por ese canal, nombra a WhatsApp (Meta) como proveedor y explica que se registra el uso de los canales de contacto sin el contenido de la consulta.
 
 ## Alcance implementado
 

@@ -51,6 +51,8 @@ El video del encabezado y las ilustraciones de las páginas interiores son mater
 
 Los trabajos se mencionan solo por rubro (una clínica, una empresa de construcción y ampliaciones, una tienda de materiales de costura), sin nombres ni cifras.
 
+El teléfono público es **+56 9 3744 1215**, con enlaces para llamar y para escribir por WhatsApp en el pie, en la página de contacto y en los llamados a la acción. Los datos están en `src/data/site.ts`.
+
 El correo público es **contacto@metrilab.cl**, con recepción y respuestas en **Zoho Mail gratuito**. Acceso: https://mail.zoho.com/. Cloudflare Email Routing está desactivado; los mensajes anteriores siguen en **metrilabcl@gmail.com**. Se comprobaron recepción y respuesta reales. No hay hub de libros ni sección de publicaciones.
 
 El contacto prepara un mensaje y muestra el borrador junto a opciones para abrir Gmail, Outlook o la aplicación de correo, además de copiarlo. Preparar el mensaje no transmite ni guarda los campos. Los enlaces de Gmail y Outlook abren el borrador en el proveedor elegido; el visitante revisa y envía desde allí. La apertura de `mailto:` depende de una aplicación configurada y conserva el borrador visible como alternativa. Al editar los campos se invalidan las opciones anteriores para no abrir un mensaje desactualizado.
@@ -92,7 +94,7 @@ La cabecera `no-transform` en `public/_headers` impide la inserción automática
 
 Desde el 10 de octubre de 2026, `launchReady: true` habilita la indexación de las páginas publicadas a petición del titular. La página 404 conserva `noindex`.
 
-- Sitemap: https://metrilab.cl/sitemap.xml, generado automáticamente a partir de las páginas y artículos publicados.
+- Sitemap: https://metrilab.cl/sitemap.xml, generado automáticamente a partir de las páginas y artículos publicados. Cada URL declara su `lastmod`, tomado de la fecha de revisión que muestra la página; la de portada y contacto se actualiza a mano en `src/pages/sitemap.xml.ts`.
 - Robots: https://metrilab.cl/robots.txt, permite el rastreo y declara la dirección del sitemap.
 - En la propiedad de `metrilab.cl` en Search Console, abrir **Sitemaps** y enviar `https://metrilab.cl/sitemap.xml` (o `sitemap.xml` si el formulario ya muestra el dominio).
 - Si la propiedad aún no está verificada, completar primero su verificación de titularidad; el archivo robots no se envía por separado.
@@ -110,6 +112,7 @@ El script `check:launch` detecta el estado de borrador; no sustituye la revisió
 - [Ilustraciones y video propios](docs/ilustraciones-y-video-propios.md)
 - [Análisis del brief y decisiones de diseño (histórico)](docs/brief-y-propuesta.md)
 - [Registro de verificación](docs/verificacion.md)
+- [Google Tag Manager y eventos de contacto](docs/google-tag-manager.md)
 - [Privacidad y correo](docs/privacidad-y-correo.md)
 - [Publicación automática y recuperación](DESPLIEGUE.md)
 - [Astro en Vercel](https://docs.astro.build/en/guides/deploy/vercel/)

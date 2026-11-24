@@ -5,7 +5,7 @@ import '@fontsource-variable/newsreader';
 import '@fontsource-variable/newsreader/wght-italic.css';
 import Brand from '../components/Brand.astro';
 import Icon from '../components/Icon.astro';
-import { navigation, site } from '../data/site';
+import { navigation, site, tel, whatsapp } from '../data/site';
 interface Props { title: string; description: string; type?: string; schema?: Record<string, unknown>; noindex?: boolean; }
 const { title, description, type = 'WebPage', schema, noindex = false } = Astro.props;
 const path = Astro.url.pathname;
@@ -13,7 +13,9 @@ const canonical = new URL(path, site.url).href;
 const organization = {
   '@type': 'Organization', '@id': `${site.url}/#organization`, name: site.name, alternateName: 'Metrilab CL',
   url: site.url, description: site.description, areaServed: { '@type': 'Country', name: 'Chile' },
-  logo: `${site.url}/brand.svg`, ...(site.email ? { email: site.email } : {}),
+  logo: `${site.url}/brand.svg`, ...(site.email ? { email: site.email } : {}), telephone: site.phone,
+  address: { '@type': 'PostalAddress', addressLocality: site.locality, addressRegion: site.region, addressCountry: 'CL' },
+  founder: { '@type': 'Person', name: site.owner.name, sameAs: [site.owner.linkedin] },
 };
 const graph = [organization, {
   '@type': path === '/' ? 'WebSite' : type, '@id': `${canonical}#webpage`, name: title, description, url: canonical,
@@ -76,12 +78,14 @@ if (path !== '/' && path !== '/404/') graph.push({
       <div class="container footer-top">
         <div class="footer-brand"><Brand footer /><p>Anuncios, medición y automatización.<br />Del clic al cliente.</p><span class="eyebrow">Iquique · Chile</span></div>
         <div><p class="footer-label">Servicios</p><a href="/publicidad-digital/">Google Ads y Meta Ads</a><a href="/tracking-conversiones/">Tracking y conversiones</a><a href="/chatbots-whatsapp/">Chatbots y CRM en WhatsApp</a><a href="/automatizaciones-funnels/">Automatizaciones y funnels</a><a href="/contenidos/">Contenidos y piezas</a><a href="/seo/">SEO y sitio web</a><a href="/diagnostico/">Diagnóstico</a><a href="/investigacion/">Investigación</a><a href="/visibilidad-en-ia/">Visibilidad en IA</a></div>
-        <div><p class="footer-label">MetrilabCL</p><a href="/servicios/">Todos los servicios</a><a href="/metodo/">Nuestro método</a><a href="/nosotros/">El estudio</a><a href="/recursos/">Recursos</a><a href="/contacto/">Contacto</a></div>
+        <div><p class="footer-label">MetrilabCL</p><a href="/servicios/">Todos los servicios</a><a href="/metodo/">Nuestro método</a><a href="/nosotros/">El estudio</a><a href="/recursos/">Recursos</a><a href="/contacto/">Contacto</a><a href={whatsapp()} target="_blank" rel="noopener">WhatsApp</a><a href={tel}>{site.phoneLabel}</a></div>
       </div>
       <div class="container footer-bottom"><span>© {new Date().getFullYear()} MetrilabCL</span><span>Hecho y medido en Chile.</span><a href="/privacidad/">Privacidad</a></div>
       <div class="footer-mega" aria-hidden="true" data-text="metrilabCL"></div>
     </footer>
     <script>
+      import { trackClicks } from '../scripts/track';
+      trackClicks();
       const root = document.documentElement;
       root.classList.add('io');
       const toggle = document.querySelector<HTMLButtonElement>('.menu-toggle');

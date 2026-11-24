@@ -26,3 +26,31 @@ Se comprobó la recepción real de `page_view`, `session_start` y `first_visit` 
 Referencia oficial: [Instalar un contenedor web](https://support.google.com/tagmanager/answer/14847097).
 
 Verificación: Astro sin errores en 35 archivos; fragmentos presentes en los 17 HTML compilados; cinco pruebas de navegador aprobadas. El recurso `gtm.js` del contenedor respondió HTTP 200.
+
+## Eventos de contacto (24 de noviembre de 2026)
+
+El sitio envía a `dataLayer` tres eventos propios. El código está en `src/scripts/track.ts`; la página de contacto añade los suyos en `src/pages/contacto.astro`.
+
+| Evento | Cuándo se envía | Parámetros |
+| --- | --- | --- |
+| `generate_lead` | Clic en un enlace de WhatsApp, de teléfono o de correo; abrir Gmail, Outlook o la aplicación de correo desde el preparador; copiar el mensaje preparado | `method`: `whatsapp`, `telefono`, `correo`, `gmail`, `outlook`, `correo_app` o `copiar`. `placement`: `encabezado`, `contenido` o `pie` |
+| `contacto_preparado` | El visitante completa el preparador y pulsa «Preparar correo» | Ninguno |
+| `cta_click` | Clic en un llamado a la acción marcado con `data-track` | `cta`: texto del llamado. `placement` |
+
+`generate_lead` registra un intento de contacto, no un mensaje recibido: el sitio no sabe si la persona envió el WhatsApp o el correo. Una misma visita puede generar más de uno (por ejemplo, abrir Gmail y después copiar). Los enlaces de correo de la política de privacidad llevan `data-no-lead` y no cuentan.
+
+Ningún evento incluye los campos del preparador: ni nombre, ni sitio, ni servicio elegido, ni mensaje. La prueba de navegador lo comprueba.
+
+### Pendiente en Tag Manager
+
+Hasta completar estos pasos, los eventos llegan a `dataLayer` pero no a Analytics.
+
+1. **Variables → Nueva → Variable de capa de datos**, tres veces: `method`, `placement` y `cta` como nombre de la variable de capa de datos.
+2. **Activadores → Nuevo → Evento personalizado**. Nombre del evento: `^(generate_lead|contacto_preparado|cta_click)$`, con «Usar coincidencia de expresiones regulares» marcado.
+3. **Etiquetas → Nueva → Google Analytics: Evento de GA4**. ID de medición `G-R4D90YVNLK`; nombre del evento `{{Event}}`; parámetros `method`, `placement` y `cta` con las tres variables del paso 1; activador, el del paso 2.
+4. Probar en **Vista previa** con un clic en WhatsApp y publicar la versión.
+5. En Analytics, **Administrar → Eventos**: marcar `generate_lead` como evento clave cuando aparezca (puede tardar hasta un día). En **Definiciones personalizadas**, registrar `placement` y `cta` como dimensiones de evento; `method` también, si «Método» no aparece en los informes.
+
+Para que las visitas propias no cuenten: **Administrar → Flujos de datos → Configurar ajustes de etiquetas → Definir tráfico interno**.
+
+Las pruebas de navegador bloquean `googletagmanager.com` y `google-analytics.com`, de modo que ni las ejecuciones locales ni las de GitHub Actions dejan visitas o conversiones en la propiedad.
