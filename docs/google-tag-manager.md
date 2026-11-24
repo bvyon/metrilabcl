@@ -43,15 +43,19 @@ Cada evento envía las tres claves (`method`, `placement`, `cta`), vacías cuand
 
 Ningún evento incluye los campos del preparador: ni nombre, ni sitio, ni servicio elegido, ni mensaje. La prueba de navegador lo comprueba.
 
-### Pendiente en Tag Manager
+### Configuración publicada en Tag Manager
 
-Hasta completar estos pasos, los eventos llegan a `dataLayer` pero no a Analytics.
+El 24 de noviembre de 2026 se publicó la versión 3 del contenedor, «Eventos de contacto y CTA»:
 
-1. **Variables → Nueva → Variable de capa de datos**, tres veces: `method`, `placement` y `cta` como nombre de la variable de capa de datos.
-2. **Activadores → Nuevo → Evento personalizado**. Nombre del evento: `^(generate_lead|contacto_preparado|cta_click)$`, con «Usar coincidencia de expresiones regulares» marcado.
-3. **Etiquetas → Nueva → Google Analytics: Evento de GA4**. ID de medición `G-R4D90YVNLK`; nombre del evento `{{Event}}`; parámetros `method`, `placement` y `cta` con las tres variables del paso 1; activador, el del paso 2.
-4. Probar en **Vista previa** con un clic en WhatsApp y publicar la versión.
-5. En Analytics, **Administrar → Eventos**: marcar `generate_lead` como evento clave cuando aparezca (puede tardar hasta un día). En **Definiciones personalizadas**, registrar `placement` y `cta` como dimensiones de evento; `method` también, si «Método» no aparece en los informes.
+- Variables de capa de datos `DLV - method`, `DLV - placement` y `DLV - cta`.
+- Activador `CE - Eventos de contacto y CTA`: evento personalizado con la expresión regular `^(generate_lead|contacto_preparado|cta_click)$`.
+- Etiqueta `GA4 | MetrilabCL | Eventos de contacto y CTA`: evento de GA4 con ID de medición `G-R4D90YVNLK`, nombre de evento `{{Event}}` y los tres parámetros.
+
+Se comprobó en Vista previa, sobre `https://metrilab.cl/contacto/`, que los cuatro tipos de acción envían su evento a Analytics con los parámetros correctos y sin el texto del preparador. La prueba dejó eventos de prueba en la propiedad, entre ellos cuatro `generate_lead` que no son consultas.
+
+### Pendiente en Analytics
+
+En **Administrar → Eventos**, marcar `generate_lead` como evento clave cuando aparezca (puede tardar hasta un día). En **Definiciones personalizadas**, registrar `placement` y `cta` como dimensiones de evento; `method` también, si «Método» no aparece en los informes.
 
 Para que las visitas propias no cuenten: **Administrar → Flujos de datos → Configurar ajustes de etiquetas → Definir tráfico interno**.
 
