@@ -95,6 +95,6 @@ Teléfono y WhatsApp en el pie, en contacto y en los llamados a la acción; even
 
 Verificación local: análisis de Astro sin errores, advertencias ni sugerencias; 23 páginas HTML y 936 enlaces y recursos internos; siete pruebas de navegador aprobadas con Chrome, incluidas accesibilidad con axe en las 22 rutas y la prueba nueva de eventos. Se compararon capturas del encabezado de la portada contra producción, en escritorio y móvil: solo cambia el texto de la insignia.
 
-Sin verificar: la llegada de los eventos a Analytics, que depende de la configuración pendiente en Tag Manager (`docs/google-tag-manager.md`), y la apertura real de WhatsApp o de una llamada, que las pruebas anulan.
+La llegada de los eventos a Analytics se comprobó después en la Vista previa de Tag Manager y se publicó la versión 3 del contenedor (`docs/google-tag-manager.md`). Esa prueba detectó que un evento heredaba los parámetros del clic anterior; se corrigió y se repitió con resultado correcto. Sin verificar: la apertura real de WhatsApp o de una llamada, que las pruebas anulan.
 
 Pendiente fuera del código, en Cloudflare: activar «Always Use HTTPS» (`http://metrilab.cl` responde 200 sin redirigir) y una regla de redirección de `www` al dominio principal.
