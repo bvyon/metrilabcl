@@ -58,6 +58,7 @@ const sitemap = await readFile(join(root, 'sitemap.xml'), 'utf8');
 const sitemapUrls = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map(match => match[1]);
 assert.match(sitemap, /<urlset xmlns="http:\/\/www\.sitemaps\.org\/schemas\/sitemap\/0\.9">/);
 assert.equal(new Set(sitemapUrls).size, sitemapUrls.length, 'No repetir URLs en el sitemap');
+assert.equal((sitemap.match(/<lastmod>\d{4}-\d{2}-\d{2}<\/lastmod>/g) || []).length, sitemapUrls.length, 'Cada URL del sitemap debe declarar su fecha de modificación');
 assert.equal(sitemapUrls.length, htmlFiles.length - 1, 'Cada página publicada, salvo 404, debe figurar en el sitemap');
 assert.ok(!sitemapUrls.some(url => url.includes('404')), 'No incluir 404 en sitemap');
 for (const url of sitemapUrls) {

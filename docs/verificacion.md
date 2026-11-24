@@ -88,3 +88,13 @@ Se inspeccionaron capturas de la portada en escritorio y móvil, al inicio y a l
 El video del encabezado y las ilustraciones de las páginas interiores se reemplazaron por material generado para el sitio (detalle en `docs/ilustraciones-y-video-propios.md`). La imagen para compartir se rehízo con el cuadro fijo del video nuevo.
 
 La versión anterior se comprobó en producción tras su publicación: portada, páginas nuevas, una lectura nueva, video e imagen social respondieron HTTP 200 desde `metrilab.cl`, y la publicación automática aprobó sus comprobaciones previas y posteriores.
+
+## Contacto directo, eventos y base de posicionamiento — 24 de noviembre de 2026
+
+Teléfono y WhatsApp en el pie, en contacto y en los llamados a la acción; eventos `generate_lead`, `contacto_preparado` y `cta_click` hacia `dataLayer`; `lastmod` en el sitemap; título de la portada y H1 con «Agencia de marketing digital en Chile»; seis preguntas frecuentes en la portada; teléfono, localidad y responsable en los datos estructurados; política de privacidad actualizada.
+
+Verificación local: análisis de Astro sin errores, advertencias ni sugerencias; 23 páginas HTML y 936 enlaces y recursos internos; siete pruebas de navegador aprobadas con Chrome, incluidas accesibilidad con axe en las 22 rutas y la prueba nueva de eventos. Se compararon capturas del encabezado de la portada contra producción, en escritorio y móvil: solo cambia el texto de la insignia.
+
+Sin verificar: la llegada de los eventos a Analytics, que depende de la configuración pendiente en Tag Manager (`docs/google-tag-manager.md`), y la apertura real de WhatsApp o de una llamada, que las pruebas anulan.
+
+Pendiente fuera del código, en Cloudflare: activar «Always Use HTTPS» (`http://metrilab.cl` responde 200 sin redirigir) y una regla de redirección de `www` al dominio principal.

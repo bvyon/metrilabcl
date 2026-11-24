@@ -2,11 +2,11 @@
 import Layout from '../layouts/Layout.astro';
 import PageHero from '../components/PageHero.astro';
 import Icon from '../components/Icon.astro';
-import { site, mailto } from '../data/site';
+import { site, mailto, tel, whatsapp } from '../data/site';
 ---
-<Layout title="Cuéntanos tu sitio | Contacto MetrilabCL" description="Escribe a MetrilabCL para conversar sobre tu sitio. Cuéntanos si necesitas anuncios, tracking, un chatbot de WhatsApp, automatizaciones, contenidos, SEO o un diagnóstico. Contacto por correo." type="ContactPage" schema={{ mainEntity: { '@id': `${site.url}/#organization` }, ...(site.email ? { contactPoint: { '@type': 'ContactPoint', email: site.email, contactType: 'Consultas de servicios', availableLanguage: 'Spanish' } } : {}) }}>
+<Layout title="Cuéntanos tu sitio | Contacto MetrilabCL" description="Escribe a MetrilabCL para conversar sobre tu sitio. Cuéntanos si necesitas anuncios, tracking, un chatbot de WhatsApp, automatizaciones, contenidos, SEO o un diagnóstico. Contacto por WhatsApp, teléfono o correo." type="ContactPage" schema={{ mainEntity: { '@id': `${site.url}/#organization` }, ...(site.email ? { contactPoint: { '@type': 'ContactPoint', email: site.email, telephone: site.phone, contactType: 'Consultas de servicios', availableLanguage: 'Spanish' } } : {}) }}>
   <PageHero title="Una buena conversación empieza con tu sitio." label="CONTACTO / CONVERSEMOS" lead="Cuéntanos qué necesitas entender o mejorar. No hace falta llegar con todas las respuestas; basta con una pregunta y un objetivo." breadcrumb="Contacto" contact={false} />
-  <div class="container contact-grid"><section class="contact-info"><p class="eyebrow">CONTACTO DIRECTO</p><a class="contact-email" href={mailto('Consulta desde contacto | MetrilabCL')}>{site.email}<Icon name="diagonal" size={22} /></a><p>Escríbenos con la dirección de tu sitio, el objetivo que quieres resolver y si necesitas campañas de Google Ads o Meta Ads, medición de conversiones, un chatbot de WhatsApp, automatizaciones, contenidos, SEO, un diagnóstico o ayuda para elegir.</p><h2>Qué pasa después.</h2><ol class="contact-steps"><li>Revisamos tu consulta y el contexto que compartas.</li><li>Aclaramos el alcance y los accesos necesarios.</li><li>Preparamos una propuesta con entregables y condiciones.</li></ol><p>El plazo de respuesta y de trabajo se acuerda durante la conversación.</p><div class="note"><p>¿Todavía no tienes sitio? Cuéntanos el estado de tu proyecto. Podemos definir qué investigar antes de empezar.</p></div></section>
+  <div class="container contact-grid"><section class="contact-info"><p class="eyebrow">CONTACTO DIRECTO</p><a class="contact-email" href={mailto('Consulta desde contacto | MetrilabCL')}>{site.email}<Icon name="diagonal" size={22} /></a><p class="contact-channels"><a class="text-link" href={whatsapp()} target="_blank" rel="noopener">WhatsApp {site.phoneLabel} <Icon name="diagonal" size={16} /></a><a class="text-link" href={tel}>Llamar <Icon name="diagonal" size={16} /></a></p><p>Escríbenos con la dirección de tu sitio, el objetivo que quieres resolver y si necesitas campañas de Google Ads o Meta Ads, medición de conversiones, un chatbot de WhatsApp, automatizaciones, contenidos, SEO, un diagnóstico o ayuda para elegir.</p><h2>Qué pasa después.</h2><ol class="contact-steps"><li>Revisamos tu consulta y el contexto que compartas.</li><li>Aclaramos el alcance y los accesos necesarios.</li><li>Preparamos una propuesta con entregables y condiciones.</li></ol><p>El plazo de respuesta y de trabajo se acuerda durante la conversación.</p><div class="note"><p>¿Todavía no tienes sitio? Cuéntanos el estado de tu proyecto. Podemos definir qué investigar antes de empezar.</p></div></section>
     <section class="contact-form" aria-labelledby="composer-title"><h2 id="composer-title">Prepara tu primer mensaje.</h2><p>Te ayudamos a ordenarlo. Se prepara en tu navegador y tú decides cuándo enviarlo desde tu correo.</p>
       <form id="contact-composer" data-email={site.email} data-authorization={`Autorizo a ${site.owner.name}, responsable de MetrilabCL, a tratar los datos de esta consulta para responderme y preparar la propuesta que solicito, y a conservarla por un máximo de ${site.privacyRetentionMonths} meses desde la última interacción si no contrato un servicio. He leído la política: ${site.url}/privacidad/. Puedo retirar esta autorización por correo.`}>
         <div class="field"><label for="contact-name">Tu nombre <span>(opcional)</span></label><input id="contact-name" name="name" type="text" autocomplete="name" maxlength="100" placeholder="¿Cómo te llamas?" /></div>
@@ -19,7 +19,7 @@ import { site, mailto } from '../data/site';
         <section id="delivery-options" class="delivery-options" aria-labelledby="delivery-title" hidden>
           <h3 id="delivery-title" tabindex="-1">Tu correo está listo.</h3>
           <p>Elige dónde abrirlo, revisa el mensaje y envíalo desde tu correo.</p>
-          <div class="form-actions"><a id="open-gmail" class="button button-outline" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">Abrir Gmail</a><a id="open-outlook" class="button button-outline" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">Abrir Outlook</a><a id="open-mail-app" class="button button-outline">Abrir aplicación de correo</a></div>
+          <div class="form-actions"><a id="open-gmail" data-lead-method="gmail" class="button button-outline" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">Abrir Gmail</a><a id="open-outlook" data-lead-method="outlook" class="button button-outline" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">Abrir Outlook</a><a id="open-mail-app" data-lead-method="correo_app" class="button button-outline">Abrir aplicación de correo</a></div>
           <p id="mail-app-help">La aplicación de correo necesita estar configurada en tu dispositivo. Si no se abre, usa Gmail, Outlook o copia el mensaje.</p>
           <label for="draft-result">Mensaje para copiar</label><textarea class="draft-result" id="draft-result" readonly></textarea>
         </section>
@@ -28,6 +28,7 @@ import { site, mailto } from '../data/site';
     </section>
   </div>
   <script>
+    import { pushEvent } from '../scripts/track';
     const form = document.querySelector<HTMLFormElement>('#contact-composer');
     const status = document.querySelector<HTMLElement>('#form-status');
     const output = document.querySelector<HTMLTextAreaElement>('#draft-result');
@@ -60,6 +61,7 @@ import { site, mailto } from '../data/site';
       event.preventDefault();
       const message = compose();
       if (!message || prepare(message) === null) return;
+      pushEvent('contacto_preparado');
       if (status) status.textContent = 'Mensaje preparado. Elige dónde abrirlo o usa «Copiar mensaje».';
       document.querySelector<HTMLElement>('#delivery-title')?.focus();
     });
@@ -79,6 +81,7 @@ import { site, mailto } from '../data/site';
       if (!message) return;
       const text = prepare(message);
       if (text === null) return;
+      pushEvent('generate_lead', { method: 'copiar', placement: 'contenido' });
       try { await navigator.clipboard.writeText(text); if (status) status.textContent = 'Mensaje copiado. Pégalo en tu correo y envíalo cuando quieras.'; }
       catch { if (output) { output.focus(); output.select(); } if (status) status.textContent = 'Puedes seleccionar y copiar el mensaje que aparece debajo.'; }
     });

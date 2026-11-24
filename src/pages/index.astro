@@ -18,6 +18,14 @@ const work = [
   { sector: 'Hogar', title: 'Una empresa de construcción y ampliaciones', text: 'Campañas, cambios en el sitio web y medición de conversiones para ordenar las consultas que llegan desde los anuncios.', tags: ['Google Ads', 'Meta Ads', 'Tracking', 'Sitio web', 'SEO'] },
   { sector: 'Comercio', title: 'Una tienda de materiales de costura', text: 'Campañas, sitio web, SEO y configuración de Google para un emprendimiento que vende materiales para confección.', tags: ['Google Ads', 'Meta Ads', 'SEO', 'Tracking', 'Sitio web'] },
 ];
+const faqs = [
+  { q: '¿Cuánto cuesta trabajar con MetrilabCL?', a: 'No hay una tarifa única: el valor depende de lo que necesite tu negocio, de las plataformas que uses y del alcance del trabajo. Conversamos, definimos qué hace falta y recibes una propuesta con entregables y condiciones antes de decidir.' },
+  { q: '¿Puedo contratar un solo servicio?', a: 'Sí. Puedes contratar una parte, como la gestión de tus campañas, la medición o un chatbot de WhatsApp, o el trabajo completo. Definimos contigo por dónde conviene partir.' },
+  { q: '¿Trabajan solo con negocios de Iquique?', a: 'No. Estamos en Iquique y atendemos a negocios de todo Chile. La conversación parte por WhatsApp, teléfono o correo.' },
+  { q: '¿Garantizan ventas o posiciones en Google?', a: 'No. Prometemos trabajo que se puede revisar: acordamos qué se hace, con qué accesos y cómo vas a ver lo que ocurre con tu inversión. Las ventas y las posiciones dependen de factores que ninguna agencia controla.' },
+  { q: '¿Con quién voy a hablar?', a: `Con ${site.owner.name}, responsable de MetrilabCL. Él planifica, configura y revisa las campañas, la medición y las automatizaciones, sin intermediarios ni ejecutivos de cuenta.` },
+  { q: '¿Qué necesito para empezar?', a: 'Nada preparado. Cuéntanos qué vendes, en qué plataformas anuncias y qué te gustaría mejorar. Si todavía no tienes sitio web, también podemos partir desde ahí.' },
+];
 const steps = [
   { title: 'Revisamos', text: 'Miramos tus cuentas, tu sitio y tu medición para saber de dónde partimos.' },
   { title: 'Medimos', text: 'Dejamos el tracking y las conversiones funcionando antes de invertir más.' },
@@ -25,7 +33,7 @@ const steps = [
   { title: 'Automatizamos', text: 'WhatsApp, CRM y seguimiento para responder a tiempo cada consulta.' },
 ];
 ---
-<Layout title="MetrilabCL | Google Ads, Meta Ads, tracking y chatbots de WhatsApp en Chile" description="Agencia de marketing digital en Chile: gestión de Google Ads y Meta Ads, tracking de conversiones, chatbots y CRM en WhatsApp, automatizaciones, contenidos y SEO.">
+<Layout title="Agencia de marketing digital en Chile: Google Ads y Meta Ads | MetrilabCL" description="Agencia de marketing digital en Chile: gestión de Google Ads y Meta Ads, tracking de conversiones, chatbots y CRM en WhatsApp, automatizaciones, contenidos y SEO.">
   <section class="hero" data-section="Inicio">
     <div class="hero-media" aria-hidden="true">
       <div class="hero-dots"></div>
@@ -39,10 +47,12 @@ const steps = [
       </div>
       <div class="hero-bottom">
         <div class="hero-copy">
-          <p class="badge" data-enter style="--d:.15s"><span class="status-dot live"></span>Agencia de marketing digital · Chile</p>
-          <h1 class="hero-title">
-            <span class="line"><span class="word" data-enter style="--d:.25s">Del</span> <span class="word" data-enter style="--d:.35s">clic</span></span>{' '}
-            <span class="line"><em><span class="word" data-enter style="--d:.45s">al</span> <span class="word" data-enter style="--d:.55s">cliente.</span></em></span>
+          <h1 class="hero-heading">
+            <span class="badge" data-enter style="--d:.15s"><span class="status-dot live"></span>Agencia de marketing digital en Chile</span>{' '}
+            <span class="hero-title">
+              <span class="line"><span class="word" data-enter style="--d:.25s">Del</span> <span class="word" data-enter style="--d:.35s">clic</span></span>{' '}
+              <span class="line"><em><span class="word" data-enter style="--d:.45s">al</span> <span class="word" data-enter style="--d:.55s">cliente.</span></em></span>
+            </span>
           </h1>
           <p class="hero-sub" data-enter style="--d:.7s">Gestionamos tus anuncios en Google y Meta, medimos cada conversión y automatizamos WhatsApp para que ninguna consulta quede sin respuesta.</p>
           <div class="hero-actions" data-enter style="--d:.82s"><a href="/contacto/" class="button button-lime" data-track="cta_click" data-track-detail="Conversemos">Conversemos <Icon name="diagonal" /></a><a href="#anuncios" class="text-link" data-track="cta_click" data-track-detail="Ver cómo funciona">Ver cómo funciona <Icon /></a></div>
@@ -199,6 +209,13 @@ const steps = [
         <div class="studio-links"><a href="/nosotros/" class="text-link">Conocer el estudio <Icon name="diagonal" /></a><a href={site.owner.linkedin} class="text-link" rel="me noopener">LinkedIn <Icon name="diagonal" /></a></div>
         <p class="promise"><strong>Prometemos trabajo que se puede revisar.</strong> No prometemos posiciones en Google ni ventas garantizadas: eso depende de factores que ninguna agencia controla.</p>
       </div>
+    </div>
+  </section>
+
+  <section class="faq section" id="preguntas" data-section="Preguntas">
+    <div class="container faq-grid">
+      <header data-reveal><p class="kicker">Antes de escribirnos</p><h2>Preguntas <em>frecuentes.</em></h2></header>
+      <div class="faq-list" data-reveal style="--d:.1s">{faqs.map(faq => <details class="faq-item"><summary>{faq.q}</summary><p>{faq.a}</p></details>)}</div>
     </div>
   </section>
 

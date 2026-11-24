@@ -3,6 +3,12 @@ import axe from 'axe-core';
 
 const routes = ['/', '/servicios/', '/diagnostico/', '/seo/', '/visibilidad-en-ia/', '/investigacion/', '/publicidad-digital/', '/contenidos/', '/automatizaciones-funnels/', '/tracking-conversiones/', '/chatbots-whatsapp/', '/metodo/', '/nosotros/', '/recursos/', '/contacto/', '/privacidad/', '/recursos/anuncios-sin-consultas/', '/recursos/medicion-que-no-cuadra/', '/recursos/whatsapp-sin-responder/', '/recursos/diagnostico-o-ejecucion/', '/recursos/como-leer-un-diagnostico/', '/recursos/visibilidad-ia-sin-promesas/'];
 
+// Las pruebas no cargan Tag Manager ni Analytics: así no dejan visitas ni conversiones falsas en la medición real.
+test.beforeEach(async ({ context }) => {
+  await context.route(/^https:\/\/([a-z0-9-]+\.)*(googletagmanager|google-analytics)\.com\//, route => route.abort());
+});
+const events = (page: import('@playwright/test').Page) => page.evaluate(() => ((window as any).dataLayer as any[]).filter(entry => typeof entry?.event === 'string' && !entry.event.startsWith('gtm.')));
+
 test('páginas compiladas: navegación, accesibilidad y adaptación móvil', async ({ page }) => {
   const errors: string[] = [];
   page.on('pageerror', error => errors.push(error.message));
@@ -110,6 +116,33 @@ test('contacto valida y prepara una consulta sin enviar sus campos', async ({ pa
   await expect(page.locator('#draft-result')).toHaveValue(/Quiero investigar/);
   expect(submissions).toEqual([]);
   expect(transmittedFields).toEqual([]);
+  const sent = await events(page);
+  expect(sent).toContainEqual({ event: 'generate_lead', method: 'copiar', placement: 'contenido' });
+  const dataLayer = await page.evaluate(() => JSON.stringify((window as any).dataLayer));
+  for (const value of ['Prueba de consulta', 'ejemplo.cl', 'Quiero investigar', 'Google Ads']) expect(dataLayer).not.toContain(value);
+});
+
+test('los canales de contacto y los llamados a la acción dejan un evento para Tag Manager', async ({ page }) => {
+  await page.goto('/servicios/');
+  // Se anula la navegación para comprobar el evento sin abrir WhatsApp, el teléfono ni el correo.
+  await page.evaluate(() => document.addEventListener('click', event => event.preventDefault(), true));
+  const footer = page.locator('.site-footer');
+  await expect(footer.getByRole('link', { name: 'WhatsApp', exact: true })).toHaveAttribute('href', /^https:\/\/wa\.me\/56937441215\?text=/);
+  await expect(footer.getByRole('link', { name: '+56 9 3744 1215' })).toHaveAttribute('href', 'tel:+56937441215');
+  await footer.getByRole('link', { name: 'WhatsApp', exact: true }).click();
+  await footer.getByRole('link', { name: '+56 9 3744 1215' }).click();
+  await page.locator('.cta-section').getByRole('link', { name: /WhatsApp/ }).click();
+  await page.locator('.site-header .header-cta').click();
+  expect(await events(page)).toEqual([
+    { event: 'generate_lead', method: 'whatsapp', placement: 'pie' },
+    { event: 'generate_lead', method: 'telefono', placement: 'pie' },
+    { event: 'generate_lead', method: 'whatsapp', placement: 'contenido' },
+    { event: 'cta_click', cta: 'Hablemos', placement: 'encabezado' },
+  ]);
+  await page.goto('/privacidad/');
+  await page.evaluate(() => document.addEventListener('click', event => event.preventDefault(), true));
+  await page.locator('#derechos a[href^="mailto:"]').click();
+  expect(await events(page)).toEqual([]);
 });
 
 test('preparar correo muestra opciones y conserva el borrador sin una aplicación configurada', async ({ page, context }) => {
@@ -134,6 +167,7 @@ test('preparar correo muestra opciones y conserva el borrador sin una aplicació
   await expect(page.locator('#draft-result')).toHaveValue(/Consulta de botón: análisis & ejecución/);
   await expect(page).toHaveURL(/\/contacto\/$/);
   expect(transmittedFields).toEqual([]);
+  expect(await events(page)).toEqual([{ event: 'contacto_preparado' }]);
 
   for (const id of ['open-gmail', 'open-outlook', 'open-mail-app']) {
     const url = new URL((await page.locator(`#${id}`).getAttribute('href'))!);
@@ -154,6 +188,7 @@ test('preparar correo muestra opciones y conserva el borrador sin una aplicació
   await page.getByRole('link', { name: 'Abrir Gmail', exact: true }).click();
   const popup = await popupPromise;
   await expect(popup).toHaveURL(/https:\/\/mail\.google\.com\/mail\//);
+  expect(await events(page)).toContainEqual({ event: 'generate_lead', method: 'gmail', placement: 'contenido' });
   await expect(page.locator('#draft-result')).toHaveValue(/Consulta de botón: análisis & ejecución/);
   await popup.close();
 
